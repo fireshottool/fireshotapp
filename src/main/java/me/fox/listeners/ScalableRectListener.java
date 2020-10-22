@@ -1,5 +1,6 @@
-package me.fox.listener;
+package me.fox.listeners;
 
+import lombok.Getter;
 import me.fox.adapter.MouseListenerAdapter;
 import me.fox.ui.components.ScalableRectangle;
 
@@ -12,6 +13,7 @@ import java.util.Arrays;
  * @version (~ 21.10.2020)
  */
 
+@Getter
 public class ScalableRectListener extends MouseListenerAdapter {
 
     private final ScalableRectangle parent;
@@ -25,6 +27,13 @@ public class ScalableRectListener extends MouseListenerAdapter {
 
     @Override
     public void mousePressed(MouseEvent event) {
+
+        if (this.parent.isPointInRect(event.getPoint()) && this.parent.getCursor() == Cursor.MOVE_CURSOR) {
+            drag = true;
+            distanceX = event.getX() - this.parent.x;
+            distanceY = event.getY() - this.parent.y;
+            return;
+        }
         int x = this.parent.x;
         int y = this.parent.y;
         int height = this.parent.height;
@@ -39,7 +48,7 @@ public class ScalableRectListener extends MouseListenerAdapter {
                 diagonal = true;
                 break;
             case Cursor.NW_RESIZE_CURSOR:
-                this.parent.setRect(x + width, y + height, width, -height);
+                this.parent.setRect(x + width, y + height, -width, -height);
                 diagonal = true;
                 break;
             case Cursor.NE_RESIZE_CURSOR:
@@ -66,6 +75,11 @@ public class ScalableRectListener extends MouseListenerAdapter {
 
     @Override
     public void mouseReleased(MouseEvent event) {
+        if (drag) {
+            drag = false;
+            return;
+        }
+
         int x = this.parent.x;
         int y = this.parent.y;
         int height = this.parent.height;
@@ -89,6 +103,12 @@ public class ScalableRectListener extends MouseListenerAdapter {
 
     @Override
     public void mouseDragged(MouseEvent event) {
+        if (drag) {
+            this.parent.x = event.getX() - distanceX;
+            this.parent.y = event.getY() - distanceY;
+            return;
+        }
+
         int x = this.parent.x;
         int y = this.parent.y;
         int height = this.parent.height;
@@ -115,6 +135,8 @@ public class ScalableRectListener extends MouseListenerAdapter {
     }
 
     private void updateCursor(MouseEvent event) {
+        //TODO Update the window Cursor
+        this.parent.setCursor(Cursor.CROSSHAIR_CURSOR);
         if (this.parent.isPointInRect(event.getPoint())) {
             this.parent.setCursor(Cursor.MOVE_CURSOR);
         }

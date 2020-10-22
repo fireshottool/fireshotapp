@@ -1,6 +1,4 @@
-package me.fox.adapter;
-
-import me.fox.ui.components.ScalePoint;
+package me.fox.ui.components;
 
 import java.awt.*;
 
@@ -9,7 +7,7 @@ import java.awt.*;
  * @version (~ 21.10.2020)
  */
 
-public class Rectangle extends java.awt.Rectangle {
+public abstract class Rectangle extends java.awt.Rectangle {
 
     /**
      * Check if a point is in the {@link ScalePoint} {@link java.awt.Rectangle} or not

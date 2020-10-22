@@ -2,7 +2,6 @@ package me.fox.ui.components;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.adapter.Rectangle;
 
 import java.awt.*;
 
