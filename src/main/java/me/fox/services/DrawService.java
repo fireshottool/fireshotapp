@@ -1,7 +1,7 @@
 package me.fox.services;
 
 import lombok.Getter;
-import me.fox.adapter.Drawable;
+import me.fox.ui.components.Drawable;
 
 import javax.swing.*;
 import java.awt.*;

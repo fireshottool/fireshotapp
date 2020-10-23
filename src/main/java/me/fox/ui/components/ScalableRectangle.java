@@ -2,8 +2,7 @@ package me.fox.ui.components;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.adapter.Drawable;
-import me.fox.listeners.ScalableRectListener;
+import me.fox.listeners.mouse.ScalableRectListener;
 import me.fox.services.DrawService;
 
 import java.awt.*;

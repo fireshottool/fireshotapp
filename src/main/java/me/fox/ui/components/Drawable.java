@@ -1,4 +1,4 @@
-package me.fox.adapter;
+package me.fox.ui.components;
 
 import java.awt.*;
 

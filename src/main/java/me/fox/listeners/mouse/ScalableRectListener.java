@@ -1,4 +1,4 @@
-package me.fox.listeners;
+package me.fox.listeners.mouse;
 
 import lombok.Getter;
 import me.fox.adapter.MouseListenerAdapter;
@@ -21,6 +21,11 @@ public class ScalableRectListener extends MouseListenerAdapter {
     private Integer distanceX, distanceY;
     private boolean drag, diagonal;
 
+    /**
+     * Constructor for {@link ScalableRectListener}
+     *
+     * @param parent to set {@link ScalableRectListener#parent}
+     */
     public ScalableRectListener(ScalableRectangle parent) {
         this.parent = parent;
     }
@@ -134,6 +139,11 @@ public class ScalableRectListener extends MouseListenerAdapter {
         this.updateCursor(event);
     }
 
+    /**
+     * Update the {@link ScalableRectangle#getCursor()}
+     *
+     * @param event to update the cursor
+     */
     private void updateCursor(MouseEvent event) {
         //TODO Update the window Cursor
         this.parent.setCursor(Cursor.CROSSHAIR_CURSOR);
