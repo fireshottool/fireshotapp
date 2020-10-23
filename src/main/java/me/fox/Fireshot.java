@@ -21,14 +21,16 @@ public class Fireshot {
     private final JsonService jsonService = new JsonService();
     private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshot", this.drawService);
     private final ScreenshotService screenshotService = new ScreenshotService(screenshotFrame, drawService);
-    private final HotkeyService hotkeyService = new HotkeyService(screenshotService);
+    private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService);
 
     private void load(String[] args) {
-        this.jsonService.read(hotkeyService);
+        this.jsonService.read(hotkeyService, drawService);
+        this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
     }
 
     public static void main(String[] args) {
         instance = new Fireshot();
         instance.load(args);
+
     }
 }

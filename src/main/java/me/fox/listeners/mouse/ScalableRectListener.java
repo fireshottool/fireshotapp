@@ -32,6 +32,7 @@ public class ScalableRectListener extends MouseListenerAdapter {
 
     @Override
     public void mousePressed(MouseEvent event) {
+        if (this.parent.getDrawService().isDraw()) return;
 
         if (this.parent.isPointInRect(event.getPoint()) && this.parent.getCursor() == Cursor.MOVE_CURSOR) {
             drag = true;
@@ -80,6 +81,7 @@ public class ScalableRectListener extends MouseListenerAdapter {
 
     @Override
     public void mouseReleased(MouseEvent event) {
+        if (this.parent.getDrawService().isDraw()) return;
         if (drag) {
             drag = false;
             return;
@@ -108,6 +110,8 @@ public class ScalableRectListener extends MouseListenerAdapter {
 
     @Override
     public void mouseDragged(MouseEvent event) {
+        if (this.parent.getDrawService().isDraw()) return;
+
         if (drag) {
             this.parent.x = event.getX() - distanceX;
             this.parent.y = event.getY() - distanceY;
@@ -136,6 +140,7 @@ public class ScalableRectListener extends MouseListenerAdapter {
 
     @Override
     public void mouseMoved(MouseEvent event) {
+        if (this.parent.getDrawService().isDraw()) return;
         this.updateCursor(event);
     }
 

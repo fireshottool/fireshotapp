@@ -22,6 +22,7 @@ public class ScalableRectangle extends Rectangle implements Drawable {
     private final ScreenshotFrame screenshotFrame;
     private final ScalePoint[] scalePoints = this.createPoints();
     private final ScalableRectListener listener = new ScalableRectListener(this);
+    private final Stroke stroke = new BasicStroke();
     private int cursor = 1;
 
     public ScalableRectangle(DrawService drawService, ScreenshotFrame screenshotFrame) {
@@ -47,6 +48,7 @@ public class ScalableRectangle extends Rectangle implements Drawable {
     @Override
     public void draw(Graphics2D g2d) {
         //Draw scalePoints
+        g2d.setStroke(this.stroke);
         if (height == 0 && width == 0) return;
         Arrays.stream(this.scalePoints).forEach(var -> {
             var.updateLocation(this);

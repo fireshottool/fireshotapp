@@ -24,22 +24,28 @@ public class HotkeyService {
 
     private final Map<String, HotkeyFunc> hotkeyMap = Map.ofEntries(
             Map.entry("screenshot", this::screenshot),
-            Map.entry("escape", this::escape)
+            Map.entry("escape", this::escape),
+            Map.entry("draw", this::draw),
+            Map.entry("redo", this::redo),
+            Map.entry("undo", this::undo)
     );
     private final ScreenshotService screenshotService;
+    private final DrawService drawService;
+    private final HotkeyListener hotkeyListener = new HotkeyListener(this);
     private final List<Integer> pressedKeys = new ArrayList<>();
     private final List<Hotkey> hotkeys = new ArrayList<>();
-    private final HotkeyListener hotkeyListener = new HotkeyListener(this);
+
 
     /**
      * Constructor for {@link HotkeyService}
      * registers the {@link HotkeyService#hotkeyListener}
      */
-    public HotkeyService(ScreenshotService screenshotService) {
+    public HotkeyService(ScreenshotService screenshotService, DrawService drawService) {
         GlobalKeyboardHook globalKeyboardHook = new GlobalKeyboardHook(true);
         globalKeyboardHook.addKeyListener(this.hotkeyListener);
 
         this.screenshotService = screenshotService;
+        this.drawService = drawService;
     }
 
     /**
@@ -83,5 +89,17 @@ public class HotkeyService {
 
     private void escape() {
         screenshotService.resetAndHide();
+    }
+
+    private void draw() {
+        this.drawService.setDraw(!this.drawService.isDraw());
+    }
+
+    private void redo() {
+        this.drawService.redoLine();
+    }
+
+    private void undo() {
+        this.drawService.undoLine();
     }
 }

@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import me.fox.components.Hotkey;
 
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,7 +28,7 @@ public class JsonService {
 
     private JsonObject jsonObject;
 
-    public void read(HotkeyService hotkeyService) {
+    public void read(HotkeyService hotkeyService, DrawService drawService) {
         CompletableFuture.runAsync(() -> {
             try {
                 FileInputStream fileInputStream = new FileInputStream(jsonPath.toString());
@@ -36,6 +37,7 @@ public class JsonService {
                 this.jsonObject = gson.fromJson(inputStreamReader, JsonObject.class);
 
                 readHotkeys(hotkeyService);
+                readDraw(drawService);
 
                 fileInputStream.close();
                 inputStreamReader.close();
@@ -53,5 +55,13 @@ public class JsonService {
 
         jsonArray.forEach(var -> list.add(gson.fromJson(var, Hotkey.class)));
         hotkeyService.getHotkeys().addAll(list);
+    }
+
+    private void readDraw(DrawService drawService) {
+        JsonObject drawObject = this.jsonObject.getAsJsonObject("draw");
+        drawService.setCurrentStrokeWidth(drawObject.get("defaultThickness").getAsFloat());
+        drawService.setIncreaseThickness(drawObject.get("thicknessIncrease").getAsFloat());
+        drawService.setIncreaseThickness(drawObject.get("thicknessDecrease").getAsFloat());
+        drawService.setDrawColor(Color.decode(drawObject.get("color").getAsString()));
     }
 }
