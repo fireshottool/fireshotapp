@@ -144,14 +144,13 @@ public class ScalableRectListener extends MouseListenerAdapter {
      *
      * @param event to update the cursor
      */
+    @SuppressWarnings("MagicConstant")
     private void updateCursor(MouseEvent event) {
-        //TODO Update the window Cursor
         this.parent.setCursor(Cursor.CROSSHAIR_CURSOR);
         if (this.parent.isPointInRect(event.getPoint())) {
             this.parent.setCursor(Cursor.MOVE_CURSOR);
         }
-        Arrays.stream(this.parent.getScalePoints()).filter(var -> var.isPointInRect(event.getPoint())).forEach(var -> {
-            this.parent.setCursor(var.getDirection());
-        });
+        Arrays.stream(this.parent.getScalePoints()).filter(var -> var.isPointInRect(event.getPoint())).forEach(var -> this.parent.setCursor(var.getDirection()));
+        this.parent.getScreenshotFrame().setCursor(Cursor.getPredefinedCursor(this.parent.getCursor()));
     }
 }

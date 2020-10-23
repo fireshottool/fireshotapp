@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.listeners.mouse.ScalableRectListener;
 import me.fox.services.DrawService;
+import me.fox.ui.frames.ScreenshotFrame;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -17,15 +18,20 @@ import java.util.Arrays;
 @Setter
 public class ScalableRectangle extends Rectangle implements Drawable {
 
+    private final DrawService drawService;
+    private final ScreenshotFrame screenshotFrame;
     private final ScalePoint[] scalePoints = this.createPoints();
     private final ScalableRectListener listener = new ScalableRectListener(this);
-
-    private final DrawService drawService;
     private int cursor = 1;
 
-    public ScalableRectangle(DrawService drawService) {
+    public ScalableRectangle(DrawService drawService, ScreenshotFrame screenshotFrame) {
         this.drawService = drawService;
-        this.drawService.registerDrawable(this);
+        this.drawService.registerDrawable(this, 2);
+
+        this.screenshotFrame = screenshotFrame;
+        screenshotFrame.registerMouseListener(this.listener);
+
+        this.setRect(-10, -10, 0, 0);
     }
 
     private ScalePoint[] createPoints() {

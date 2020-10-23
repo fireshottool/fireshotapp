@@ -3,7 +3,6 @@ package me.fox.ui.frames;
 import lombok.Getter;
 import me.fox.adapter.MouseListenerAdapter;
 import me.fox.services.DrawService;
-import me.fox.ui.components.ScalableRectangle;
 import me.fox.utils.Util;
 
 import javax.swing.*;
@@ -19,8 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Getter
 public class ScreenshotFrame extends JFrame {
 
-    private final ScalableRectangle scalableRectangle;
-
     /**
      * Constructor for {@link ScreenshotFrame}
      * Call the super Constructor from {@link JFrame} to set the title to {@param title}
@@ -32,8 +29,6 @@ public class ScreenshotFrame extends JFrame {
         super(title);
         this.loadFrame();
         this.setContentPane(drawService);
-        scalableRectangle = new ScalableRectangle(drawService);
-        this.registerMouseListener(scalableRectangle.getListener());
     }
 
     /**
@@ -43,7 +38,7 @@ public class ScreenshotFrame extends JFrame {
         this.setFocusable(true);
         this.setUndecorated(true);
         this.setLayout(null);
-        this.setVisible(true);
+        this.setVisible(false);
         this.setBackground(Color.BLACK);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));

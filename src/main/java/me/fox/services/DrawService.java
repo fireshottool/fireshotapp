@@ -16,7 +16,9 @@ import java.util.List;
 @Getter
 public class DrawService extends JComponent {
 
-    private final List<Drawable> drawables = new ArrayList<>();
+    private final List<Drawable> firstLayer = new ArrayList<>();
+    private final List<Drawable> secondLayer = new ArrayList<>();
+    private final List<Drawable> thirdLayer = new ArrayList<>();
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -25,15 +27,28 @@ public class DrawService extends JComponent {
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        this.drawables.forEach(var -> var.draw(g2d));
+        this.firstLayer.forEach(var -> var.draw(g2d));
+        this.secondLayer.forEach(var -> var.draw(g2d));
+        this.thirdLayer.forEach(var -> var.draw(g2d));
         repaint();
     }
 
     /**
      * Register a new {@link Drawable}
+     *
      * @param drawable to register
      */
-    public void registerDrawable(Drawable drawable) {
-        this.drawables.add(drawable);
+    public void registerDrawable(Drawable drawable, int layer) {
+        switch (layer) {
+            case 0:
+                firstLayer.add(drawable);
+                break;
+            case 1:
+                secondLayer.add(drawable);
+                break;
+            case 2:
+                thirdLayer.add(drawable);
+                break;
+        }
     }
 }

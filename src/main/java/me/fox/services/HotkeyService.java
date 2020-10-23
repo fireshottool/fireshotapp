@@ -23,9 +23,10 @@ import java.util.Optional;
 public class HotkeyService {
 
     private final Map<String, HotkeyFunc> hotkeyMap = Map.ofEntries(
-
+            Map.entry("screenshot", this::screenshot),
+            Map.entry("escape", this::escape)
     );
-
+    private final ScreenshotService screenshotService;
     private final List<Integer> pressedKeys = new ArrayList<>();
     private final List<Hotkey> hotkeys = new ArrayList<>();
     private final HotkeyListener hotkeyListener = new HotkeyListener(this);
@@ -34,9 +35,11 @@ public class HotkeyService {
      * Constructor for {@link HotkeyService}
      * registers the {@link HotkeyService#hotkeyListener}
      */
-    public HotkeyService() {
+    public HotkeyService(ScreenshotService screenshotService) {
         GlobalKeyboardHook globalKeyboardHook = new GlobalKeyboardHook(true);
         globalKeyboardHook.addKeyListener(this.hotkeyListener);
+
+        this.screenshotService = screenshotService;
     }
 
     /**
@@ -47,7 +50,8 @@ public class HotkeyService {
      */
     public void invokeIfPresent(GlobalKeyEvent event) {
         Optional<Hotkey> optionalHotkey = this.hotkeys
-                .stream().filter(var -> var.isValid(event, this)).findFirst();
+                .stream().filter(var -> var.isValid(event, this) &&
+                        hotkeyMap.containsKey(var.getName())).findFirst();
         optionalHotkey.ifPresent(var -> hotkeyMap.get(var.getName()).invoke());
     }
 
@@ -71,5 +75,13 @@ public class HotkeyService {
         if (pressedKeys.contains(keyCode)) {
             pressedKeys.remove((Integer) keyCode);
         }
+    }
+
+    private void screenshot() {
+        screenshotService.show();
+    }
+
+    private void escape() {
+        screenshotService.resetAndHide();
     }
 }
