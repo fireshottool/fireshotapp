@@ -28,7 +28,7 @@ public class JsonService {
 
     private JsonObject jsonObject;
 
-    public void read(HotkeyService hotkeyService, DrawService drawService) {
+    public void read(HotkeyService hotkeyService, DrawService drawService, ScreenshotService screenshotService) {
         CompletableFuture.runAsync(() -> {
             try {
                 FileInputStream fileInputStream = new FileInputStream(jsonPath.toString());
@@ -37,6 +37,7 @@ public class JsonService {
                 this.jsonObject = gson.fromJson(inputStreamReader, JsonObject.class);
 
                 readHotkeys(hotkeyService);
+                readScreenshot(screenshotService);
                 readDraw(drawService);
 
                 fileInputStream.close();
@@ -46,6 +47,12 @@ public class JsonService {
             }
         });
 
+    }
+
+    private void readScreenshot(ScreenshotService screenshotService) {
+        JsonObject screenshotObject = this.jsonObject.getAsJsonObject("screenshot");
+        screenshotService.setScreenshotPath(Path.of(screenshotObject.get("imageLocation").getAsString()));
+        screenshotService.setDimColor(Color.decode(screenshotObject.get("dimColor").getAsString()));
     }
 
     private void readHotkeys(HotkeyService hotkeyService) {

@@ -1,10 +1,7 @@
 package me.fox;
 
 import lombok.Getter;
-import me.fox.services.DrawService;
-import me.fox.services.HotkeyService;
-import me.fox.services.JsonService;
-import me.fox.services.ScreenshotService;
+import me.fox.services.*;
 import me.fox.ui.frames.ScreenshotFrame;
 
 /**
@@ -21,10 +18,11 @@ public class Fireshot {
     private final JsonService jsonService = new JsonService();
     private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshot", this.drawService);
     private final ScreenshotService screenshotService = new ScreenshotService(screenshotFrame, drawService);
-    private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService);
+    private final ScreenService screenService = new ScreenService(screenshotFrame, screenshotService);
+    private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
 
     private void load(String[] args) {
-        this.jsonService.read(hotkeyService, drawService);
+        this.jsonService.read(hotkeyService, drawService, screenshotService);
         this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
     }
 

@@ -2,13 +2,21 @@ package me.fox.services;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.fox.components.ClipboardImage;
 import me.fox.ui.components.Drawable;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.frames.ScreenshotFrame;
+import me.fox.utils.Util;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Objects;
 
 /**
  * @author (Ausgefuchster)
@@ -22,26 +30,20 @@ public class ScreenshotService implements Drawable {
     private final ScreenshotFrame screenshotFrame;
     private final ScalableRectangle selectionRectangle;
     private final DrawService drawService;
+    private final String fileSeparator = System.getProperty("file.separator");
 
+    private Path screenshotPath = Path.of(System.getProperty("user.home") + fileSeparator + "fireshot" + fileSeparator + "screenshots");
+    private String fileType = "png";
+    private Color dimColor;
     private BufferedImage image;
 
     public ScreenshotService(ScreenshotFrame screenshotFrame, DrawService drawService) {
-        this.screenshotFrame = screenshotFrame;
-        this.selectionRectangle = new ScalableRectangle(drawService, screenshotFrame);
         this.drawService = drawService;
+        this.screenshotFrame = screenshotFrame;
         this.drawService.registerDrawable(this, 0);
+        this.selectionRectangle = new ScalableRectangle(drawService, screenshotFrame);
     }
 
-    public void show() {
-        this.createScreenshot();
-        this.screenshotFrame.setVisible(true);
-    }
-
-    public void resetAndHide() {
-        this.image = null;
-        this.selectionRectangle.setRect(-10, -10, 0, 0);
-        this.screenshotFrame.setVisible(false);
-    }
 
     public void createScreenshot() {
         int x = this.screenshotFrame.getX();
@@ -55,20 +57,24 @@ public class ScreenshotService implements Drawable {
         }
     }
 
-    @Override
-    public void draw(Graphics2D g2d) {
-        if (this.image != null) {
-            int width = this.screenshotFrame.getWidth();
-            int height = this.screenshotFrame.getHeight();
-            g2d.drawImage(image, 0, 0, width, height, null);
+    public void confirmScreenShot() throws IOException {
+        int x = this.selectionRectangle.x;
+        int y = this.selectionRectangle.y;
+        int width = this.selectionRectangle.width;
+        int height = this.selectionRectangle.height;
+        BufferedImage screenshot = Objects.requireNonNull(this.takeScreenshot(x, y, width, height));
 
-            //Draw black overlay
-            g2d.setColor(new Color(0, 0, 0, 200));
-            g2d.fillRect(0, 0, width, height);
+        this.drawService.draw((Graphics2D) screenshot.getGraphics());
 
-            //Draw selected image part
-            this.drawSelected(g2d, this.selectionRectangle);
+        String fileName = Util.generateRandomString(18);
+
+        if (!Files.exists(this.screenshotPath)) {
+            Files.createDirectories(screenshotPath);
         }
+        File file = new File(this.screenshotPath.toString() + fileSeparator + fileName + "." + this.fileType);
+        ImageIO.write(screenshot, this.fileType, file);
+
+        ClipboardImage.write(screenshot);
     }
 
     private BufferedImage takeScreenshot(int x, int y, int width, int height) {
@@ -104,20 +110,40 @@ public class ScreenshotService implements Drawable {
         }
     }
 
+    @Override
+    public void draw(Graphics2D g2d) {
+        if (this.image != null) {
+            int width = this.screenshotFrame.getWidth();
+            int height = this.screenshotFrame.getHeight();
+            g2d.drawImage(image, 0, 0, width, height, null);
+
+            //Draw black overlay
+            g2d.setColor(new Color(0, 0, 0, 200));
+            g2d.fillRect(0, 0, width, height);
+
+            //Draw selected image part
+            this.drawSelected(g2d, this.selectionRectangle);
+        }
+    }
+
     private void drawSelected(Graphics2D g2d, Rectangle selection) {
-        if (selection.width != 0 && selection.height != 0) {
-            if (selection.width < 0 && selection.height < 0) {
-                BufferedImage overlayScreen = this.takeScreenshot(selection.x - Math.abs(selection.width), selection.y - Math.abs(selection.height), Math.abs(selection.width), Math.abs(selection.height));
-                g2d.drawImage(overlayScreen, Math.max(selection.x - Math.abs(selection.width), 0), Math.max(selection.y - Math.abs(selection.height), 0), null);
-            } else if (selection.width < 0) {
-                BufferedImage overlayScreen = this.takeScreenshot(selection.x - Math.abs(selection.width), selection.y, Math.abs(selection.width), selection.height);
-                g2d.drawImage(overlayScreen, Math.max(selection.x - Math.abs(selection.width), 0), Math.max(selection.y, 0), null);
-            } else if (selection.height < 0) {
-                BufferedImage overlayScreen = this.takeScreenshot(selection.x, selection.y - Math.abs(selection.height), selection.width, Math.abs(selection.height));
-                g2d.drawImage(overlayScreen, Math.max(selection.x, 0), Math.max(selection.y - Math.abs(selection.height), 0), null);
+        int x = selection.x;
+        int y = selection.y;
+        int width = Math.abs(selection.width);
+        int height = Math.abs(selection.height);
+        if (width != 0 && height != 0) {
+            if (width < 0 && height < 0) {
+                BufferedImage overlayScreen = this.takeScreenshot(x - width, y - height, width, height);
+                g2d.drawImage(overlayScreen, Math.max(x - width, 0), Math.max(y - height, 0), null);
+            } else if (width < 0) {
+                BufferedImage overlayScreen = this.takeScreenshot(x - width, y, width, height);
+                g2d.drawImage(overlayScreen, Math.max(x - width, 0), Math.max(y, 0), null);
+            } else if (height < 0) {
+                BufferedImage overlayScreen = this.takeScreenshot(x, y - height, width, height);
+                g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y - height, 0), null);
             } else {
-                BufferedImage overlayScreen = this.takeScreenshot(selection.x, selection.y, selection.width, selection.height);
-                g2d.drawImage(overlayScreen, Math.max(selection.x, 0), Math.max(selection.y, 0), null);
+                BufferedImage overlayScreen = this.takeScreenshot(x, y, width, height);
+                g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y, 0), null);
             }
         }
     }

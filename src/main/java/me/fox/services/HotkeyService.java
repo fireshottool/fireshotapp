@@ -27,10 +27,12 @@ public class HotkeyService {
             Map.entry("escape", this::escape),
             Map.entry("draw", this::draw),
             Map.entry("redo", this::redo),
-            Map.entry("undo", this::undo)
+            Map.entry("undo", this::undo),
+            Map.entry("confirm", this::confirm)
     );
-    private final ScreenshotService screenshotService;
     private final DrawService drawService;
+    private final ScreenService screenService;
+    private final ScreenshotService screenshotService;
     private final HotkeyListener hotkeyListener = new HotkeyListener(this);
     private final List<Integer> pressedKeys = new ArrayList<>();
     private final List<Hotkey> hotkeys = new ArrayList<>();
@@ -40,11 +42,12 @@ public class HotkeyService {
      * Constructor for {@link HotkeyService}
      * registers the {@link HotkeyService#hotkeyListener}
      */
-    public HotkeyService(ScreenshotService screenshotService, DrawService drawService) {
+    public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
         GlobalKeyboardHook globalKeyboardHook = new GlobalKeyboardHook(true);
         globalKeyboardHook.addKeyListener(this.hotkeyListener);
 
         this.screenshotService = screenshotService;
+        this.screenService = screenService;
         this.drawService = drawService;
     }
 
@@ -84,22 +87,32 @@ public class HotkeyService {
     }
 
     private void screenshot() {
-        screenshotService.show();
+        if (this.screenService.getScreenshotFrame().isVisible()) return;
+        this.screenService.show();
     }
 
     private void escape() {
-        screenshotService.resetAndHide();
+        if (!this.screenService.getScreenshotFrame().isVisible()) return;
+        this.screenService.resetAndHide();
     }
 
     private void draw() {
+        if (!this.screenService.getScreenshotFrame().isVisible()) return;
         this.drawService.setDraw(!this.drawService.isDraw());
     }
 
     private void redo() {
+        if (!this.screenService.getScreenshotFrame().isVisible()) return;
         this.drawService.redoLine();
     }
 
     private void undo() {
+        if (!this.screenService.getScreenshotFrame().isVisible()) return;
         this.drawService.undoLine();
+    }
+
+    private void confirm() {
+        if (!this.screenService.getScreenshotFrame().isVisible()) return;
+        this.screenService.confirmAndHide();
     }
 }

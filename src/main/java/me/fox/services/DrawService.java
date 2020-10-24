@@ -53,6 +53,12 @@ public class DrawService extends JComponent implements Drawable {
         repaint();
     }
 
+    public void resetDraw() {
+        this.lines.clear();
+        this.undoLines.clear();
+        this.currentIndex = -1;
+    }
+
     /**
      * Register a new {@link Drawable}
      *
@@ -70,11 +76,6 @@ public class DrawService extends JComponent implements Drawable {
                 thirdLayer.add(drawable);
                 break;
         }
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
-        this.drawLines(g2d);
     }
 
     public void addPoint(Point point) {
@@ -101,6 +102,11 @@ public class DrawService extends JComponent implements Drawable {
             lines.add(undoLines.get(size - 1));
             undoLines.remove(size - 1);
         }
+    }
+
+    @Override
+    public void draw(Graphics2D g2d) {
+        this.drawLines(g2d);
     }
 
     public void drawLines(Graphics2D g2d) {
