@@ -113,6 +113,6 @@ public class HotkeyService {
 
     private void confirm() {
         if (!this.screenService.getScreenshotFrame().isVisible()) return;
-        this.screenService.confirmAndHide();
+        this.screenService.hideAndConfirm();
     }
 }

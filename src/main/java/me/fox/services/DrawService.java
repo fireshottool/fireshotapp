@@ -3,8 +3,8 @@ package me.fox.services;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.listeners.mouse.DrawListener;
-import me.fox.ui.components.Drawable;
-import me.fox.ui.components.Line;
+import me.fox.ui.components.draw.Drawable;
+import me.fox.ui.components.draw.Line;
 
 import javax.swing.*;
 import java.awt.*;

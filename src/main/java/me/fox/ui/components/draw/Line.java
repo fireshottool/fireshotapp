@@ -1,4 +1,4 @@
-package me.fox.ui.components;
+package me.fox.ui.components.draw;
 
 import lombok.Getter;
 import me.fox.Fireshot;

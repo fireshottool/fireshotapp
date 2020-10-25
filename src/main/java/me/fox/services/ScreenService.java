@@ -3,6 +3,9 @@ package me.fox.services;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.ui.frames.ScreenshotFrame;
+import me.fox.ui.panels.Toolbox;
+import me.fox.ui.panels.ext.DrawToolbox;
+import me.fox.ui.panels.ext.ScreenshotToolbox;
 
 import java.io.IOException;
 
@@ -17,10 +20,14 @@ public class ScreenService {
 
     private final ScreenshotFrame screenshotFrame;
     private final ScreenshotService screenshotService;
+    private final Toolbox drawToolbox = new DrawToolbox();
+    private final Toolbox screenshotToolbox = new ScreenshotToolbox();
 
     public ScreenService(ScreenshotFrame screenshotFrame, ScreenshotService screenshotService) {
         this.screenshotFrame = screenshotFrame;
         this.screenshotService = screenshotService;
+        this.screenshotFrame.add(drawToolbox);
+        this.screenshotFrame.add(screenshotToolbox);
     }
 
     public void show() {
@@ -28,7 +35,8 @@ public class ScreenService {
         this.screenshotFrame.setVisible(true);
     }
 
-    public void confirmAndHide() {
+    public void hideAndConfirm() {
+        this.screenshotFrame.setVisible(false);
         try {
             this.screenshotService.confirmScreenShot();
         } catch (IOException e) {

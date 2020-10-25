@@ -4,6 +4,8 @@ import lombok.Getter;
 import me.fox.services.*;
 import me.fox.ui.frames.ScreenshotFrame;
 
+import javax.swing.*;
+
 /**
  * @author (Ausgefuchster)
  * @version (2.0 ~ 21.10.2020)
@@ -22,6 +24,12 @@ public class Fireshot {
     private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
 
     private void load(String[] args) {
+        try {
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.jsonService.read(hotkeyService, drawService, screenshotService);
         this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
     }

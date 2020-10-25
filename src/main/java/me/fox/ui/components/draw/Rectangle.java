@@ -1,4 +1,6 @@
-package me.fox.ui.components;
+package me.fox.ui.components.draw;
+
+import me.fox.ui.components.ScalePoint;
 
 import java.awt.*;
 

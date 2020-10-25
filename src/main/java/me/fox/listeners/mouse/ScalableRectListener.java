@@ -1,6 +1,7 @@
 package me.fox.listeners.mouse;
 
 import lombok.Getter;
+import me.fox.Fireshot;
 import me.fox.adapter.MouseListenerAdapter;
 import me.fox.ui.components.ScalableRectangle;
 
@@ -33,6 +34,7 @@ public class ScalableRectListener extends MouseListenerAdapter {
     @Override
     public void mousePressed(MouseEvent event) {
         if (this.parent.getDrawService().isDraw()) return;
+        Fireshot.getInstance().getScreenService().getScreenshotToolbox().hideSelf();
 
         if (this.parent.isPointInRect(event.getPoint()) && this.parent.getCursor() == Cursor.MOVE_CURSOR) {
             drag = true;
@@ -82,6 +84,7 @@ public class ScalableRectListener extends MouseListenerAdapter {
     @Override
     public void mouseReleased(MouseEvent event) {
         if (this.parent.getDrawService().isDraw()) return;
+        Fireshot.getInstance().getScreenService().getScreenshotToolbox().showSelf();
         if (drag) {
             drag = false;
             return;
@@ -149,13 +152,12 @@ public class ScalableRectListener extends MouseListenerAdapter {
      *
      * @param event to update the cursor
      */
-    @SuppressWarnings("MagicConstant")
     private void updateCursor(MouseEvent event) {
         this.parent.setCursor(Cursor.CROSSHAIR_CURSOR);
         if (this.parent.isPointInRect(event.getPoint())) {
             this.parent.setCursor(Cursor.MOVE_CURSOR);
         }
         Arrays.stream(this.parent.getScalePoints()).filter(var -> var.isPointInRect(event.getPoint())).forEach(var -> this.parent.setCursor(var.getDirection()));
-        this.parent.getScreenshotFrame().setCursor(Cursor.getPredefinedCursor(this.parent.getCursor()));
+        this.parent.getScreenshotFrame().updateCursor(this.parent.getCursor());
     }
 }

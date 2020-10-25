@@ -3,8 +3,8 @@ package me.fox.services;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.components.ClipboardImage;
-import me.fox.ui.components.Drawable;
 import me.fox.ui.components.ScalableRectangle;
+import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.utils.Util;
 
@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
 
 /**
  * @author (Ausgefuchster)
@@ -62,7 +61,8 @@ public class ScreenshotService implements Drawable {
         int y = this.selectionRectangle.y;
         int width = this.selectionRectangle.width;
         int height = this.selectionRectangle.height;
-        BufferedImage screenshot = Objects.requireNonNull(this.takeScreenshot(x, y, width, height));
+        BufferedImage screenshot = this.takeScreenshot(x, y, width, height);
+        if (screenshot == null) return;
 
         this.drawService.draw((Graphics2D) screenshot.getGraphics());
 
@@ -78,6 +78,7 @@ public class ScreenshotService implements Drawable {
     }
 
     private BufferedImage takeScreenshot(int x, int y, int width, int height) {
+        if (width == 0 || height == 0) return null;
         try {
             return this.image.getSubimage(x, y, width, height);
         } catch (RasterFormatException e) {

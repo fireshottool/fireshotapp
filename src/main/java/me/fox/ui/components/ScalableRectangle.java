@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.listeners.mouse.ScalableRectListener;
 import me.fox.services.DrawService;
+import me.fox.ui.components.draw.Drawable;
+import me.fox.ui.components.draw.Rectangle;
 import me.fox.ui.frames.ScreenshotFrame;
 
 import java.awt.*;
@@ -25,6 +27,12 @@ public class ScalableRectangle extends Rectangle implements Drawable {
     private final Stroke stroke = new BasicStroke();
     private int cursor = 1;
 
+    /**
+     * Constructor for {@link ScalableRectangle}
+     *
+     * @param drawService     to set {@link ScalableRectangle#drawService}
+     * @param screenshotFrame to set {@link ScalableRectangle#screenshotFrame}
+     */
     public ScalableRectangle(DrawService drawService, ScreenshotFrame screenshotFrame) {
         this.drawService = drawService;
         this.drawService.registerDrawable(this, 2);
@@ -35,6 +43,11 @@ public class ScalableRectangle extends Rectangle implements Drawable {
         this.setRect(-10, -10, 0, 0);
     }
 
+    /**
+     * Create all 8 scale points
+     *
+     * @return the array of scale points
+     */
     private ScalePoint[] createPoints() {
         ScalePoint[] scalePoints = new ScalePoint[8];
         int dirCount = 4;

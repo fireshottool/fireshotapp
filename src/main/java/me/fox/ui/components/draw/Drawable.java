@@ -1,4 +1,4 @@
-package me.fox.ui.components;
+package me.fox.ui.components.draw;
 
 import java.awt.*;
 

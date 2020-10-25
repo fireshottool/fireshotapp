@@ -2,6 +2,7 @@ package me.fox.ui.components;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.fox.ui.components.draw.Rectangle;
 
 import java.awt.*;
 
@@ -12,7 +13,7 @@ import java.awt.*;
 
 @Getter
 @Setter
-public class ScalePoint extends Rectangle {
+public class ScalePoint extends me.fox.ui.components.draw.Rectangle {
 
     private final int direction;
 
