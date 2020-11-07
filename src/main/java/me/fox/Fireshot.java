@@ -24,19 +24,18 @@ public class Fireshot {
     private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
 
     private void load(String[] args) {
+        this.jsonService.read(hotkeyService, drawService, screenshotService);
+        this.screenshotFrame.registerMouseListener(this.drawService.getDrawListenerM());
+    }
+
+    public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.jsonService.read(hotkeyService, drawService, screenshotService);
-        this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
-    }
-
-    public static void main(String[] args) {
         instance = new Fireshot();
         instance.load(args);
-
     }
 }

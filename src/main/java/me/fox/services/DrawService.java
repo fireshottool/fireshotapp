@@ -2,7 +2,10 @@ package me.fox.services;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.listeners.mouse.DrawListener;
+import me.fox.Fireshot;
+import me.fox.listeners.keyboard.DrawListenerK;
+import me.fox.listeners.mouse.DrawListenerM;
+import me.fox.ui.components.draw.Circle;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.components.draw.Line;
 
@@ -21,22 +24,24 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Setter
 public class DrawService extends JComponent implements Drawable {
 
-    private final DrawListener drawListener;
+    private final DrawListenerM drawListenerM;
+    private final DrawListenerK drawListenerK;
 
     private final List<Drawable> firstLayer = new ArrayList<>();
     private final List<Drawable> secondLayer = new ArrayList<>();
     private final List<Drawable> thirdLayer = new ArrayList<>();
-    private final List<Line> lines = new CopyOnWriteArrayList<>();
-    private final List<Line> undoLines = new CopyOnWriteArrayList<>();
+    private final List<Drawable> drawings = new CopyOnWriteArrayList<>();
+    private final List<Drawable> undoDrawings = new CopyOnWriteArrayList<>();
 
-    private boolean draw = false;
+    private boolean draw = false, line = false, circle = false;
     private int currentIndex = -1;
     private float currentStrokeWidth;
     private float decreaseThickness, increaseThickness;
     private Color drawColor;
 
     public DrawService() {
-        this.drawListener = new DrawListener(this);
+        this.drawListenerM = new DrawListenerM(this);
+        this.drawListenerK = new DrawListenerK(this);
         this.registerDrawable(this, 1);
     }
 
@@ -54,9 +59,12 @@ public class DrawService extends JComponent implements Drawable {
     }
 
     public void resetDraw() {
-        this.lines.clear();
-        this.undoLines.clear();
+        this.drawings.clear();
+        this.undoDrawings.clear();
         this.currentIndex = -1;
+        this.draw = false;
+        this.line = false;
+        this.circle = false;
     }
 
     /**
@@ -67,62 +75,63 @@ public class DrawService extends JComponent implements Drawable {
     public void registerDrawable(Drawable drawable, int layer) {
         switch (layer) {
             case 0:
-                firstLayer.add(drawable);
+                this.firstLayer.add(drawable);
                 break;
             case 1:
-                secondLayer.add(drawable);
+                this.secondLayer.add(drawable);
                 break;
             case 2:
-                thirdLayer.add(drawable);
+                this.thirdLayer.add(drawable);
                 break;
         }
+    }
+
+    public void addCircle(Point point) {
+        this.currentIndex++;
+        this.drawings.add(new Circle(point.x, point.y, drawColor));
+    }
+
+    public void resizeCurrentCircle(Point point) {
+        Circle circle = (Circle) this.drawings.get(this.currentIndex);
+        if (Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(17)) {
+            int radius = (int) Math.sqrt(Math.pow(circle.getX() - point.x, 2) + (Math.pow(circle.getY() - point.y, 2)));
+            circle.setSize(radius * 2, radius * 2);
+            return;
+        }
+        int width = Math.abs(point.x - circle.getX()) * 2;
+        int height = Math.abs(point.y - circle.getY()) * 2;
+
+        circle.setSize(width, height);
     }
 
     public void addPoint(Point point) {
-        lines.get(currentIndex).addPoint(point);
+        ((Line) this.drawings.get(this.currentIndex)).addPoint(point);
     }
 
     public void addLine() {
-        currentIndex++;
-        lines.add(new Line());
+        this.currentIndex++;
+        this.drawings.add(new Line());
     }
 
-    public void undoLine() {
-        if (lines.size() != 0) {
-            currentIndex--;
-            undoLines.add(lines.get(currentIndex + 1));
-            lines.remove(currentIndex + 1);
+    public void undoDrawing() {
+        if (this.drawings.size() != 0) {
+            this.currentIndex--;
+            this.undoDrawings.add(this.drawings.get(this.currentIndex + 1));
+            this.drawings.remove(this.currentIndex + 1);
         }
     }
 
-    public void redoLine() {
-        if (undoLines.size() > 0) {
-            currentIndex++;
-            int size = undoLines.size();
-            lines.add(undoLines.get(size - 1));
-            undoLines.remove(size - 1);
+    public void redoDrawing() {
+        if (this.undoDrawings.size() > 0) {
+            this.currentIndex++;
+            int size = this.undoDrawings.size();
+            this.drawings.add(this.undoDrawings.get(size - 1));
+            this.undoDrawings.remove(size - 1);
         }
     }
 
     @Override
     public void draw(Graphics2D g2d) {
-        this.drawLines(g2d);
-    }
-
-    public void drawLines(Graphics2D g2d) {
-        this.lines.forEach(var -> {
-            g2d.setStroke(var.getStroke());
-
-            for (int j = 0; j < var.getPoints().size(); j++) {
-                List<Point> points = var.getPoints();
-                g2d.setColor(var.getColor());
-
-                if (j + 1 != points.size()) {
-                    g2d.drawLine(points.get(j).x, points.get(j).y, points.get(j + 1).x, points.get(j + 1).y);
-                } else {
-                    g2d.fillRect(points.get(j).x, points.get(j).y, 1, 1);
-                }
-            }
-        });
+        this.drawings.forEach(var -> var.draw(g2d));
     }
 }

@@ -17,4 +17,13 @@ public class DefaultToolboxComponent extends ToolboxComponent {
         this.setSize(32, 32);
         this.addActionListener(actionListener);
     }
+
+    public DefaultToolboxComponent(BufferedImage icon, ActionListener actionListener, boolean selectable) {
+        super(icon);
+        this.setSize(32, 32);
+        this.addActionListener(actionListener);
+        if (selectable) {
+            this.addActionListener(this::select);
+        }
+    }
 }

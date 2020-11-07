@@ -2,6 +2,7 @@ package me.fox.services;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.fox.Fireshot;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.ui.panels.Toolbox;
 import me.fox.ui.panels.ext.DrawToolbox;
@@ -49,7 +50,20 @@ public class ScreenService {
         this.screenshotService.setImage(null);
         this.screenshotService.getSelectionRectangle().setRect(-10, -10, 0, 0);
         this.screenshotFrame.setVisible(false);
-        this.screenshotService.getDrawService().resetDraw();
+        DrawService drawService = Fireshot.getInstance().getDrawService();
+        if (drawService.isDraw()) {
+            ((ScreenshotToolbox) this.screenshotToolbox).getDraw().select(null);
+            if (drawService.isCircle()) {
+                ((DrawToolbox) this.drawToolbox).getCircle().select(null);
+            }
+            if (drawService.isLine()) {
+                ((DrawToolbox) this.drawToolbox).getLine().select(null);
+            }
+        }
+        drawService.resetDraw();
+        this.drawToolbox.hideSelf();
+        this.screenshotToolbox.hideSelf();
+
     }
 
 }

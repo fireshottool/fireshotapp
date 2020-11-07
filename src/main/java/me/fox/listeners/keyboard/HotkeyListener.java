@@ -24,6 +24,7 @@ public class HotkeyListener extends KeyboardListenerAdapter {
 
     @Override
     public void keyPressed(GlobalKeyEvent event) {
+        System.out.println(event.getVirtualKeyCode());
         this.hotkeyService.registerKey(event.getVirtualKeyCode());
         this.hotkeyService.invokeIfPresent(event);
     }

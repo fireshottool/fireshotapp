@@ -84,31 +84,31 @@ public class ScalableRectListener extends MouseListenerAdapter {
     @Override
     public void mouseReleased(MouseEvent event) {
         if (this.parent.getDrawService().isDraw()) return;
-        Fireshot.getInstance().getScreenService().getScreenshotToolbox().showSelf();
+
         if (drag) {
             drag = false;
-            return;
-        }
+        } else {
+            int x = this.parent.x;
+            int y = this.parent.y;
+            int height = this.parent.height;
+            int width = this.parent.width;
 
-        int x = this.parent.x;
-        int y = this.parent.y;
-        int height = this.parent.height;
-        int width = this.parent.width;
-
-        switch (this.parent.getCursor()) {
-            case Cursor.W_RESIZE_CURSOR:
-            case Cursor.E_RESIZE_CURSOR:
-                if (width < 0) {
-                    this.parent.setRect(x + width, y, -width, height);
-                }
-                break;
-            case Cursor.N_RESIZE_CURSOR:
-            case Cursor.S_RESIZE_CURSOR:
-                if (height < 0) {
-                    this.parent.setRect(x, y + height, width, -height);
-                }
+            switch (this.parent.getCursor()) {
+                case Cursor.W_RESIZE_CURSOR:
+                case Cursor.E_RESIZE_CURSOR:
+                    if (width < 0) {
+                        this.parent.setRect(x + width, y, -width, height);
+                    }
+                    break;
+                case Cursor.N_RESIZE_CURSOR:
+                case Cursor.S_RESIZE_CURSOR:
+                    if (height < 0) {
+                        this.parent.setRect(x, y + height, width, -height);
+                    }
+            }
+            this.parent.setRect(this.parent.reCalcRect());
         }
-        this.parent.setRect(this.parent.reCalcRect());
+        Fireshot.getInstance().getScreenService().getScreenshotToolbox().showSelf();
     }
 
     @Override

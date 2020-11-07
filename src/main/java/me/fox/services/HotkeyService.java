@@ -7,6 +7,8 @@ import lombok.Setter;
 import me.fox.components.Hotkey;
 import me.fox.components.HotkeyFunc;
 import me.fox.listeners.keyboard.HotkeyListener;
+import me.fox.ui.components.toolbox.ToolboxComponent;
+import me.fox.ui.panels.ext.ScreenshotToolbox;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +38,8 @@ public class HotkeyService {
     private final HotkeyListener hotkeyListener = new HotkeyListener(this);
     private final List<Integer> pressedKeys = new ArrayList<>();
     private final List<Hotkey> hotkeys = new ArrayList<>();
+    private final ToolboxComponent drawComponent;
+    private final GlobalKeyboardHook globalKeyboardHook;
 
 
     /**
@@ -43,12 +47,14 @@ public class HotkeyService {
      * registers the {@link HotkeyService#hotkeyListener}
      */
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
-        GlobalKeyboardHook globalKeyboardHook = new GlobalKeyboardHook(true);
+        globalKeyboardHook = new GlobalKeyboardHook(true);
         globalKeyboardHook.addKeyListener(this.hotkeyListener);
+        globalKeyboardHook.addKeyListener(drawService.getDrawListenerK());
 
         this.screenshotService = screenshotService;
         this.screenService = screenService;
         this.drawService = drawService;
+        this.drawComponent = ((ScreenshotToolbox) this.screenService.getScreenshotToolbox()).getDraw();
     }
 
     /**
@@ -99,16 +105,17 @@ public class HotkeyService {
     private void draw() {
         if (!this.screenService.getScreenshotFrame().isVisible()) return;
         this.drawService.setDraw(!this.drawService.isDraw());
+        drawComponent.select(null);
     }
 
     private void redo() {
         if (!this.screenService.getScreenshotFrame().isVisible()) return;
-        this.drawService.redoLine();
+        this.drawService.redoDrawing();
     }
 
     private void undo() {
         if (!this.screenService.getScreenshotFrame().isVisible()) return;
-        this.drawService.undoLine();
+        this.drawService.undoDrawing();
     }
 
     private void confirm() {

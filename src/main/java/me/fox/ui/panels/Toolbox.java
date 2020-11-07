@@ -73,7 +73,7 @@ public abstract class Toolbox extends JPanel {
                 y = scalableRectangle.y - this.getHeight() - 10;
                 break;
             case VERTICAL:
-                x = scalableRectangle.x - this.getWidth() - 10;
+                x = scalableRectangle.x + scalableRectangle.width + 10;
                 y = scalableRectangle.y + scalableRectangle.height - this.getHeight();
                 break;
         }

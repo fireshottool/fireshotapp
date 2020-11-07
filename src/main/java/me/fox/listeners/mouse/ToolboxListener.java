@@ -14,6 +14,7 @@ import java.awt.event.MouseEvent;
 public class ToolboxListener extends MouseListenerAdapter {
 
     private final Toolbox parent;
+    private int distanceX, distanceY;
 
     public ToolboxListener(Toolbox parent) {
         this.parent = parent;
@@ -21,11 +22,13 @@ public class ToolboxListener extends MouseListenerAdapter {
 
     @Override
     public void mousePressed(MouseEvent event) {
-
+        distanceX = event.getXOnScreen() - this.parent.getX();
+        distanceY = event.getYOnScreen() - this.parent.getY();
     }
 
     @Override
     public void mouseDragged(MouseEvent event) {
+        this.parent.setLocation(event.getXOnScreen() - distanceX, event.getYOnScreen() - distanceY);
     }
 
     @Override

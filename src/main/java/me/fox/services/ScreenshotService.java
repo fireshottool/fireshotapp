@@ -78,7 +78,7 @@ public class ScreenshotService implements Drawable {
     }
 
     private BufferedImage takeScreenshot(int x, int y, int width, int height) {
-        if (width == 0 || height == 0) return null;
+        if (width == 0 || height == 0 || image == null) return null;
         try {
             return this.image.getSubimage(x, y, width, height);
         } catch (RasterFormatException e) {
@@ -133,13 +133,13 @@ public class ScreenshotService implements Drawable {
         int width = Math.abs(selection.width);
         int height = Math.abs(selection.height);
         if (width != 0 && height != 0) {
-            if (width < 0 && height < 0) {
+            if (selection.width < 0 && selection.height < 0) {
                 BufferedImage overlayScreen = this.takeScreenshot(x - width, y - height, width, height);
                 g2d.drawImage(overlayScreen, Math.max(x - width, 0), Math.max(y - height, 0), null);
-            } else if (width < 0) {
+            } else if (selection.width < 0) {
                 BufferedImage overlayScreen = this.takeScreenshot(x - width, y, width, height);
                 g2d.drawImage(overlayScreen, Math.max(x - width, 0), Math.max(y, 0), null);
-            } else if (height < 0) {
+            } else if (selection.height < 0) {
                 BufferedImage overlayScreen = this.takeScreenshot(x, y - height, width, height);
                 g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y - height, 0), null);
             } else {
