@@ -51,15 +51,8 @@ public class ScreenService {
         this.screenshotService.getSelectionRectangle().setRect(-10, -10, 0, 0);
         this.screenshotFrame.setVisible(false);
         DrawService drawService = Fireshot.getInstance().getDrawService();
-        if (drawService.isDraw()) {
-            ((ScreenshotToolbox) this.screenshotToolbox).getDraw().select(null);
-            if (drawService.isCircle()) {
-                ((DrawToolbox) this.drawToolbox).getCircle().select(null);
-            }
-            if (drawService.isLine()) {
-                ((DrawToolbox) this.drawToolbox).getLine().select(null);
-            }
-        }
+        drawToolbox.reset();
+        screenshotToolbox.reset();
         drawService.resetDraw();
         this.drawToolbox.hideSelf();
         this.screenshotToolbox.hideSelf();

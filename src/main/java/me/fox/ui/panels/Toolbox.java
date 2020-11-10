@@ -40,6 +40,8 @@ public abstract class Toolbox extends JPanel {
 
     public abstract void loadToolboxComponents();
 
+    public abstract void reset();
+
     /**
      * Load the fundamentals of the {@link JPanel}
      */

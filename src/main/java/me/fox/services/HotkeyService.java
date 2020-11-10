@@ -49,7 +49,6 @@ public class HotkeyService {
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
         globalKeyboardHook = new GlobalKeyboardHook(true);
         globalKeyboardHook.addKeyListener(this.hotkeyListener);
-        globalKeyboardHook.addKeyListener(drawService.getDrawListenerK());
 
         this.screenshotService = screenshotService;
         this.screenService = screenService;

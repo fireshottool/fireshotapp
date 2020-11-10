@@ -25,7 +25,7 @@ public class Fireshot {
 
     private void load(String[] args) {
         this.jsonService.read(hotkeyService, drawService, screenshotService);
-        this.screenshotFrame.registerMouseListener(this.drawService.getDrawListenerM());
+        this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
     }
 
     public static void main(String[] args) {

@@ -3,11 +3,11 @@ package me.fox.services;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
-import me.fox.listeners.keyboard.DrawListenerK;
-import me.fox.listeners.mouse.DrawListenerM;
-import me.fox.ui.components.draw.Circle;
+import me.fox.listeners.mouse.DrawListener;
 import me.fox.ui.components.draw.Drawable;
-import me.fox.ui.components.draw.Line;
+import me.fox.ui.components.draw.impl.Circle;
+import me.fox.ui.components.draw.impl.Line;
+import me.fox.ui.components.draw.impl.Rectangle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Setter
 public class DrawService extends JComponent implements Drawable {
 
-    private final DrawListenerM drawListenerM;
-    private final DrawListenerK drawListenerK;
+    private final DrawListener drawListener;
 
     private final List<Drawable> firstLayer = new ArrayList<>();
     private final List<Drawable> secondLayer = new ArrayList<>();
@@ -33,15 +32,15 @@ public class DrawService extends JComponent implements Drawable {
     private final List<Drawable> drawings = new CopyOnWriteArrayList<>();
     private final List<Drawable> undoDrawings = new CopyOnWriteArrayList<>();
 
-    private boolean draw = false, line = false, circle = false;
+    private boolean draw = false, line = false, circle = false, rectangle;
+    private boolean fillCircle = true, fillRectangle = true;
     private int currentIndex = -1;
     private float currentStrokeWidth;
     private float decreaseThickness, increaseThickness;
     private Color drawColor;
 
     public DrawService() {
-        this.drawListenerM = new DrawListenerM(this);
-        this.drawListenerK = new DrawListenerK(this);
+        this.drawListener = new DrawListener(this);
         this.registerDrawable(this, 1);
     }
 
@@ -65,6 +64,7 @@ public class DrawService extends JComponent implements Drawable {
         this.draw = false;
         this.line = false;
         this.circle = false;
+        this.rectangle = false;
     }
 
     /**
@@ -86,9 +86,19 @@ public class DrawService extends JComponent implements Drawable {
         }
     }
 
+    public void addRectangle(Point point) {
+        this.currentIndex++;
+        this.drawings.add(new Rectangle(point.x, point.y, drawColor, fillRectangle));
+    }
+
+    public void resizeRectangle(Point point) {
+        Rectangle rectangle = (Rectangle) this.drawings.get(this.currentIndex);
+        rectangle.setSize(point.x - rectangle.x, point.y - rectangle.y);
+    }
+
     public void addCircle(Point point) {
         this.currentIndex++;
-        this.drawings.add(new Circle(point.x, point.y, drawColor));
+        this.drawings.add(new Circle(point.x, point.y, drawColor, fillCircle));
     }
 
     public void resizeCurrentCircle(Point point) {

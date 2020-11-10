@@ -39,6 +39,7 @@ public class ScreenshotFrame extends JFrame {
         this.setUndecorated(true);
         this.setLayout(null);
         this.setVisible(false);
+        this.setAlwaysOnTop(true);
         this.setBackground(Color.BLACK);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -95,6 +96,7 @@ public class ScreenshotFrame extends JFrame {
 
     /**
      * Update the cursor
+     *
      * @param cursorType to update with {@link Cursor} class
      */
     public void updateCursor(int cursorType) {

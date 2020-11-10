@@ -21,7 +21,7 @@ import java.io.IOException;
 
 @Getter
 public class ScreenshotToolbox extends Toolbox {
-    private ToolboxComponent draw;
+    private ToolboxComponent draw, upload, save;
 
     public ScreenshotToolbox() {
         super(ToolboxType.HORIZONTAL);
@@ -32,24 +32,41 @@ public class ScreenshotToolbox extends Toolbox {
         ToolboxComponent confirmScreenshot = new DefaultToolboxComponent(null, this::confirmScreenshot);
         this.addComponent(confirmScreenshot);
 
+        upload = new DefaultToolboxComponent(null, this::upload);
+        this.addComponent(upload);
+
+        save = new DefaultToolboxComponent(null, this::save);
+        this.addComponent(save);
+
         try {
-            draw = new DefaultToolboxComponent(ImageIO.read(new File("C:\\Users\\niki\\Pictures\\fireshot\\1.png")), this::switchDraw, true);
+            draw = new DefaultToolboxComponent(ImageIO.read(new File("C:\\Users\\niki\\Pictures\\fireshot\\1.png")), this::switchDraw, true, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
         this.addComponent(draw);
 
+        ToolboxComponent googleSearch = new DefaultToolboxComponent(null, this::googleSearch);
+        this.addComponent(googleSearch);
+
+
         ToolboxComponent cancel = new DefaultToolboxComponent(null, this::cancel);
         this.addComponent(cancel);
+
+    }
+
+    @Override
+    public void reset() {
+        DrawService drawService = Fireshot.getInstance().getDrawService();
+        if (drawService.isDraw()) {
+            this.switchDraw(null);
+        }
     }
 
     private void confirmScreenshot(ActionEvent event) {
-        System.out.println("Confirm");
         Fireshot.getInstance().getScreenService().hideAndConfirm();
     }
 
     private void switchDraw(ActionEvent event) {
-        System.out.println("Draw");
         DrawService drawService = Fireshot.getInstance().getDrawService();
         drawService.setDraw(!drawService.isDraw());
         ScreenService screenService = Fireshot.getInstance().getScreenService();
@@ -61,7 +78,18 @@ public class ScreenshotToolbox extends Toolbox {
     }
 
     private void cancel(ActionEvent event) {
-        System.out.println("Cancel");
         Fireshot.getInstance().getScreenService().resetAndHide();
+    }
+
+    private void upload(ActionEvent event) {
+
+    }
+
+    private void save(ActionEvent event) {
+
+    }
+
+    private void googleSearch(ActionEvent event) {
+
     }
 }

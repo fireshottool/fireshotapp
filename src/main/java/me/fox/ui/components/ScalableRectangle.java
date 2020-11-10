@@ -5,7 +5,6 @@ import lombok.Setter;
 import me.fox.listeners.mouse.ScalableRectListener;
 import me.fox.services.DrawService;
 import me.fox.ui.components.draw.Drawable;
-import me.fox.ui.components.draw.Rectangle;
 import me.fox.ui.frames.ScreenshotFrame;
 
 import java.awt.*;
@@ -58,6 +57,22 @@ public class ScalableRectangle extends Rectangle implements Drawable {
         return scalePoints;
     }
 
+    public ScalableRectangle reCalcRect() {
+        if (width < 0 && height < 0) {
+            x += width;
+            width = -width;
+            y += height;
+            height = -height;
+        } else if (width < 0) {
+            x += width;
+            width = -width;
+        } else if (height < 0) {
+            y += height;
+            height = -height;
+        }
+        return this;
+    }
+
     @Override
     public void draw(Graphics2D g2d) {
         //Draw scalePoints
@@ -79,6 +94,5 @@ public class ScalableRectangle extends Rectangle implements Drawable {
         g2d.drawLine(this.x + this.width, this.y, this.x + this.width, this.y + this.height - 1);
         g2d.drawLine(this.x + this.width, this.y + this.height, this.x + 1, this.y + this.height);
         g2d.drawLine(this.x, this.y + this.height, this.x, this.y + 1);
-
     }
 }

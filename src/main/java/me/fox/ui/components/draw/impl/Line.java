@@ -1,7 +1,8 @@
-package me.fox.ui.components.draw;
+package me.fox.ui.components.draw.impl;
 
 import lombok.Getter;
 import me.fox.Fireshot;
+import me.fox.ui.components.draw.Drawable;
 
 import java.awt.*;
 import java.util.List;

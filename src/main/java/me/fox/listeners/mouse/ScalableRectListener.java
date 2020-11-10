@@ -36,7 +36,7 @@ public class ScalableRectListener extends MouseListenerAdapter {
         if (this.parent.getDrawService().isDraw()) return;
         Fireshot.getInstance().getScreenService().getScreenshotToolbox().hideSelf();
 
-        if (this.parent.isPointInRect(event.getPoint()) && this.parent.getCursor() == Cursor.MOVE_CURSOR) {
+        if (this.parent.contains(event.getPoint()) && this.parent.getCursor() == Cursor.MOVE_CURSOR) {
             drag = true;
             distanceX = event.getX() - this.parent.x;
             distanceY = event.getY() - this.parent.y;
@@ -154,10 +154,10 @@ public class ScalableRectListener extends MouseListenerAdapter {
      */
     private void updateCursor(MouseEvent event) {
         this.parent.setCursor(Cursor.CROSSHAIR_CURSOR);
-        if (this.parent.isPointInRect(event.getPoint())) {
+        if (this.parent.contains(event.getPoint())) {
             this.parent.setCursor(Cursor.MOVE_CURSOR);
         }
-        Arrays.stream(this.parent.getScalePoints()).filter(var -> var.isPointInRect(event.getPoint())).forEach(var -> this.parent.setCursor(var.getDirection()));
+        Arrays.stream(this.parent.getScalePoints()).filter(var -> var.contains(event.getPoint())).forEach(var -> this.parent.setCursor(var.getDirection()));
         this.parent.getScreenshotFrame().updateCursor(this.parent.getCursor());
     }
 }
