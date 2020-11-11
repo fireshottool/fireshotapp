@@ -13,15 +13,16 @@ import javax.swing.*;
 
 @Getter
 public class Fireshot {
+
     @Getter
     private static Fireshot instance;
 
     private final DrawService drawService = new DrawService();
     private final JsonService jsonService = new JsonService();
     private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshot", this.drawService);
-    private final ScreenshotService screenshotService = new ScreenshotService(screenshotFrame, drawService);
-    private final ScreenService screenService = new ScreenService(screenshotFrame, screenshotService);
-    private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
+    private final ScreenshotService screenshotService = new ScreenshotService(this.screenshotFrame, this.drawService);
+    private final ScreenService screenService = new ScreenService(this.screenshotFrame, this.screenshotService);
+    private final HotkeyService hotkeyService = new HotkeyService(this.screenshotService, this.drawService, this.screenService);
 
     private void load(String[] args) {
         this.jsonService.read(hotkeyService, drawService, screenshotService);

@@ -6,6 +6,7 @@ package me.fox.enums;
  */
 
 public enum ToolboxType {
+
     HORIZONTAL(),
     VERTICAL()
 }

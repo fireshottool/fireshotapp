@@ -15,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 public class Line implements Drawable {
+
     private final List<Point> points = new CopyOnWriteArrayList<>();
 
     private final Color color = Fireshot.getInstance().getDrawService().getDrawColor();

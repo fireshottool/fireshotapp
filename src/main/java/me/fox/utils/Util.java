@@ -38,6 +38,7 @@ public class Util {
     }
 
     public static void startBrowser(String url) {
+        //Desktop.getDesktop().browse();
         String os = System.getProperty("os.name").toLowerCase();
         Runtime rt = Runtime.getRuntime();
         try {

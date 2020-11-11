@@ -21,7 +21,8 @@ import java.io.IOException;
 
 @Getter
 public class ScreenshotToolbox extends Toolbox {
-    private ToolboxComponent draw, upload, save;
+
+    private ToolboxComponent drawComponent, uploadComponent, saveComponent;
 
     public ScreenshotToolbox() {
         super(ToolboxType.HORIZONTAL);
@@ -32,22 +33,24 @@ public class ScreenshotToolbox extends Toolbox {
         ToolboxComponent confirmScreenshot = new DefaultToolboxComponent(null, this::confirmScreenshot);
         this.addComponent(confirmScreenshot);
 
-        upload = new DefaultToolboxComponent(null, this::upload);
-        this.addComponent(upload);
+        uploadComponent = new DefaultToolboxComponent(null, this::upload);
+        this.addComponent(uploadComponent);
 
-        save = new DefaultToolboxComponent(null, this::save);
-        this.addComponent(save);
+        saveComponent = new DefaultToolboxComponent(null, this::save);
+        this.addComponent(saveComponent);
 
         try {
-            draw = new DefaultToolboxComponent(ImageIO.read(new File("C:\\Users\\niki\\Pictures\\fireshot\\1.png")), this::switchDraw, true, false);
+            drawComponent = new DefaultToolboxComponent(ImageIO.read(new File("C:\\Users\\niki\\Pictures\\fireshot\\1.png")), this::switchDraw, true, false);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        this.addComponent(draw);
+        this.addComponent(drawComponent);
 
         ToolboxComponent googleSearch = new DefaultToolboxComponent(null, this::googleSearch);
         this.addComponent(googleSearch);
 
+        ToolboxComponent textRecognition = new DefaultToolboxComponent(null, this::googleSearch);
+        this.addComponent(textRecognition);
 
         ToolboxComponent cancel = new DefaultToolboxComponent(null, this::cancel);
         this.addComponent(cancel);
@@ -68,6 +71,7 @@ public class ScreenshotToolbox extends Toolbox {
 
     private void switchDraw(ActionEvent event) {
         DrawService drawService = Fireshot.getInstance().getDrawService();
+
         drawService.setDraw(!drawService.isDraw());
         ScreenService screenService = Fireshot.getInstance().getScreenService();
         if (screenService.getDrawToolbox().isVisible()) {
@@ -92,4 +96,6 @@ public class ScreenshotToolbox extends Toolbox {
     private void googleSearch(ActionEvent event) {
 
     }
+
+
 }

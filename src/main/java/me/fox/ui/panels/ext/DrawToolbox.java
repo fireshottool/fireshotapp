@@ -6,9 +6,12 @@ import me.fox.enums.ToolboxType;
 import me.fox.services.DrawService;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 import me.fox.ui.components.toolbox.ext.DefaultToolboxComponent;
+import me.fox.ui.components.toolbox.ext.PaintedToolBoxComponent;
 import me.fox.ui.panels.Toolbox;
 
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.geom.Ellipse2D;
 
 /**
  * @author (Ausgefuchster)
@@ -17,7 +20,12 @@ import java.awt.event.ActionEvent;
 
 @Getter
 public class DrawToolbox extends Toolbox {
-    private ToolboxComponent line, circle, rectangle;
+
+    private ToolboxComponent lineComponent, circleComponent, rectangleComponent;
+
+    private final Shape rectangle = new Rectangle(5, 5, 21, 21);
+    private final Shape circle = new Ellipse2D.Double(5, 5, 21, 21);
+
 
     public DrawToolbox() {
         super(ToolboxType.VERTICAL);
@@ -25,14 +33,24 @@ public class DrawToolbox extends Toolbox {
 
     @Override
     public void loadToolboxComponents() {
-        this.line = new DefaultToolboxComponent(null, this::line, true, false);
-        this.addComponent(this.line);
+        this.lineComponent = new DefaultToolboxComponent(null, this::line, true, false);
+        this.addComponent(this.lineComponent);
 
-        this.circle = new DefaultToolboxComponent(null, this::circle, true, true);
-        this.addComponent(this.circle);
+        this.circleComponent = new PaintedToolBoxComponent(
+                null,
+                this::circle,
+                true,
+                true,
+                this::drawCircle);
+        this.addComponent(this.circleComponent);
 
-        this.rectangle = new DefaultToolboxComponent(null, this::rectangle, true, true);
-        this.addComponent(this.rectangle);
+        this.rectangleComponent = new PaintedToolBoxComponent(
+                null,
+                this::rectangle,
+                true,
+                true,
+                this::drawRect);
+        this.addComponent(this.rectangleComponent);
     }
 
     @Override
@@ -40,16 +58,16 @@ public class DrawToolbox extends Toolbox {
         DrawService drawService = Fireshot.getInstance().getDrawService();
         if (drawService.isDraw()) {
             if (drawService.isCircle()) {
-                this.circle.setStage(0);
-                this.circle.select(null);
+                this.circleComponent.setStage(0);
+                this.circleComponent.select(null);
             }
             if (drawService.isLine()) {
-                this.line.setStage(0);
-                this.line.select(null);
+                this.lineComponent.setStage(0);
+                this.lineComponent.select(null);
             }
             if (drawService.isRectangle()) {
-                this.rectangle.setStage(0);
-                this.rectangle.select(null);
+                this.rectangleComponent.setStage(0);
+                this.rectangleComponent.select(null);
             }
         }
     }
@@ -57,18 +75,18 @@ public class DrawToolbox extends Toolbox {
     private void line(ActionEvent event) {
         DrawService drawService = Fireshot.getInstance().getDrawService();
         drawService.setRectangle(false);
-        this.rectangle.unselect();
+        this.rectangleComponent.unselect();
         drawService.setCircle(false);
-        this.circle.unselect();
+        this.circleComponent.unselect();
         drawService.setLine(!drawService.isLine());
     }
 
     private void circle(ActionEvent event) {
         DrawService drawService = Fireshot.getInstance().getDrawService();
         drawService.setRectangle(false);
-        this.rectangle.unselect();
+        this.rectangleComponent.unselect();
         drawService.setLine(false);
-        this.line.unselect();
+        this.lineComponent.unselect();
         if (drawService.isCircle() && drawService.isFillCircle()) {
             drawService.setFillCircle(false);
             return;
@@ -80,14 +98,45 @@ public class DrawToolbox extends Toolbox {
     private void rectangle(ActionEvent event) {
         DrawService drawService = Fireshot.getInstance().getDrawService();
         drawService.setCircle(false);
-        this.circle.unselect();
+        this.circleComponent.unselect();
         drawService.setLine(false);
-        this.line.unselect();
+        this.lineComponent.unselect();
         if (drawService.isRectangle() && drawService.isFillRectangle()) {
             drawService.setFillRectangle(false);
             return;
         }
         drawService.setRectangle(!drawService.isRectangle());
         drawService.setFillRectangle(true);
+    }
+
+    private void drawCircle(Graphics2D g2d) {
+        DrawService drawService = Fireshot.getInstance().getDrawService();
+
+        g2d.setStroke(new BasicStroke(3));
+        g2d.setColor(drawService.getDrawColor());
+
+        if (drawService.isCircle()) {
+            if (drawService.isFillCircle()) {
+                g2d.fill(this.circle);
+                return;
+            }
+            g2d.draw(this.circle);
+        }
+    }
+
+    private void drawRect(Graphics2D g2d) {
+        DrawService drawService = Fireshot.getInstance().getDrawService();
+
+        g2d.setStroke(new BasicStroke(3));
+        g2d.setColor(drawService.getDrawColor());
+
+        if (drawService.isRectangle()) {
+            if (drawService.isFillRectangle()) {
+                g2d.fill(this.rectangle);
+                return;
+            }
+            g2d.draw(this.rectangle);
+        }
+
     }
 }

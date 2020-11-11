@@ -15,6 +15,7 @@ import java.util.Arrays;
 @Getter
 @Setter
 public class Hotkey {
+
     private String name;
     private int hotkey;
     private Integer[] requiredKeys;

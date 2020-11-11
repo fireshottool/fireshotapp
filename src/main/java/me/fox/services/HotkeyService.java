@@ -53,7 +53,7 @@ public class HotkeyService {
         this.screenshotService = screenshotService;
         this.screenService = screenService;
         this.drawService = drawService;
-        this.drawComponent = ((ScreenshotToolbox) this.screenService.getScreenshotToolbox()).getDraw();
+        this.drawComponent = ((ScreenshotToolbox) this.screenService.getScreenshotToolbox()).getDrawComponent();
     }
 
     /**
