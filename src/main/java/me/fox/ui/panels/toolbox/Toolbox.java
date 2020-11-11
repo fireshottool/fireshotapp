@@ -1,4 +1,4 @@
-package me.fox.ui.panels;
+package me.fox.ui.panels.toolbox;
 
 import lombok.Getter;
 import me.fox.Fireshot;

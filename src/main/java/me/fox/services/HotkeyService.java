@@ -8,7 +8,7 @@ import me.fox.components.Hotkey;
 import me.fox.components.HotkeyFunc;
 import me.fox.listeners.keyboard.HotkeyListener;
 import me.fox.ui.components.toolbox.ToolboxComponent;
-import me.fox.ui.panels.ext.ScreenshotToolbox;
+import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
 
 import java.util.ArrayList;
 import java.util.List;

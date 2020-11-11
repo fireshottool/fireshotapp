@@ -1,4 +1,4 @@
-package me.fox.ui.panels.ext;
+package me.fox.ui.panels.toolbox.ext;
 
 import lombok.Getter;
 import me.fox.Fireshot;
@@ -7,7 +7,7 @@ import me.fox.services.DrawService;
 import me.fox.services.ScreenService;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 import me.fox.ui.components.toolbox.ext.DefaultToolboxComponent;
-import me.fox.ui.panels.Toolbox;
+import me.fox.ui.panels.toolbox.Toolbox;
 
 import javax.imageio.ImageIO;
 import java.awt.event.ActionEvent;

@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
 import me.fox.ui.frames.ScreenshotFrame;
-import me.fox.ui.panels.Toolbox;
-import me.fox.ui.panels.ext.DrawToolbox;
-import me.fox.ui.panels.ext.ScreenshotToolbox;
+import me.fox.ui.panels.toolbox.Toolbox;
+import me.fox.ui.panels.toolbox.ext.DrawToolbox;
+import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
 
 import java.io.IOException;
 

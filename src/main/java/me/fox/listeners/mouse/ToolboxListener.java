@@ -1,7 +1,7 @@
 package me.fox.listeners.mouse;
 
 import me.fox.adapter.MouseListenerAdapter;
-import me.fox.ui.panels.Toolbox;
+import me.fox.ui.panels.toolbox.Toolbox;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
