@@ -54,14 +54,13 @@ public class ScreenshotToolbox extends Toolbox {
 
         ToolboxComponent cancel = new DefaultToolboxComponent(null, this::cancel);
         this.addComponent(cancel);
-
     }
 
     @Override
     public void reset() {
         DrawService drawService = Fireshot.getInstance().getDrawService();
         if (drawService.isDraw()) {
-            this.switchDraw(null);
+            this.drawComponent.unselect();
         }
     }
 
@@ -96,6 +95,4 @@ public class ScreenshotToolbox extends Toolbox {
     private void googleSearch(ActionEvent event) {
 
     }
-
-
 }
