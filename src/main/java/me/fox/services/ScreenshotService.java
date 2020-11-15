@@ -2,20 +2,18 @@ package me.fox.services;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.fox.Fireshot;
 import me.fox.components.ClipboardImage;
+import me.fox.config.ScreenshotConfig;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.utils.Util;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RasterFormatException;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * @author (Ausgefuchster)
@@ -29,12 +27,10 @@ public class ScreenshotService implements Drawable {
     private final ScreenshotFrame screenshotFrame;
     private final ScalableRectangle selectionRectangle;
     private final DrawService drawService;
-    private final String fileSeparator = System.getProperty("file.separator");
 
-    private Path screenshotPath = Path.of(System.getProperty("user.home") + fileSeparator + "fireshot" + fileSeparator + "screenshots");
-    private String fileType = "png";
-    private Color dimColor;
     private BufferedImage image;
+    private Color dimColor;
+    private boolean localSave, upload;
 
     public ScreenshotService(ScreenshotFrame screenshotFrame, DrawService drawService) {
         this.drawService = drawService;
@@ -42,7 +38,6 @@ public class ScreenshotService implements Drawable {
         this.drawService.registerDrawable(this, 0);
         this.selectionRectangle = new ScalableRectangle(drawService, screenshotFrame);
     }
-
 
     public void createScreenshot() {
         int x = this.screenshotFrame.getX();
@@ -66,15 +61,31 @@ public class ScreenshotService implements Drawable {
 
         this.drawService.draw((Graphics2D) screenshot.getGraphics());
 
+        if (this.isUpload()) {
+            this.uploadImage(screenshot);
+        }
+
+        if (this.isLocalSave()) {
+            this.saveImage(screenshot);
+        }
+    }
+
+    public void applyConfig(ScreenshotConfig screenshotConfig) {
+        this.dimColor = Color.decode(screenshotConfig.getDimColor());
+        this.localSave = screenshotConfig.isLocalSave();
+        this.upload = screenshotConfig.isUpload();
+    }
+
+    private void saveImage(BufferedImage screenshot) throws IOException {
         String fileName = Util.generateRandomString(18);
 
-        if (!Files.exists(this.screenshotPath)) {
-            Files.createDirectories(screenshotPath);
-        }
-        File file = new File(this.screenshotPath.toString() + fileSeparator + fileName + "." + this.fileType);
-        ImageIO.write(screenshot, this.fileType, file);
+        Fireshot.getInstance().getFileService().saveImage(screenshot, fileName);
 
         ClipboardImage.write(screenshot);
+    }
+
+    private void uploadImage(BufferedImage screenshot) {
+        //TODO Implement RequestService.java
     }
 
     private BufferedImage takeScreenshot(int x, int y, int width, int height) {
@@ -111,22 +122,6 @@ public class ScreenshotService implements Drawable {
         }
     }
 
-    @Override
-    public void draw(Graphics2D g2d) {
-        if (this.image != null) {
-            int width = this.screenshotFrame.getWidth();
-            int height = this.screenshotFrame.getHeight();
-            g2d.drawImage(image, 0, 0, width, height, null);
-
-            //Draw black overlay
-            g2d.setColor(new Color(0, 0, 0, 200));
-            g2d.fillRect(0, 0, width, height);
-
-            //Draw selected image part
-            this.drawSelected(g2d, this.selectionRectangle);
-        }
-    }
-
     private void drawSelected(Graphics2D g2d, Rectangle selection) {
         int x = selection.x;
         int y = selection.y;
@@ -146,6 +141,22 @@ public class ScreenshotService implements Drawable {
                 BufferedImage overlayScreen = this.takeScreenshot(x, y, width, height);
                 g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y, 0), null);
             }
+        }
+    }
+
+    @Override
+    public void draw(Graphics2D g2d) {
+        if (this.image != null) {
+            int width = this.screenshotFrame.getWidth();
+            int height = this.screenshotFrame.getHeight();
+            g2d.drawImage(image, 0, 0, width, height, null);
+
+            //Draw black overlay
+            g2d.setColor(new Color(0, 0, 0, 200));
+            g2d.fillRect(0, 0, width, height);
+
+            //Draw selected image part
+            this.drawSelected(g2d, this.selectionRectangle);
         }
     }
 }
