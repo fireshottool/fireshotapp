@@ -1,6 +1,7 @@
 package me.fox.ui.panels.toolbox;
 
 import lombok.Getter;
+import lombok.Setter;
 import me.fox.Fireshot;
 import me.fox.adapter.MouseListenerAdapter;
 import me.fox.enums.ToolboxType;
@@ -9,6 +10,8 @@ import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,12 +22,15 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 @Getter
+@Setter
 public abstract class Toolbox extends JPanel {
 
     private final ToolboxListener toolboxListener = new ToolboxListener(this);
     private final List<ToolboxComponent> toolboxComponents = new ArrayList<>();
 
     private final ToolboxType toolboxType;
+
+    private BufferedImage backgroundImage;
 
     /**
      * Constructor for {@link Toolbox}
@@ -182,12 +188,28 @@ public abstract class Toolbox extends JPanel {
         this.addMouseWheelListener(mouseListenerAdapter);
     }
 
+    /**
+     * Hide the {@link Toolbox}
+     */
     public void hideSelf() {
         this.setVisible(false);
     }
 
+    /**
+     * Update the location of the {@link Toolbox}
+     * Show the {@link Toolbox}
+     */
     public void showSelf() {
         this.updateLocation(Fireshot.getInstance().getScreenshotService().getSelectionRectangle());
         this.setVisible(true);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (this.backgroundImage != null) {
+            g.drawImage(this.backgroundImage, 0, 0, this.getWidth(), this.getHeight(), null);
+        }
+        repaint();
     }
 }
