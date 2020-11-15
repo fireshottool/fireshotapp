@@ -24,16 +24,16 @@ public class DrawListener extends MouseListenerAdapter {
     @Override
     public void mousePressed(MouseEvent event) {
         if (this.parent.isDraw()) {
-            if (Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
-                this.parent.addPoint(event.getPoint());
-                return;
-            }
             if (this.parent.isCircle()) {
                 this.parent.addCircle(event.getPoint());
                 return;
             }
             if (this.parent.isRectangle()) {
                 this.parent.addRectangle(event.getPoint());
+                return;
+            }
+            if (Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
+                this.parent.addPoint(event.getPoint());
                 return;
             }
             if (this.parent.isLine()) {
