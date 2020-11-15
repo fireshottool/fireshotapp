@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
 import me.fox.ui.frames.ScreenshotFrame;
+import me.fox.ui.frames.SettingsFrame;
 import me.fox.ui.panels.toolbox.Toolbox;
 import me.fox.ui.panels.toolbox.ext.DrawToolbox;
 import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
@@ -23,6 +24,7 @@ public class ScreenService {
     private final ScreenshotService screenshotService;
     private final Toolbox drawToolbox = new DrawToolbox();
     private final Toolbox screenshotToolbox = new ScreenshotToolbox();
+    private final SettingsFrame settingsFrame = new SettingsFrame();
 
     public ScreenService(ScreenshotFrame screenshotFrame, ScreenshotService screenshotService) {
         this.screenshotFrame = screenshotFrame;
