@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.components.Hotkey;
 import me.fox.components.HotkeyFunc;
+import me.fox.config.HotkeyConfig;
 import me.fox.listeners.keyboard.HotkeyListener;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
@@ -91,6 +92,10 @@ public class HotkeyService {
         }
     }
 
+    public void applyConfig(HotkeyConfig hotkeyConfig) {
+        this.hotkeys.addAll(hotkeyConfig.getHotkeys());
+    }
+
     private void screenshot() {
         if (this.screenService.getScreenshotFrame().isVisible()) return;
         this.screenService.show();
@@ -104,7 +109,12 @@ public class HotkeyService {
     private void draw() {
         if (!this.screenService.getScreenshotFrame().isVisible()) return;
         this.drawService.setDraw(!this.drawService.isDraw());
-        drawComponent.select(null);
+        if (this.screenService.getDrawToolbox().isVisible()) {
+            this.screenService.getDrawToolbox().hideSelf();
+        } else {
+            this.screenService.getDrawToolbox().showSelf();
+        }
+        this.drawComponent.select(null);
     }
 
     private void redo() {
