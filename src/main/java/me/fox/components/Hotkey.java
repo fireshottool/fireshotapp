@@ -20,6 +20,12 @@ public class Hotkey {
     private int hotkey;
     private Integer[] requiredKeys;
 
+    public Hotkey(String name, int hotkey, Integer... requiredKeys) {
+        this.name = name;
+        this.hotkey = hotkey;
+        this.requiredKeys = requiredKeys;
+    }
+
     /**
      * Checks if the {@link Hotkey} fits and can be invoked
      *
