@@ -2,17 +2,10 @@ package me.fox.services;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import me.fox.components.Hotkey;
+import me.fox.config.Config;
 
-import java.awt.*;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -24,24 +17,37 @@ public class JsonService {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final String fileSeparator = System.getProperty("file.separator");
-    private final Path jsonPath = Path.of(System.getProperty("user.home") + fileSeparator + "fireshot" + fileSeparator + "test.json");
+    private final Path jsonPath = Path.of(System.getProperty("user.home") +
+            fileSeparator + "fireshot" + fileSeparator + "test.json");
 
-    private JsonObject jsonObject;
+    private Config config;
 
-    public void read(HotkeyService hotkeyService, DrawService drawService, ScreenshotService screenshotService) {
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void read(HotkeyService hotkeyService,
+                     DrawService drawService,
+                     ScreenshotService screenshotService,
+                     FileService fileService) {
+
         CompletableFuture.runAsync(() -> {
             try {
-                FileInputStream fileInputStream = new FileInputStream(jsonPath.toString());
-                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+                File file = this.jsonPath.toFile();
 
-                this.jsonObject = gson.fromJson(inputStreamReader, JsonObject.class);
+                if (!file.exists()) {
+                    if (file.getParentFile() != null) {
+                        file.getParentFile().mkdirs();
+                    }
+                    file.createNewFile();
 
-                readHotkeys(hotkeyService);
-                readScreenshot(screenshotService);
-                readDraw(drawService);
+                    FileWriter writer = new FileWriter(file);
+                    this.gson.toJson(Config.DEFAULT_CONFIG, writer);
 
-                fileInputStream.close();
-                inputStreamReader.close();
+                    writer.flush();
+                    writer.close();
+                }
+
+                this.config = this.gson.fromJson(new BufferedReader(new FileReader(file)), Config.class);
+                this.applyConfig(hotkeyService, drawService, screenshotService, fileService);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -49,26 +55,13 @@ public class JsonService {
 
     }
 
-    private void readScreenshot(ScreenshotService screenshotService) {
-        JsonObject screenshotObject = this.jsonObject.getAsJsonObject("screenshot");
-        screenshotService.setScreenshotPath(Path.of(screenshotObject.get("imageLocation").getAsString()));
-        screenshotService.setDimColor(Color.decode(screenshotObject.get("dimColor").getAsString()));
-    }
-
-    private void readHotkeys(HotkeyService hotkeyService) {
-        List<Hotkey> list = new ArrayList<>();
-
-        JsonArray jsonArray = this.jsonObject.getAsJsonArray("hotkeys");
-
-        jsonArray.forEach(var -> list.add(gson.fromJson(var, Hotkey.class)));
-        hotkeyService.getHotkeys().addAll(list);
-    }
-
-    private void readDraw(DrawService drawService) {
-        JsonObject drawObject = this.jsonObject.getAsJsonObject("draw");
-        drawService.setCurrentStrokeWidth(drawObject.get("defaultThickness").getAsFloat());
-        drawService.setIncreaseThickness(drawObject.get("thicknessIncrease").getAsFloat());
-        drawService.setIncreaseThickness(drawObject.get("thicknessDecrease").getAsFloat());
-        drawService.setDrawColor(Color.decode(drawObject.get("color").getAsString()));
+    private void applyConfig(HotkeyService hotkeyService,
+                             DrawService drawService,
+                             ScreenshotService screenshotService,
+                             FileService fileService) {
+        hotkeyService.applyConfig(this.config.getHotkeyConfig());
+        drawService.applyConfig(this.config.getDrawConfig());
+        screenshotService.applyConfig(this.config.getScreenshotConfig());
+        fileService.applyConfig(this.config.getFileConfig());
     }
 }
