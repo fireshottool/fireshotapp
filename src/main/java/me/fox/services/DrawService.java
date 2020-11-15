@@ -3,6 +3,7 @@ package me.fox.services;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
+import me.fox.config.DrawConfig;
 import me.fox.listeners.mouse.DrawListener;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.components.draw.impl.Circle;
@@ -42,19 +43,6 @@ public class DrawService extends JComponent implements Drawable {
     public DrawService() {
         this.drawListener = new DrawListener(this);
         this.registerDrawable(this, 1);
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-
-        this.firstLayer.forEach(var -> var.draw(g2d));
-        this.secondLayer.forEach(var -> var.draw(g2d));
-        this.thirdLayer.forEach(var -> var.draw(g2d));
-        repaint();
     }
 
     public void resetDraw() {
@@ -138,6 +126,26 @@ public class DrawService extends JComponent implements Drawable {
             this.drawings.add(this.undoDrawings.get(size - 1));
             this.undoDrawings.remove(size - 1);
         }
+    }
+
+    public void applyConfig(DrawConfig drawConfig) {
+        this.currentStrokeWidth = drawConfig.getDefaultThickness();
+        this.decreaseThickness = drawConfig.getThicknessDecrease();
+        this.increaseThickness = drawConfig.getThicknessIncrease();
+        this.drawColor = Color.decode(drawConfig.getColor());
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        this.firstLayer.forEach(var -> var.draw(g2d));
+        this.secondLayer.forEach(var -> var.draw(g2d));
+        this.thirdLayer.forEach(var -> var.draw(g2d));
+        repaint();
     }
 
     @Override
