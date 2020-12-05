@@ -4,7 +4,6 @@ import me.fox.ui.components.draw.Drawable;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 
 /**
  * @author (Ausgefuchster)
@@ -15,14 +14,14 @@ public class PaintedToolBoxComponent extends DefaultToolboxComponent {
 
     private final Drawable drawable;
 
-    public PaintedToolBoxComponent(BufferedImage icon, ActionListener actionListener, Drawable drawable) {
-        super(icon, actionListener);
+    public PaintedToolBoxComponent(ActionListener actionListener, Drawable drawable) {
+        super(null, actionListener);
         this.drawable = drawable;
     }
 
-    public PaintedToolBoxComponent(BufferedImage icon, ActionListener actionListener,
+    public PaintedToolBoxComponent(ActionListener actionListener,
                                    boolean selectable, boolean doubleSelect, Drawable drawable) {
-        super(icon, actionListener, selectable, doubleSelect);
+        super(null, actionListener, selectable, doubleSelect);
         this.drawable = drawable;
     }
 

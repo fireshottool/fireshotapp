@@ -11,6 +11,7 @@ import lombok.Data;
 public class FileConfig {
 
     private String imageLocation = System.getProperty("user.home") +
-            System.getProperty("file.separator") + "fireshot";
+            System.getProperty("file.separator") + "fireshot" +
+            System.getProperty("file.separator") + "screenshots";
     private String imageType = "png";
 }

@@ -3,6 +3,8 @@ package me.fox.services;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
+import me.fox.components.ConfigManager;
+import me.fox.config.Config;
 import me.fox.config.DrawConfig;
 import me.fox.listeners.mouse.DrawListener;
 import me.fox.ui.components.draw.Drawable;
@@ -23,7 +25,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Setter
-public class DrawService extends JComponent implements Drawable {
+public class DrawService extends JComponent implements Drawable, ConfigManager {
 
     private final DrawListener drawListener;
 
@@ -128,7 +130,9 @@ public class DrawService extends JComponent implements Drawable {
         }
     }
 
-    public void applyConfig(DrawConfig drawConfig) {
+    @Override
+    public void applyConfig(Config config) {
+        DrawConfig drawConfig = config.getDrawConfig();
         this.currentStrokeWidth = drawConfig.getDefaultThickness();
         this.decreaseThickness = drawConfig.getThicknessDecrease();
         this.increaseThickness = drawConfig.getThicknessIncrease();

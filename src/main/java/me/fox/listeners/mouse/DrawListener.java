@@ -1,10 +1,10 @@
 package me.fox.listeners.mouse;
 
 import me.fox.Fireshot;
-import me.fox.adapter.MouseListenerAdapter;
 import me.fox.services.DrawService;
 import me.fox.ui.components.draw.impl.Line;
 
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 /**
@@ -12,59 +12,59 @@ import java.awt.event.MouseEvent;
  * @version (~ 23.10.2020)
  */
 
-public class DrawListener extends MouseListenerAdapter {
+public class DrawListener extends MouseAdapter {
 
-    private final DrawService parent;
+    private final DrawService drawService;
     private boolean second;
 
-    public DrawListener(DrawService parent) {
-        this.parent = parent;
+    public DrawListener(DrawService drawService) {
+        this.drawService = drawService;
     }
 
     @Override
     public void mousePressed(MouseEvent event) {
-        if (this.parent.isDraw()) {
-            if (this.parent.isCircle()) {
-                this.parent.addCircle(event.getPoint());
+        if (this.drawService.isDraw()) {
+            if (this.drawService.isCircle()) {
+                this.drawService.addCircle(event.getPoint());
                 return;
             }
-            if (this.parent.isRectangle()) {
-                this.parent.addRectangle(event.getPoint());
+            if (this.drawService.isRectangle()) {
+                this.drawService.addRectangle(event.getPoint());
                 return;
             }
             if (Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
-                this.parent.addPoint(event.getPoint());
+                this.drawService.addPoint(event.getPoint());
                 return;
             }
-            if (this.parent.isLine()) {
+            if (this.drawService.isLine()) {
                 if (!second) {
-                    this.parent.addLine();
-                    this.parent.addPoint(event.getPoint());
+                    this.drawService.addLine();
+                    this.drawService.addPoint(event.getPoint());
                     second = true;
                     return;
                 }
-                this.parent.addPoint(event.getPoint());
+                this.drawService.addPoint(event.getPoint());
                 second = false;
                 return;
             }
-            this.parent.addLine();
-            this.parent.addPoint(event.getPoint());
+            this.drawService.addLine();
+            this.drawService.addPoint(event.getPoint());
         }
     }
 
     @Override
     public void mouseDragged(MouseEvent event) {
-        if (parent.isDraw()) {
-            if (this.parent.isCircle()) {
-                this.parent.resizeCurrentCircle(event.getPoint());
+        if (drawService.isDraw()) {
+            if (this.drawService.isCircle()) {
+                this.drawService.resizeCurrentCircle(event.getPoint());
                 return;
             }
-            if (this.parent.isRectangle()) {
-                this.parent.resizeRectangle(event.getPoint());
+            if (this.drawService.isRectangle()) {
+                this.drawService.resizeRectangle(event.getPoint());
                 return;
             }
-            if (parent.isLine() || Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
-                Line line = (Line) this.parent.getDrawings().get(this.parent.getCurrentIndex());
+            if (drawService.isLine() || Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
+                Line line = (Line) this.drawService.getDrawings().get(this.drawService.getCurrentIndex());
                 if (line.getPoints().size() == 1) {
                     line.getPoints().add(event.getPoint());
                     second = false;
@@ -74,7 +74,7 @@ public class DrawListener extends MouseListenerAdapter {
                 return;
             }
 
-            this.parent.addPoint(event.getPoint());
+            this.drawService.addPoint(event.getPoint());
         }
     }
 }

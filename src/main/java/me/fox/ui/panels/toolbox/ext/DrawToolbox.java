@@ -5,12 +5,17 @@ import me.fox.Fireshot;
 import me.fox.enums.ToolboxType;
 import me.fox.services.DrawService;
 import me.fox.ui.components.toolbox.ToolboxComponent;
+import me.fox.ui.components.toolbox.ext.DefaultToolboxComponent;
 import me.fox.ui.components.toolbox.ext.PaintedToolBoxComponent;
 import me.fox.ui.panels.toolbox.Toolbox;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Ellipse2D;
+import java.io.File;
+import java.util.List;
 
 /**
  * @author (Ausgefuchster)
@@ -25,7 +30,13 @@ public class DrawToolbox extends Toolbox {
     private final Shape rectangle = new Rectangle(8, 8, 16, 16);
     private final Shape circle = new Ellipse2D.Double(8, 8, 16, 16);
 
-    private ToolboxComponent lineComponent, circleComponent, rectangleComponent;
+    private ToolboxComponent lineComponent,
+            circleComponent,
+            rectangleComponent,
+            increaseComponent,
+            decreaseComponent,
+            undoComponent,
+            redoComponent;
 
     public DrawToolbox() {
         super(ToolboxType.VERTICAL);
@@ -34,7 +45,6 @@ public class DrawToolbox extends Toolbox {
     @Override
     public void loadToolboxComponents() {
         this.lineComponent = new PaintedToolBoxComponent(
-                null,
                 this::line,
                 true,
                 false,
@@ -42,7 +52,6 @@ public class DrawToolbox extends Toolbox {
         this.addComponent(this.lineComponent);
 
         this.circleComponent = new PaintedToolBoxComponent(
-                null,
                 this::circle,
                 true,
                 true,
@@ -50,29 +59,42 @@ public class DrawToolbox extends Toolbox {
         this.addComponent(this.circleComponent);
 
         this.rectangleComponent = new PaintedToolBoxComponent(
-                null,
                 this::rectangle,
                 true,
                 true,
                 this::drawRect);
         this.addComponent(this.rectangleComponent);
+
+        this.increaseComponent = new DefaultToolboxComponent(this::increase);
+        this.addComponent(this.increaseComponent);
+        this.increaseComponent.setToolTipText("Increase pencil width");
+        this.decreaseComponent = new DefaultToolboxComponent(this::decrease);
+        this.addComponent(this.decreaseComponent);
+        this.decreaseComponent.setToolTipText("Decrease pencil width");
+        this.undoComponent = new DefaultToolboxComponent(this::undo);
+        this.addComponent(this.undoComponent);
+        this.undoComponent.setToolTipText("Undo last drawing");
+        this.redoComponent = new DefaultToolboxComponent(this::redo);
+        this.addComponent(this.redoComponent);
+        this.redoComponent.setToolTipText("Redo last undone drawing");
     }
 
-    @Override
-    public void reset() {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
-        if (drawService.isDraw()) {
-            if (drawService.isCircle()) {
-                this.circleComponent.unselect();
-            }
-            if (drawService.isLine()) {
-                this.lineComponent.unselect();
-            }
-            if (drawService.isRectangle()) {
-                this.rectangleComponent.unselect();
-            }
-        }
+    private void undo(ActionEvent event) {
+
     }
+
+    private void redo(ActionEvent event) {
+
+    }
+
+    private void increase(ActionEvent event) {
+
+    }
+
+    private void decrease(ActionEvent event) {
+
+    }
+
 
     private void line(ActionEvent event) {
         DrawService drawService = Fireshot.getInstance().getDrawService();
@@ -152,5 +174,50 @@ public class DrawToolbox extends Toolbox {
         g2d.setColor(drawService.getDrawColor());
 
         g2d.drawLine(8, 8, 22, 22);
+    }
+
+    @Override
+    public void reset() {
+        DrawService drawService = Fireshot.getInstance().getDrawService();
+        if (drawService.isDraw()) {
+            if (drawService.isCircle()) {
+                this.circleComponent.unselect();
+            }
+            if (drawService.isLine()) {
+                this.lineComponent.unselect();
+            }
+            if (drawService.isRectangle()) {
+                this.rectangleComponent.unselect();
+            }
+        }
+    }
+
+    @Override
+    public void applyResources(List<File> files) {
+        files.forEach(var -> {
+            try {
+                if (var.getName().equals("increase.png")) {
+                    this.increaseComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("decrease.png")) {
+                    this.decreaseComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("undo.png")) {
+                    this.undoComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("redo.png")) {
+                    this.redoComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("toolboxbg.png")) {
+                    this.setBackgroundImage(ImageIO.read(var));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

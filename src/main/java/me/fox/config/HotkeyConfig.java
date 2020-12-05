@@ -14,11 +14,11 @@ import java.util.List;
 public class HotkeyConfig {
 
     private List<Hotkey> hotkeys = List.of(
-            new Hotkey("screenshot", 44),
-            new Hotkey("escape", 27),
-            new Hotkey("draw", 68, 17),
-            new Hotkey("undo", 90, 17),
-            new Hotkey("redo", 89, 17),
-            new Hotkey("confirm", 13)
+            new Hotkey("screenshot", "Create screenshot", 44),
+            new Hotkey("escape", "Escape", 27),
+            new Hotkey("draw", "Switch to draw", 68, 17),
+            new Hotkey("undo", "Undo", 90, 17),
+            new Hotkey("redo", "Redo", 89, 17),
+            new Hotkey("confirm", "Confirm screenshot", 13)
     );
 }

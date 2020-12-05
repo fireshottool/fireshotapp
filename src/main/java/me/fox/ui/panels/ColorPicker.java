@@ -1,5 +1,7 @@
 package me.fox.ui.panels;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -9,15 +11,17 @@ import java.awt.*;
  * @version (~ 11.11.2020)
  */
 
+
+@Getter
 public class ColorPicker extends JPanel {
 
     private final JColorChooser colorChooser = new JColorChooser();
 
-    public ColorPicker(ChangeListener changeListener, Color initialColor) {
-        this.setVisible(false);
+    public ColorPicker(ChangeListener changeListener) {
+        this.setVisible(true);
         this.setLayout(null);
-        this.setSize(400, 400);
-        this.colorChooser.setColor(initialColor);
+        this.setSize(230, 210);
+        this.colorChooser.setColor(Color.red);
 
         this.colorChooser.getSelectionModel().addChangeListener(changeListener);
 
@@ -39,5 +43,9 @@ public class ColorPicker extends JPanel {
 
     public Color getColor() {
         return this.colorChooser.getColor();
+    }
+
+    public void setColor(Color color) {
+        this.colorChooser.setColor(color);
     }
 }

@@ -4,8 +4,10 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import lombok.Getter;
 import lombok.Setter;
+import me.fox.components.ConfigManager;
 import me.fox.components.Hotkey;
 import me.fox.components.HotkeyFunc;
+import me.fox.config.Config;
 import me.fox.config.HotkeyConfig;
 import me.fox.listeners.keyboard.HotkeyListener;
 import me.fox.ui.components.toolbox.ToolboxComponent;
@@ -23,7 +25,7 @@ import java.util.Optional;
 
 @Getter
 @Setter
-public class HotkeyService {
+public class HotkeyService implements ConfigManager {
 
     private final Map<String, HotkeyFunc> hotkeyMap = Map.ofEntries(
             Map.entry("screenshot", this::screenshot),
@@ -41,6 +43,8 @@ public class HotkeyService {
     private final List<Hotkey> hotkeys = new ArrayList<>();
     private final ToolboxComponent drawComponent;
     private final GlobalKeyboardHook globalKeyboardHook;
+
+    private boolean changingHotkey;
 
 
     /**
@@ -92,10 +96,6 @@ public class HotkeyService {
         }
     }
 
-    public void applyConfig(HotkeyConfig hotkeyConfig) {
-        this.hotkeys.addAll(hotkeyConfig.getHotkeys());
-    }
-
     private void screenshot() {
         if (this.screenService.getScreenshotFrame().isVisible()) return;
         this.screenService.show();
@@ -130,5 +130,11 @@ public class HotkeyService {
     private void confirm() {
         if (!this.screenService.getScreenshotFrame().isVisible()) return;
         this.screenService.hideAndConfirm();
+    }
+
+    @Override
+    public void applyConfig(Config config) {
+        HotkeyConfig hotkeyConfig = config.getHotkeyConfig();
+        this.hotkeys.addAll(hotkeyConfig.getHotkeys());
     }
 }

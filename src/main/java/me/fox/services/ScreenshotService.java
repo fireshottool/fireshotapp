@@ -4,8 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
 import me.fox.components.ClipboardImage;
+import me.fox.components.ConfigManager;
+import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
 import me.fox.ui.components.ScalableRectangle;
+import me.fox.ui.components.TrayIcon;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.utils.Util;
@@ -22,7 +25,7 @@ import java.io.IOException;
 
 @Getter
 @Setter
-public class ScreenshotService implements Drawable {
+public class ScreenshotService implements Drawable, ConfigManager {
 
     private final ScreenshotFrame screenshotFrame;
     private final ScalableRectangle selectionRectangle;
@@ -60,20 +63,15 @@ public class ScreenshotService implements Drawable {
         if (screenshot == null) return;
 
         this.drawService.draw((Graphics2D) screenshot.getGraphics());
-
         if (this.isUpload()) {
+            System.out.println("upload");
             this.uploadImage(screenshot);
         }
 
         if (this.isLocalSave()) {
+            System.out.println("local save");
             this.saveImage(screenshot);
         }
-    }
-
-    public void applyConfig(ScreenshotConfig screenshotConfig) {
-        this.dimColor = Color.decode(screenshotConfig.getDimColor());
-        this.localSave = screenshotConfig.isLocalSave();
-        this.upload = screenshotConfig.isUpload();
     }
 
     private void saveImage(BufferedImage screenshot) throws IOException {
@@ -145,6 +143,18 @@ public class ScreenshotService implements Drawable {
     }
 
     @Override
+    public void applyConfig(Config config) {
+        ScreenshotConfig screenshotConfig = config.getScreenshotConfig();
+        Color color = Color.decode(screenshotConfig.getDimColor());
+        this.dimColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 200);
+        this.localSave = screenshotConfig.isLocalSave();
+        this.upload = screenshotConfig.isUpload();
+        TrayIcon trayIcon = Fireshot.getInstance().getSystemTray();
+        trayIcon.getLocalSaveItem().setState(this.localSave);
+        trayIcon.getUploadItem().setState(this.upload);
+    }
+
+    @Override
     public void draw(Graphics2D g2d) {
         if (this.image != null) {
             int width = this.screenshotFrame.getWidth();
@@ -152,7 +162,7 @@ public class ScreenshotService implements Drawable {
             g2d.drawImage(image, 0, 0, width, height, null);
 
             //Draw black overlay
-            g2d.setColor(new Color(0, 0, 0, 200));
+            g2d.setColor(this.dimColor);
             g2d.fillRect(0, 0, width, height);
 
             //Draw selected image part

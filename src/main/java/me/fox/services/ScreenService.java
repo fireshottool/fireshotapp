@@ -3,13 +3,16 @@ package me.fox.services;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
+import me.fox.components.ResourceManager;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.ui.frames.SettingsFrame;
 import me.fox.ui.panels.toolbox.Toolbox;
 import me.fox.ui.panels.toolbox.ext.DrawToolbox;
 import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author (Ausgefuchster)
@@ -18,7 +21,7 @@ import java.io.IOException;
 
 @Getter
 @Setter
-public class ScreenService {
+public class ScreenService implements ResourceManager {
 
     private final ScreenshotFrame screenshotFrame;
     private final ScreenshotService screenshotService;
@@ -59,6 +62,12 @@ public class ScreenService {
         this.drawToolbox.hideSelf();
         this.screenshotToolbox.hideSelf();
 
+    }
+
+    @Override
+    public void applyResources(List<File> files) {
+        drawToolbox.applyResources(files);
+        screenshotToolbox.applyResources(files);
     }
 
 }

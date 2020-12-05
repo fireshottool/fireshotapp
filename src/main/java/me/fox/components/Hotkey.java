@@ -16,12 +16,13 @@ import java.util.Arrays;
 @Setter
 public class Hotkey {
 
-    private String name;
+    private String name, displayName;
     private int hotkey;
     private Integer[] requiredKeys;
 
-    public Hotkey(String name, int hotkey, Integer... requiredKeys) {
+    public Hotkey(String name, String displayName, int hotkey, Integer... requiredKeys) {
         this.name = name;
+        this.displayName = displayName;
         this.hotkey = hotkey;
         this.requiredKeys = requiredKeys;
     }

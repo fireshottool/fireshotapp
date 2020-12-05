@@ -1,12 +1,12 @@
 package me.fox.ui.frames;
 
 import lombok.Getter;
-import me.fox.adapter.MouseListenerAdapter;
 import me.fox.services.DrawService;
 import me.fox.utils.Util;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -84,11 +84,11 @@ public class ScreenshotFrame extends JFrame {
     }
 
     /**
-     * Register a new {@link MouseListenerAdapter} to the {@link JFrame}
+     * Register a new {@link MouseAdapter} to the {@link JFrame}
      *
      * @param mouseListenerAdapter to register
      */
-    public void registerMouseListener(MouseListenerAdapter mouseListenerAdapter) {
+    public void registerMouseListener(MouseAdapter mouseListenerAdapter) {
         this.addMouseListener(mouseListenerAdapter);
         this.addMouseMotionListener(mouseListenerAdapter);
         this.addMouseWheelListener(mouseListenerAdapter);

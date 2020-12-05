@@ -6,7 +6,6 @@ import me.fox.ui.components.TrayIcon;
 import me.fox.ui.frames.ScreenshotFrame;
 
 import javax.swing.*;
-import java.awt.image.BufferedImage;
 
 /**
  * @author (Ausgefuchster)
@@ -21,16 +20,27 @@ public class Fireshot {
 
     private final DrawService drawService = new DrawService();
     private final JsonService jsonService = new JsonService();
-    private final FileService fileService = new FileService();
-    private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshot", this.drawService);
-    private final ScreenshotService screenshotService = new ScreenshotService(this.screenshotFrame, this.drawService);
-    private final ScreenService screenService = new ScreenService(this.screenshotFrame, this.screenshotService);
-    private final HotkeyService hotkeyService = new HotkeyService(this.screenshotService, this.drawService, this.screenService);
-    private final TrayIcon systemTray = new TrayIcon(new BufferedImage(32, 32, 1), "Fireshot");
+    private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshot", drawService);
+    private final ScreenshotService screenshotService = new ScreenshotService(screenshotFrame, drawService);
+    private final ScreenService screenService = new ScreenService(screenshotFrame, screenshotService);
+    private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
+    private final TrayIcon systemTray = new TrayIcon("Fireshot");
+    private final FileService fileService = new FileService(screenService, systemTray);
 
     private void load(String[] args) {
-        this.jsonService.read(hotkeyService, drawService, screenshotService, fileService);
+        this.readJson();
         this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
+    }
+
+    private void readJson() {
+        this.jsonService.read(
+                hotkeyService,
+                drawService,
+                screenshotService,
+                fileService,
+                screenService.getSettingsFrame()
+        );
+
     }
 
     public static void main(String[] args) {

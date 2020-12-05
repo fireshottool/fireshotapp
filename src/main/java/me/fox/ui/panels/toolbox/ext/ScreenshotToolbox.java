@@ -10,9 +10,11 @@ import me.fox.ui.components.toolbox.ext.DefaultToolboxComponent;
 import me.fox.ui.panels.toolbox.Toolbox;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 /**
  * @author (Ausgefuchster)
@@ -22,7 +24,11 @@ import java.io.IOException;
 @Getter
 public class ScreenshotToolbox extends Toolbox {
 
-    private ToolboxComponent drawComponent, uploadComponent, saveComponent;
+    private ToolboxComponent drawComponent,
+            confirmComponent,
+            googleSearchComponent,
+            textRecognition,
+            cancel;
 
     public ScreenshotToolbox() {
         super(ToolboxType.HORIZONTAL);
@@ -30,30 +36,25 @@ public class ScreenshotToolbox extends Toolbox {
 
     @Override
     public void loadToolboxComponents() {
-        ToolboxComponent confirmScreenshot = new DefaultToolboxComponent(null, this::confirmScreenshot);
-        this.addComponent(confirmScreenshot);
+        this.googleSearchComponent = new DefaultToolboxComponent(null, this::googleSearch);
+        this.addComponent(this.googleSearchComponent);
+        this.googleSearchComponent.setToolTipText("Search the image on google");
 
-        uploadComponent = new DefaultToolboxComponent(null, this::upload);
-        this.addComponent(uploadComponent);
+        this.textRecognition = new DefaultToolboxComponent(null, this::googleSearch);
+        this.addComponent(this.textRecognition);
+        this.textRecognition.setToolTipText("Get the text on the image (text recognition)");
 
-        saveComponent = new DefaultToolboxComponent(null, this::save);
-        this.addComponent(saveComponent);
+        this.cancel = new DefaultToolboxComponent(null, this::cancel);
+        this.addComponent(this.cancel);
+        this.cancel.setToolTipText("Cancel the screenshot");
 
-        try {
-            drawComponent = new DefaultToolboxComponent(ImageIO.read(new File("C:\\Users\\niki\\Pictures\\fireshot\\1.png")), this::switchDraw, true, false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.addComponent(drawComponent);
+        this.drawComponent = new DefaultToolboxComponent(null, this::switchDraw, true, false);
+        this.addComponent(this.drawComponent);
+        this.drawComponent.setToolTipText("Switch to draw");
 
-        ToolboxComponent googleSearch = new DefaultToolboxComponent(null, this::googleSearch);
-        this.addComponent(googleSearch);
-
-        ToolboxComponent textRecognition = new DefaultToolboxComponent(null, this::googleSearch);
-        this.addComponent(textRecognition);
-
-        ToolboxComponent cancel = new DefaultToolboxComponent(null, this::cancel);
-        this.addComponent(cancel);
+        this.confirmComponent = new DefaultToolboxComponent(null, this::confirmScreenshot);
+        this.addComponent(this.confirmComponent);
+        this.confirmComponent.setToolTipText("Confirm Screenshot");
     }
 
     @Override
@@ -84,15 +85,28 @@ public class ScreenshotToolbox extends Toolbox {
         Fireshot.getInstance().getScreenService().resetAndHide();
     }
 
-    private void upload(ActionEvent event) {
-
-    }
-
-    private void save(ActionEvent event) {
-
-    }
-
     private void googleSearch(ActionEvent event) {
 
+    }
+
+    @Override
+    public void applyResources(List<File> files) {
+        files.forEach(var -> {
+            try {
+                if (var.getName().equals("save.png")) {
+                    this.confirmComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("pencil.png")) {
+                    this.drawComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("toolboxbg.png")) {
+                    this.setBackgroundImage(ImageIO.read(var));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

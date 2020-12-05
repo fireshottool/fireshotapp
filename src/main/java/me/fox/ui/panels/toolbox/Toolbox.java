@@ -3,7 +3,7 @@ package me.fox.ui.panels.toolbox;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
-import me.fox.adapter.MouseListenerAdapter;
+import me.fox.components.ResourceManager;
 import me.fox.enums.ToolboxType;
 import me.fox.listeners.mouse.ToolboxListener;
 import me.fox.ui.components.ScalableRectangle;
@@ -11,6 +11,7 @@ import me.fox.ui.components.toolbox.ToolboxComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
-public abstract class Toolbox extends JPanel {
+public abstract class Toolbox extends JPanel implements ResourceManager {
 
     private final ToolboxListener toolboxListener = new ToolboxListener(this);
     private final List<ToolboxComponent> toolboxComponents = new ArrayList<>();
@@ -178,11 +179,11 @@ public abstract class Toolbox extends JPanel {
     }
 
     /**
-     * Register a new {@link MouseListenerAdapter} to the {@link JPanel}
+     * Register a new {@link MouseAdapter} to the {@link JPanel}
      *
      * @param mouseListenerAdapter to register
      */
-    public void registerMouseListener(MouseListenerAdapter mouseListenerAdapter) {
+    public void registerMouseListener(MouseAdapter mouseListenerAdapter) {
         this.addMouseListener(mouseListenerAdapter);
         this.addMouseMotionListener(mouseListenerAdapter);
         this.addMouseWheelListener(mouseListenerAdapter);

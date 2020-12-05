@@ -24,13 +24,16 @@ public class HotkeyListener extends KeyboardListenerAdapter {
 
     @Override
     public void keyPressed(GlobalKeyEvent event) {
-        System.out.println(event.getVirtualKeyCode());
+        if (event.getVirtualKeyCode() == 255) return;
         this.hotkeyService.registerKey(event.getVirtualKeyCode());
+        if (this.hotkeyService.isChangingHotkey()) return;
         this.hotkeyService.invokeIfPresent(event);
     }
 
     @Override
     public void keyReleased(GlobalKeyEvent event) {
+        if (this.hotkeyService.isChangingHotkey()) return;
+        if (event.getVirtualKeyCode() == 255) return;
         this.hotkeyService.unregisterKey(event.getVirtualKeyCode());
     }
 }

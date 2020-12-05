@@ -1,6 +1,9 @@
 package me.fox.services;
 
 import lombok.Setter;
+import me.fox.components.ConfigManager;
+import me.fox.components.ResourceManager;
+import me.fox.config.Config;
 import me.fox.config.FileConfig;
 
 import javax.imageio.ImageIO;
@@ -9,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author (Ausgefuchster)
@@ -16,11 +21,23 @@ import java.nio.file.Path;
  */
 
 @Setter
-public class FileService {
-    private final String fileSeparator = System.getProperty("file.separator");
+public class FileService implements ConfigManager {
 
-    private Path screenshotPath = Path.of(System.getProperty("user.home") + fileSeparator + "fireshot" + fileSeparator + "screenshots");
+    private final String fileSeparator = System.getProperty("file.separator");
+    private final Path resourcePath = Path.of(System.getProperty("user.home") +
+            fileSeparator + "fireshot" + fileSeparator + "resources");
+
+    private final List<File> resources = new ArrayList<>();
+    private final List<ResourceManager> resourceManagers = new ArrayList<>();
+
+    private Path screenshotPath = Path.of(System.getProperty("user.home") +
+            fileSeparator + "fireshot" + fileSeparator + "screenshots");
     private String imageType = "png";
+
+    public FileService(ResourceManager... resourceManager) {
+        this.resourceManagers.addAll(List.of(resourceManager));
+        this.loadResources();
+    }
 
     public void saveImage(BufferedImage image, String fileName) throws IOException {
         if (!Files.exists(this.screenshotPath)) {
@@ -30,7 +47,31 @@ public class FileService {
         ImageIO.write(image, this.imageType, file);
     }
 
-    public void applyConfig(FileConfig fileConfig) {
+    public void loadResources() {
+        File file = resourcePath.toFile();
+        if (file.exists() && file.isDirectory()) {
+            File[] files = file.listFiles(File::isFile);
+            if (files != null) {
+                this.resources.addAll(List.of(files));
+                this.invokeResourceManager();
+                return;
+            }
+        }
+        this.downLoadResources();
+    }
+
+    private void downLoadResources() {
+        System.out.println("downloading...");
+    }
+
+    private void invokeResourceManager() {
+        System.out.println(resourceManagers);
+        this.resourceManagers.forEach(var -> var.applyResources(this.resources));
+    }
+
+    @Override
+    public void applyConfig(Config config) {
+        FileConfig fileConfig = config.getFileConfig();
         this.screenshotPath = Path.of(fileConfig.getImageLocation());
         this.imageType = fileConfig.getImageType();
     }
