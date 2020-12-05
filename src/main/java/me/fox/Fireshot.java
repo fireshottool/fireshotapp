@@ -40,7 +40,6 @@ public class Fireshot {
                 fileService,
                 screenService.getSettingsFrame()
         );
-
     }
 
     public static void main(String[] args) {
