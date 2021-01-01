@@ -16,18 +16,21 @@ import java.awt.*;
 public class Rectangle extends java.awt.Rectangle implements Drawable {
 
     private final Color color;
+    private final Stroke stroke;
     private final boolean fill;
 
-    public Rectangle(int x, int y, Color color, boolean fill) {
+    public Rectangle(int x, int y, Color color, float strokeWidth, boolean fill) {
         this.x = x;
         this.y = y;
         this.color = color;
         this.fill = fill;
+        this.stroke = new BasicStroke(strokeWidth);
     }
 
     @Override
     public void draw(Graphics2D g2d) {
         g2d.setColor(color);
+        g2d.setStroke(this.stroke);
 
         if (this.fill) {
             this.drawFillRect(g2d);

@@ -27,46 +27,16 @@ public class ScreenshotToolbox extends Toolbox {
     private ToolboxComponent drawComponent,
             confirmComponent,
             googleSearchComponent,
-            textRecognition,
-            cancel;
+            textRecognitionComponent,
+            cancelComponent;
 
     public ScreenshotToolbox() {
         super(ToolboxType.HORIZONTAL);
     }
 
-    @Override
-    public void loadToolboxComponents() {
-        this.googleSearchComponent = new DefaultToolboxComponent(null, this::googleSearch);
-        this.addComponent(this.googleSearchComponent);
-        this.googleSearchComponent.setToolTipText("Search the image on google");
-
-        this.textRecognition = new DefaultToolboxComponent(null, this::googleSearch);
-        this.addComponent(this.textRecognition);
-        this.textRecognition.setToolTipText("Get the text on the image (text recognition)");
-
-        this.cancel = new DefaultToolboxComponent(null, this::cancel);
-        this.addComponent(this.cancel);
-        this.cancel.setToolTipText("Cancel the screenshot");
-
-        this.drawComponent = new DefaultToolboxComponent(null, this::switchDraw, true, false);
-        this.addComponent(this.drawComponent);
-        this.drawComponent.setToolTipText("Switch to draw");
-
-        this.confirmComponent = new DefaultToolboxComponent(null, this::confirmScreenshot);
-        this.addComponent(this.confirmComponent);
-        this.confirmComponent.setToolTipText("Confirm Screenshot");
-    }
-
-    @Override
-    public void reset() {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
-        if (drawService.isDraw()) {
-            this.drawComponent.unselect();
-        }
-    }
 
     private void confirmScreenshot(ActionEvent event) {
-        Fireshot.getInstance().getScreenService().hideAndConfirm();
+        Fireshot.getInstance().getScreenService().hideAndConfirm(false, false);
     }
 
     private void switchDraw(ActionEvent event) {
@@ -86,12 +56,60 @@ public class ScreenshotToolbox extends Toolbox {
     }
 
     private void googleSearch(ActionEvent event) {
+        Fireshot.getInstance().getScreenService().hideAndConfirm(false, true);
+    }
 
+    private void textRecognition(ActionEvent event) {
+        Fireshot.getInstance().getScreenService().hideAndConfirm(true, false);
+    }
+
+    @Override
+    public void loadToolboxComponents() {
+        this.googleSearchComponent = new DefaultToolboxComponent(null, this::googleSearch);
+        this.googleSearchComponent.setToolTipText("Search the image on google");
+
+        this.textRecognitionComponent = new DefaultToolboxComponent(null, this::textRecognition);
+        this.textRecognitionComponent.setToolTipText("Get the text on the image (OCR)");
+
+        this.cancelComponent = new DefaultToolboxComponent(null, this::cancel);
+        this.cancelComponent.setToolTipText("Cancel the screenshot");
+
+        this.drawComponent = new DefaultToolboxComponent(null, this::switchDraw, true, false);
+        this.drawComponent.setToolTipText("Switch to draw");
+
+        this.confirmComponent = new DefaultToolboxComponent(null, this::confirmScreenshot);
+        this.confirmComponent.setToolTipText("Confirm Screenshot");
+
+        this.addComponent(this.cancelComponent);
+        this.addComponent(this.googleSearchComponent);
+        this.addComponent(this.textRecognitionComponent);
+        this.addComponent(this.drawComponent);
+        this.addComponent(this.confirmComponent);
+    }
+
+    @Override
+    public void resetResources() {
+        this.drawComponent.setIcon(null);
+        this.cancelComponent.setIcon(null);
+        this.confirmComponent.setIcon(null);
+        this.googleSearchComponent.setIcon(null);
+        this.textRecognitionComponent.setIcon(null);
+    }
+
+    @Override
+    public void reset() {
+        DrawService drawService = Fireshot.getInstance().getDrawService();
+        if (drawService.isDraw()) {
+            this.drawComponent.unselect();
+        }
     }
 
     @Override
     public void applyResources(List<File> files) {
-        files.forEach(var -> {
+        super.applyResources(files);
+        this.resetResources();
+
+        files.stream().filter(var -> !var.getName().equals("toolboxbg.png")).forEach(var -> {
             try {
                 if (var.getName().equals("save.png")) {
                     this.confirmComponent.setIcon(new ImageIcon(
@@ -101,8 +119,18 @@ public class ScreenshotToolbox extends Toolbox {
                     this.drawComponent.setIcon(new ImageIcon(
                             ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
                     ));
-                } else if (var.getName().equals("toolboxbg.png")) {
-                    this.setBackgroundImage(ImageIO.read(var));
+                } else if (var.getName().equals("ocr.png")) {
+                    this.textRecognitionComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("googlesearch.png")) {
+                    this.googleSearchComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
+                } else if (var.getName().equals("cross.png")) {
+                    this.cancelComponent.setIcon(new ImageIcon(
+                            ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
+                    ));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

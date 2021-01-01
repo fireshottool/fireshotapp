@@ -86,12 +86,18 @@ public class ScreenshotFrame extends JFrame {
     /**
      * Register a new {@link MouseAdapter} to the {@link JFrame}
      *
-     * @param mouseListenerAdapter to register
+     * @param mouseAdapter to register
      */
-    public void registerMouseListener(MouseAdapter mouseListenerAdapter) {
-        this.addMouseListener(mouseListenerAdapter);
-        this.addMouseMotionListener(mouseListenerAdapter);
-        this.addMouseWheelListener(mouseListenerAdapter);
+    public void registerMouseListener(MouseAdapter mouseAdapter) {
+        this.addMouseListener(mouseAdapter);
+        this.addMouseMotionListener(mouseAdapter);
+        this.addMouseWheelListener(mouseAdapter);
+    }
+
+    public void unregisterMouseListener(MouseAdapter mouseAdapter) {
+        this.removeMouseListener(mouseAdapter);
+        this.removeMouseMotionListener(mouseAdapter);
+        this.removeMouseWheelListener(mouseAdapter);
     }
 
     /**

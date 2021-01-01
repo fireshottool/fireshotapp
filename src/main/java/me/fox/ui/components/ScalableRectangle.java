@@ -76,8 +76,8 @@ public class ScalableRectangle extends Rectangle implements Drawable {
     @Override
     public void draw(Graphics2D g2d) {
         //Draw scalePoints
-        g2d.setStroke(this.stroke);
         if (height == 0 && width == 0) return;
+        g2d.setStroke(this.stroke);
         Arrays.stream(this.scalePoints).forEach(var -> {
             var.updateLocation(this);
             g2d.setColor(Color.black);
@@ -86,7 +86,8 @@ public class ScalableRectangle extends Rectangle implements Drawable {
             g2d.drawRect(var.x, var.y, var.width, var.height);
         });
         //Draw self
-        Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 0, new float[]{3}, 0);
+        Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+                0, new float[]{3}, 0);
 
         g2d.setStroke(dashed);
 

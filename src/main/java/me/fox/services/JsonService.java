@@ -11,7 +11,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * @author (Ausgefuchster)
@@ -24,7 +23,7 @@ public class JsonService {
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final String fileSeparator = System.getProperty("file.separator");
     private final Path jsonPath = Path.of(System.getProperty("user.home") +
-            fileSeparator + "fireshot" + fileSeparator + "test.json");
+            fileSeparator + "fireshot" + fileSeparator + "fireshot.json");
 
     private final List<ConfigManager> configManagers = new ArrayList<>();
 
@@ -33,31 +32,28 @@ public class JsonService {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void read(ConfigManager... configManagers) {
         this.configManagers.addAll(List.of(configManagers));
+        try {
+            File file = this.jsonPath.toFile();
 
-        CompletableFuture.runAsync(() -> {
-            try {
-                File file = this.jsonPath.toFile();
-
-                if (!file.exists()) {
-                    if (file.getParentFile() != null) {
-                        file.getParentFile().mkdirs();
-                    }
-                    file.createNewFile();
-
-                    FileWriter writer = new FileWriter(file);
-                    this.gson.toJson(Config.DEFAULT_CONFIG, writer);
-
-                    writer.flush();
-                    writer.close();
+            if (!file.exists()) {
+                if (file.getParentFile() != null) {
+                    file.getParentFile().mkdirs();
                 }
+                file.createNewFile();
 
-                this.config = this.gson.fromJson(new BufferedReader(new FileReader(file)), Config.class);
+                FileWriter writer = new FileWriter(file);
+                this.gson.toJson(Config.DEFAULT_CONFIG, writer);
 
-                Arrays.stream(configManagers).forEach(var -> var.applyConfig(this.config));
-            } catch (IOException e) {
-                e.printStackTrace();
+                writer.flush();
+                writer.close();
             }
-        });
+
+            this.config = this.gson.fromJson(new BufferedReader(new FileReader(file)), Config.class);
+
+            Arrays.stream(configManagers).forEach(var -> var.applyConfig(this.config));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

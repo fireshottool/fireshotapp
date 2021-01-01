@@ -14,5 +14,6 @@ public class Config {
     private FileConfig fileConfig = new FileConfig();
     private DrawConfig drawConfig = new DrawConfig();
     private HotkeyConfig hotkeyConfig = new HotkeyConfig();
+    private RequestConfig requestConfig = new RequestConfig();
     private ScreenshotConfig screenshotConfig = new ScreenshotConfig();
 }

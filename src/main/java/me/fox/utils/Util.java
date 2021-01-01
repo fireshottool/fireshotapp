@@ -1,6 +1,9 @@
 package me.fox.utils;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 /**
@@ -37,9 +40,14 @@ public class Util {
                 .toString();
     }
 
-    public static void startBrowser(String url) {
-        //Desktop.getDesktop().browse();
-        String os = System.getProperty("os.name").toLowerCase();
+    public static void googleSearch(String imageUrl) {
+        System.out.println("google search");
+        try {
+            Desktop.getDesktop().browse(new URI("https://www.google.com/searchbyimage?image_url=" + imageUrl));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+       /* String os = System.getProperty("os.name").toLowerCase();
         Runtime rt = Runtime.getRuntime();
         try {
             if (os.contains("win")) {
@@ -67,6 +75,6 @@ public class Util {
 
             }
         } catch (Exception ignored) {
-        }
+        }*/
     }
 }

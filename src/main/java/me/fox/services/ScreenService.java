@@ -25,13 +25,14 @@ public class ScreenService implements ResourceManager {
 
     private final ScreenshotFrame screenshotFrame;
     private final ScreenshotService screenshotService;
-    private final Toolbox drawToolbox = new DrawToolbox();
+    private final Toolbox drawToolbox;
     private final Toolbox screenshotToolbox = new ScreenshotToolbox();
     private final SettingsFrame settingsFrame = new SettingsFrame();
 
     public ScreenService(ScreenshotFrame screenshotFrame, ScreenshotService screenshotService) {
         this.screenshotFrame = screenshotFrame;
         this.screenshotService = screenshotService;
+        this.drawToolbox = new DrawToolbox(screenshotFrame);
         this.screenshotFrame.add(drawToolbox);
         this.screenshotFrame.add(screenshotToolbox);
     }
@@ -41,10 +42,10 @@ public class ScreenService implements ResourceManager {
         this.screenshotFrame.setVisible(true);
     }
 
-    public void hideAndConfirm() {
+    public void hideAndConfirm(boolean imageDetection, boolean googleSearch) {
         this.screenshotFrame.setVisible(false);
         try {
-            this.screenshotService.confirmScreenShot();
+            this.screenshotService.confirmScreenshot(imageDetection, googleSearch);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,5 +70,4 @@ public class ScreenService implements ResourceManager {
         drawToolbox.applyResources(files);
         screenshotToolbox.applyResources(files);
     }
-
 }

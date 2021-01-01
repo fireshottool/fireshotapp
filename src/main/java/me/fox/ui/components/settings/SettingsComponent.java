@@ -12,7 +12,7 @@ import java.awt.*;
 public abstract class SettingsComponent extends JPanel {
 
     public SettingsComponent(Point location) {
-        this.setSize(400, 80);
+        this.setSize(400, 70);
         this.setLocation(location);
         this.setVisible(true);
         this.setLayout(null);

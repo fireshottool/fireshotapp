@@ -9,12 +9,16 @@ import me.fox.listeners.mouse.ToolboxListener;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -46,6 +50,8 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     public abstract void loadToolboxComponents();
+
+    public abstract void resetResources();
 
     public abstract void reset();
 
@@ -203,6 +209,18 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     public void showSelf() {
         this.updateLocation(Fireshot.getInstance().getScreenshotService().getSelectionRectangle());
         this.setVisible(true);
+    }
+
+    @Override
+    public void applyResources(List<File> files) {
+        Optional<File> optionalFile = files.stream().filter(var -> var.getName().equals("toolboxbg.png")).findFirst();
+        optionalFile.ifPresentOrElse(var -> {
+            try {
+                this.setBackgroundImage(ImageIO.read(var));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }, () -> this.setBackgroundImage(null));
     }
 
     @Override

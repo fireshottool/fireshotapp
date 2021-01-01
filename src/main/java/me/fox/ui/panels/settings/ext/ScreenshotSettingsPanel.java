@@ -36,47 +36,84 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
     );
 
     private final CheckBoxComponent uploadCheckBox = new CheckBoxComponent(
-            new Point(30, 170),
+            new Point(30, 140),
             "Upload image",
             this::uploadCheckBoxActionPerformed
     );
 
     private final CheckBoxComponent saveCheckBox = new CheckBoxComponent(
-            new Point(30, 250),
+            new Point(30, 190),
             "Save image",
             this::saveCheckBoxActionPerformed
     );
 
-    private final ColorComponent colorComponent;
+    private final CheckBoxComponent zoomCheckBox = new CheckBoxComponent(
+            new Point(30, 240),
+            "Show zoom",
+            this::zoomCheckBoxActionPerformed
+    );
+
+    private final ColorComponent dimColorComponent, zoomCrossColorComponent, zoomRasterColorComponent;
 
     public ScreenshotSettingsPanel(PanelManager panelManager) {
         super(panelManager);
 
-        this.colorComponent = new ColorComponent(
+        this.dimColorComponent = new ColorComponent(
                 "Dim color",
-                new Point(30, 330),
-                this::colorChanged,
+                new Point(30, 290),
+                this::dimColorChanged,
+                panelManager.getSettingsFrame()
+        );
+        this.zoomCrossColorComponent = new ColorComponent(
+                "Zoom Cross color",
+                new Point(30, 340),
+                this::zoomCrossColorChanged,
+                panelManager.getSettingsFrame()
+        );
+        this.zoomRasterColorComponent = new ColorComponent(
+                "Zoom Raster color",
+                new Point(30, 390),
+                this::zoomRasterColorChanged,
                 panelManager.getSettingsFrame()
         );
 
         this.add(this.locationChooserComponent);
         this.add(this.comboBoxComponent);
-        this.add(this.colorComponent);
+        this.add(this.dimColorComponent);
         this.add(this.uploadCheckBox);
         this.add(this.saveCheckBox);
+        this.add(this.zoomCheckBox);
+        this.add(this.zoomCrossColorComponent);
+        this.add(this.zoomRasterColorComponent);
     }
 
-    private void colorChanged(ActionEvent event) {
-        this.colorComponent.getColorPickerDialog().setVisible(false);
+    private void zoomCrossColorChanged(ActionEvent event) {
+        this.zoomCrossColorComponent.getColorPickerDialog().setVisible(false);
         JsonService jsonService = Fireshot.getInstance().getJsonService();
-        Color color = this.colorComponent.getColor();
+        Color color = this.zoomCrossColorComponent.getColor();
+        String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        jsonService.getConfig().getScreenshotConfig().setZoomCrossColor(hex);
+    }
+
+    private void zoomRasterColorChanged(ActionEvent event) {
+        this.zoomRasterColorComponent.getColorPickerDialog().setVisible(false);
+        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        Color color = this.zoomRasterColorComponent.getColor();
+        String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        jsonService.getConfig().getScreenshotConfig().setZoomRasterColor(hex);
+    }
+
+    private void dimColorChanged(ActionEvent event) {
+        this.dimColorComponent.getColorPickerDialog().setVisible(false);
+        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        Color color = this.dimColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getScreenshotConfig().setDimColor(hex);
     }
 
     private void saveCheckBoxActionPerformed(ActionEvent event) {
         JsonService jsonService = Fireshot.getInstance().getJsonService();
-        jsonService.getConfig().getScreenshotConfig().setLocalSave(this.uploadCheckBox.getCheckBox().isSelected());
+        jsonService.getConfig().getScreenshotConfig().setLocalSave(this.saveCheckBox.getCheckBox().isSelected());
     }
 
     private void uploadCheckBoxActionPerformed(ActionEvent event) {
@@ -84,11 +121,18 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
         jsonService.getConfig().getScreenshotConfig().setUpload(this.uploadCheckBox.getCheckBox().isSelected());
     }
 
+    private void zoomCheckBoxActionPerformed(ActionEvent event) {
+        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        jsonService.getConfig().getScreenshotConfig().setZoom(this.zoomCheckBox.getCheckBox().isSelected());
+    }
+
     @Override
     public void applyConfig(Config config) {
         ScreenshotConfig screenshotConfig = config.getScreenshotConfig();
         FileConfig fileConfig = config.getFileConfig();
-        this.colorComponent.setColor(Color.decode(screenshotConfig.getDimColor()));
+        this.dimColorComponent.setColor(Color.decode(screenshotConfig.getDimColor()));
+        this.zoomCrossColorComponent.setColor(Color.decode(screenshotConfig.getZoomCrossColor()));
+        this.zoomRasterColorComponent.setColor(Color.decode(screenshotConfig.getZoomRasterColor()));
         this.comboBoxComponent.getComboBox().setSelectedItem(fileConfig.getImageType());
         this.locationChooserComponent.setLocationText(fileConfig.getImageLocation());
         this.uploadCheckBox.getCheckBox().setSelected(screenshotConfig.isUpload());

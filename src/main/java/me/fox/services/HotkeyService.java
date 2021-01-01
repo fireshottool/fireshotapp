@@ -33,7 +33,8 @@ public class HotkeyService implements ConfigManager {
             Map.entry("draw", this::draw),
             Map.entry("redo", this::redo),
             Map.entry("undo", this::undo),
-            Map.entry("confirm", this::confirm)
+            Map.entry("confirm", this::confirm),
+            Map.entry("zoom", this::zoom)
     );
     private final DrawService drawService;
     private final ScreenService screenService;
@@ -129,7 +130,12 @@ public class HotkeyService implements ConfigManager {
 
     private void confirm() {
         if (!this.screenService.getScreenshotFrame().isVisible()) return;
-        this.screenService.hideAndConfirm();
+        this.screenService.hideAndConfirm(false, false);
+    }
+
+    private void zoom() {
+        if (!this.screenService.getScreenshotFrame().isVisible()) return;
+        this.screenshotService.setZoom(!this.getScreenshotService().isZoom());
     }
 
     @Override

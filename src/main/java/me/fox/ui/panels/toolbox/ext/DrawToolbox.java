@@ -7,10 +7,13 @@ import me.fox.services.DrawService;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 import me.fox.ui.components.toolbox.ext.DefaultToolboxComponent;
 import me.fox.ui.components.toolbox.ext.PaintedToolBoxComponent;
+import me.fox.ui.frames.ColorPickerDialog;
+import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.ui.panels.toolbox.Toolbox;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Ellipse2D;
@@ -30,7 +33,12 @@ public class DrawToolbox extends Toolbox {
     private final Shape rectangle = new Rectangle(8, 8, 16, 16);
     private final Shape circle = new Ellipse2D.Double(8, 8, 16, 16);
 
+    private final ColorPickerDialog colorPickerDialog;
+
+    private Color oldColor;
+
     private ToolboxComponent lineComponent,
+            colorPickerComponent,
             circleComponent,
             rectangleComponent,
             increaseComponent,
@@ -38,63 +46,12 @@ public class DrawToolbox extends Toolbox {
             undoComponent,
             redoComponent;
 
-    public DrawToolbox() {
+    public DrawToolbox(ScreenshotFrame screenshotFrame) {
         super(ToolboxType.VERTICAL);
+        this.colorPickerDialog = new ColorPickerDialog(screenshotFrame, this::colorChanged);
+        this.colorPickerDialog.getCancel().addActionListener(this::colorPickerCancel);
+        this.colorPickerDialog.getOk().addActionListener(this::colorPickerConfirm);
     }
-
-    @Override
-    public void loadToolboxComponents() {
-        this.lineComponent = new PaintedToolBoxComponent(
-                this::line,
-                true,
-                false,
-                this::drawLine);
-        this.addComponent(this.lineComponent);
-
-        this.circleComponent = new PaintedToolBoxComponent(
-                this::circle,
-                true,
-                true,
-                this::drawCircle);
-        this.addComponent(this.circleComponent);
-
-        this.rectangleComponent = new PaintedToolBoxComponent(
-                this::rectangle,
-                true,
-                true,
-                this::drawRect);
-        this.addComponent(this.rectangleComponent);
-
-        this.increaseComponent = new DefaultToolboxComponent(this::increase);
-        this.addComponent(this.increaseComponent);
-        this.increaseComponent.setToolTipText("Increase pencil width");
-        this.decreaseComponent = new DefaultToolboxComponent(this::decrease);
-        this.addComponent(this.decreaseComponent);
-        this.decreaseComponent.setToolTipText("Decrease pencil width");
-        this.undoComponent = new DefaultToolboxComponent(this::undo);
-        this.addComponent(this.undoComponent);
-        this.undoComponent.setToolTipText("Undo last drawing");
-        this.redoComponent = new DefaultToolboxComponent(this::redo);
-        this.addComponent(this.redoComponent);
-        this.redoComponent.setToolTipText("Redo last undone drawing");
-    }
-
-    private void undo(ActionEvent event) {
-
-    }
-
-    private void redo(ActionEvent event) {
-
-    }
-
-    private void increase(ActionEvent event) {
-
-    }
-
-    private void decrease(ActionEvent event) {
-
-    }
-
 
     private void line(ActionEvent event) {
         DrawService drawService = Fireshot.getInstance().getDrawService();
@@ -176,6 +133,92 @@ public class DrawToolbox extends Toolbox {
         g2d.drawLine(8, 8, 22, 22);
     }
 
+    private void undo(ActionEvent event) {
+        Fireshot.getInstance().getDrawService().undoDrawing();
+    }
+
+    private void redo(ActionEvent event) {
+        Fireshot.getInstance().getDrawService().redoDrawing();
+    }
+
+    private void increase(ActionEvent event) {
+        Fireshot.getInstance().getDrawService().increaseThickness();
+    }
+
+    private void decrease(ActionEvent event) {
+        Fireshot.getInstance().getDrawService().decreaseThickness();
+    }
+
+    private void colorPicker(ActionEvent event) {
+        this.colorPickerDialog.setVisible(true);
+    }
+
+    private void colorChanged(ChangeEvent event) {
+        DrawService drawService = Fireshot.getInstance().getDrawService();
+        if (this.oldColor == null) {
+            this.oldColor = drawService.getDrawColor();
+        }
+        drawService.setDrawColor(this.colorPickerDialog.getColorPicker().getColor());
+    }
+
+    private void colorPickerCancel(ActionEvent event) {
+        Fireshot.getInstance().getDrawService().setDrawColor(this.oldColor);
+        this.colorPickerDialog.setVisible(false);
+        this.oldColor = null;
+    }
+
+    private void colorPickerConfirm(ActionEvent event) {
+        this.colorPickerDialog.setVisible(false);
+        this.oldColor = null;
+    }
+
+    @Override
+    public void loadToolboxComponents() {
+        this.colorPickerComponent = new DefaultToolboxComponent(this::colorPicker);
+        this.addComponent(this.colorPickerComponent);
+        this.lineComponent = new PaintedToolBoxComponent(
+                this::line,
+                true,
+                false,
+                this::drawLine);
+        this.addComponent(this.lineComponent);
+
+        this.circleComponent = new PaintedToolBoxComponent(
+                this::circle,
+                true,
+                true,
+                this::drawCircle);
+        this.addComponent(this.circleComponent);
+
+        this.rectangleComponent = new PaintedToolBoxComponent(
+                this::rectangle,
+                true,
+                true,
+                this::drawRect);
+        this.addComponent(this.rectangleComponent);
+
+        this.increaseComponent = new DefaultToolboxComponent(this::increase);
+        this.addComponent(this.increaseComponent);
+        this.increaseComponent.setToolTipText("Increase pencil width");
+        this.decreaseComponent = new DefaultToolboxComponent(this::decrease);
+        this.addComponent(this.decreaseComponent);
+        this.decreaseComponent.setToolTipText("Decrease pencil width");
+        this.undoComponent = new DefaultToolboxComponent(this::undo);
+        this.addComponent(this.undoComponent);
+        this.undoComponent.setToolTipText("Undo last drawing");
+        this.redoComponent = new DefaultToolboxComponent(this::redo);
+        this.addComponent(this.redoComponent);
+        this.redoComponent.setToolTipText("Redo last undone drawing");
+    }
+
+    @Override
+    public void resetResources() {
+        this.redoComponent.setIcon(null);
+        this.undoComponent.setIcon(null);
+        this.increaseComponent.setIcon(null);
+        this.decreaseComponent.setIcon(null);
+    }
+
     @Override
     public void reset() {
         DrawService drawService = Fireshot.getInstance().getDrawService();
@@ -194,7 +237,10 @@ public class DrawToolbox extends Toolbox {
 
     @Override
     public void applyResources(List<File> files) {
-        files.forEach(var -> {
+        super.applyResources(files);
+        this.resetResources();
+
+        files.stream().filter(var -> !var.getName().equals("toolboxbg.png")).forEach(var -> {
             try {
                 if (var.getName().equals("increase.png")) {
                     this.increaseComponent.setIcon(new ImageIcon(
@@ -212,8 +258,6 @@ public class DrawToolbox extends Toolbox {
                     this.redoComponent.setIcon(new ImageIcon(
                             ImageIO.read(var).getScaledInstance(26, 26, Image.SCALE_SMOOTH)
                     ));
-                } else if (var.getName().equals("toolboxbg.png")) {
-                    this.setBackgroundImage(ImageIO.read(var));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshot;
 import me.fox.components.ConfigManager;
+import me.fox.components.ResourceManager;
 import me.fox.config.Config;
 import me.fox.config.DrawConfig;
 import me.fox.listeners.mouse.DrawListener;
@@ -12,10 +13,14 @@ import me.fox.ui.components.draw.impl.Circle;
 import me.fox.ui.components.draw.impl.Line;
 import me.fox.ui.components.draw.impl.Rectangle;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -25,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Setter
-public class DrawService extends JComponent implements Drawable, ConfigManager {
+public class DrawService extends JComponent implements Drawable, ConfigManager, ResourceManager {
 
     private final DrawListener drawListener;
 
@@ -35,16 +40,27 @@ public class DrawService extends JComponent implements Drawable, ConfigManager {
     private final List<Drawable> drawings = new CopyOnWriteArrayList<>();
     private final List<Drawable> undoDrawings = new CopyOnWriteArrayList<>();
 
+    private Cursor drawCursor;
+    private Color drawColor;
+
     private boolean draw = false, line = false, circle = false, rectangle;
     private boolean fillCircle = true, fillRectangle = true;
     private int currentIndex = -1;
     private float currentStrokeWidth;
     private float decreaseThickness, increaseThickness;
-    private Color drawColor;
 
     public DrawService() {
         this.drawListener = new DrawListener(this);
         this.registerDrawable(this, 1);
+    }
+
+    public void decreaseThickness() {
+        if (this.currentStrokeWidth - this.decreaseThickness <= 0) return;
+        this.currentStrokeWidth -= this.decreaseThickness;
+    }
+
+    public void increaseThickness() {
+        this.currentStrokeWidth += this.increaseThickness;
     }
 
     public void resetDraw() {
@@ -78,7 +94,7 @@ public class DrawService extends JComponent implements Drawable, ConfigManager {
 
     public void addRectangle(Point point) {
         this.currentIndex++;
-        this.drawings.add(new Rectangle(point.x, point.y, drawColor, fillRectangle));
+        this.drawings.add(new Rectangle(point.x, point.y, drawColor, currentStrokeWidth, fillRectangle));
     }
 
     public void resizeRectangle(Point point) {
@@ -88,7 +104,7 @@ public class DrawService extends JComponent implements Drawable, ConfigManager {
 
     public void addCircle(Point point) {
         this.currentIndex++;
-        this.drawings.add(new Circle(point.x, point.y, drawColor, fillCircle));
+        this.drawings.add(new Circle(point.x, point.y, drawColor, currentStrokeWidth, fillCircle));
     }
 
     public void resizeCurrentCircle(Point point) {
@@ -155,5 +171,23 @@ public class DrawService extends JComponent implements Drawable, ConfigManager {
     @Override
     public void draw(Graphics2D g2d) {
         this.drawings.forEach(var -> var.draw(g2d));
+    }
+
+    @Override
+    public void applyResources(List<File> files) {
+        Optional<File> fileOptional = files.stream().filter(var -> var.getName().equals("pencilw.png")).findFirst();
+
+        fileOptional.ifPresent(var -> {
+            try {
+                this.drawCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                        ImageIO.read(var),
+                        new Point(5, 25),
+                        "drawing"
+                );
+                System.out.println("Test" + drawCursor);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
