@@ -1,1 +1,1 @@
-# fireshot
+# fireshotapp
