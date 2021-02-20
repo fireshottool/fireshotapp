@@ -1,7 +1,7 @@
 package me.fox.services;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.components.ConfigManager;
 import me.fox.config.Config;
 import me.fox.config.RequestConfig;
@@ -9,6 +9,7 @@ import me.fox.utils.Util;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -33,8 +34,16 @@ public class RequestService implements ConfigManager {
     private String uploadURL, imageURL, imageDetectionURL;
     private final HttpClient client = HttpClientBuilder.create().build();
 
+    /**
+     * Upload am image to the server
+     *
+     * @param file           image to upload
+     * @param imageDetection whether it should use OCR or not
+     * @param googleSearch   whether it should be searched on google or not
+     * @return {@link ListenableFuture} with the {@link File} to delete it
+     */
     public ListenableFuture<File> uploadImage(File file, boolean imageDetection, boolean googleSearch) {
-        return Fireshot.getInstance().getExecutorService().submit(() -> {
+        return Fireshotapp.getInstance().getExecutorService().submit(() -> {
             HttpEntity entity;
             HttpPost request;
 
@@ -73,8 +82,14 @@ public class RequestService implements ConfigManager {
         });
     }
 
+    /**
+     * Request an image from the server
+     *
+     * @param imageName to request it
+     * @return {@link ListenableFuture} with the {@link Image}
+     */
     public ListenableFuture<Image> requestImage(String imageName) {
-        return Fireshot.getInstance().getExecutorService().submit(() -> {
+        return Fireshotapp.getInstance().getExecutorService().submit(() -> {
             try {
                 URL url = new URL(this.imageURL + imageName);
                 return ImageIO.read(url);
@@ -82,6 +97,28 @@ public class RequestService implements ConfigManager {
                 e.printStackTrace();
                 return null;
             }
+        });
+    }
+
+    /**
+     * Get the current {@link me.fox.components.Version} from the {@link Fireshotapp}
+     *
+     * @return {@link ListenableFuture} with the {@link me.fox.components.Version} as {@link String}
+     */
+    public ListenableFuture<String> getVersion() {
+        return Fireshotapp.getInstance().getExecutorService().submit(() -> {
+            HttpGet request = new HttpGet("https://fireshotapp.eu/tool/version");
+            try {
+                HttpResponse response = client.execute(request);
+                if (response.getStatusLine().getStatusCode() != 200) {
+                    return "";
+                }
+
+                return EntityUtils.toString(response.getEntity());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "";
         });
     }
 

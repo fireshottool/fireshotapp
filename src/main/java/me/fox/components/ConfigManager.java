@@ -9,5 +9,10 @@ import me.fox.config.Config;
 
 public interface ConfigManager {
 
+    /**
+     * Load the values from the config
+     *
+     * @param config to load the values from
+     */
     void applyConfig(Config config);
 }

@@ -1,7 +1,7 @@
 package me.fox.ui.panels.toolbox.ext;
 
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.enums.ToolboxType;
 import me.fox.services.DrawService;
 import me.fox.services.ScreenService;
@@ -36,14 +36,14 @@ public class ScreenshotToolbox extends Toolbox {
 
 
     private void confirmScreenshot(ActionEvent event) {
-        Fireshot.getInstance().getScreenService().hideAndConfirm(false, false);
+        Fireshotapp.getInstance().getScreenService().hideAndConfirm(false, false);
     }
 
     private void switchDraw(ActionEvent event) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
 
         drawService.setDraw(!drawService.isDraw());
-        ScreenService screenService = Fireshot.getInstance().getScreenService();
+        ScreenService screenService = Fireshotapp.getInstance().getScreenService();
         if (screenService.getDrawToolbox().isVisible()) {
             screenService.getDrawToolbox().hideSelf();
         } else {
@@ -52,15 +52,15 @@ public class ScreenshotToolbox extends Toolbox {
     }
 
     private void cancel(ActionEvent event) {
-        Fireshot.getInstance().getScreenService().resetAndHide();
+        Fireshotapp.getInstance().getScreenService().resetAndHide();
     }
 
     private void googleSearch(ActionEvent event) {
-        Fireshot.getInstance().getScreenService().hideAndConfirm(false, true);
+        Fireshotapp.getInstance().getScreenService().hideAndConfirm(false, true);
     }
 
     private void textRecognition(ActionEvent event) {
-        Fireshot.getInstance().getScreenService().hideAndConfirm(true, false);
+        Fireshotapp.getInstance().getScreenService().hideAndConfirm(true, false);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ScreenshotToolbox extends Toolbox {
 
     @Override
     public void reset() {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
         if (drawService.isDraw()) {
             this.drawComponent.unselect();
         }

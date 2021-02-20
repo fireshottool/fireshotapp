@@ -2,25 +2,29 @@ package me.fox.services;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.components.ClipboardImage;
 import me.fox.components.ConfigManager;
 import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
+import me.fox.enums.ColorPalette;
+import me.fox.enums.Strokes;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.TrayIcon;
 import me.fox.ui.components.draw.Drawable;
+import me.fox.ui.frames.OptionCheckboxFrame;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.utils.Util;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.RasterFormatException;
 import java.io.File;
 import java.io.IOException;
 
@@ -38,8 +42,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     private final DrawService drawService;
     private final RequestService requestService;
 
-    private final Stroke widthTwoStroke = new BasicStroke(2);
-    private final Stroke widthOneStroke = new BasicStroke(1);
+    private final Font font = new Font("Gadugi", Font.PLAIN, 14);
 
     private BufferedImage image;
     private Color dimColor;
@@ -47,6 +50,15 @@ public class ScreenshotService implements Drawable, ConfigManager {
     private Color zoomRasterColor;
     private boolean localSave, upload, zoom;
 
+    /**
+     * Constructor for {@link ScreenshotService}
+     *
+     * @param screenshotFrame to initialize {@link ScreenshotService#screenshotFrame}
+     *                        and {@link ScreenshotService#selectionRectangle}
+     * @param drawService     to initialize {@link ScreenshotService#drawService}
+     *                        and {@link ScreenshotService#selectionRectangle}
+     * @param requestService  to initialize {@link ScreenshotService#requestService}
+     */
     public ScreenshotService(ScreenshotFrame screenshotFrame, DrawService drawService, RequestService requestService) {
         this.drawService = drawService;
         this.screenshotFrame = screenshotFrame;
@@ -55,18 +67,25 @@ public class ScreenshotService implements Drawable, ConfigManager {
         this.requestService = requestService;
     }
 
+    /**
+     * Create a new screenshot with the size of {@link ScreenshotService#screenshotFrame}
+     */
     public void createScreenshot() {
-        int x = this.screenshotFrame.getX();
-        int y = this.screenshotFrame.getY();
-        int width = this.screenshotFrame.getWidth();
-        int height = this.screenshotFrame.getHeight();
         try {
-            this.image = new Robot().createScreenCapture(new Rectangle(x, y, width, height));
+            this.image = new Robot().createScreenCapture(this.screenshotFrame.getBounds());
         } catch (AWTException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Confirm a screenshot width the {@link ScreenshotService#selectionRectangle}
+     * And save the image local or upload it
+     *
+     * @param imageDetection whether it should use OCR or not
+     * @param googleSearch   whether it should be searched on google or not
+     * @throws IOException if an I/O error occurs
+     */
     public void confirmScreenshot(boolean imageDetection, boolean googleSearch) throws IOException {
         int x = this.selectionRectangle.x;
         int y = this.selectionRectangle.y;
@@ -75,30 +94,63 @@ public class ScreenshotService implements Drawable, ConfigManager {
         BufferedImage screenshot = this.takeScreenshot(x, y, width, height);
         if (screenshot == null) return;
 
-        this.drawService.draw((Graphics2D) screenshot.getGraphics());
+        Graphics2D g2d = this.image.createGraphics();
+        this.drawService.draw(g2d);
         if (this.isUpload() || imageDetection) {
-            System.out.println("upload");
             this.uploadImage(screenshot, imageDetection, googleSearch);
 
             if (imageDetection) return;
         }
 
         if (this.isLocalSave()) {
-            System.out.println("local save");
             this.saveImage(screenshot);
         }
     }
 
+    /**
+     * Generate an random name for the image file,
+     * save the image with {@link FileService#saveImage(BufferedImage, String)}
+     * and copy the image to the Clipboard with {@link ClipboardImage#write(Image)}
+     *
+     * @param screenshot to save
+     * @throws IOException if an I/O error occurs
+     */
     private void saveImage(BufferedImage screenshot) throws IOException {
         String fileName = Util.generateRandomString(18);
 
-        Fireshot.getInstance().getFileService().saveImage(screenshot, fileName);
-
+        Fireshotapp.getInstance().getFileService().saveImage(screenshot, fileName);
+        System.out.println("Saved!");
         ClipboardImage.write(screenshot);
     }
 
+    /**
+     * Show the user a dialog to confirm the upload to the server,
+     * if it is not already confirmed.
+     * Cancel the upload if the user chooses the {@link JOptionPane#NO_OPTION}.
+     * After the upload is complete delete the image
+     *
+     * @param screenshot     to upload
+     * @param imageDetection whether it should use OCR or not
+     * @param googleSearch   whether it should be searched on google or not
+     */
     private void uploadImage(BufferedImage screenshot, boolean imageDetection, boolean googleSearch) {
-        //TODO Implement RequestService.java
+        if (Fireshotapp.getInstance().getJsonService().getConfig().getScreenshotConfig().isAskForUpload()) {
+            Pair<Integer, Boolean> pair = OptionCheckboxFrame.
+                    showDialog(null, "Fireshotapp will send the image to our server to save it for 6h. Will you allow it my lord?",
+                            "Fireshotapp - Image upload");
+            if (pair.getKey() == JOptionPane.NO_OPTION ||
+                    pair.getKey() == JOptionPane.CANCEL_OPTION || pair.getKey() == -1) {
+                Fireshotapp.getInstance().getSystemTray().info("Fireshot - Image upload",
+                        "Image upload canceled");
+                return;
+            }
+
+            if (pair.getValue()) {
+                Fireshotapp.getInstance().getJsonService().getConfig().getScreenshotConfig().setAskForUpload(false);
+                Fireshotapp.getInstance().getJsonService().saveAndApply();
+            }
+        }
+
         File file = new File("image.png");
         try {
             ImageIO.write(screenshot, "png", file);
@@ -110,7 +162,6 @@ public class ScreenshotService implements Drawable, ConfigManager {
                     @Override
                     public void onSuccess(@Nullable File file) {
                         if (file != null) {
-                            System.out.println("Testtt");
                             file.delete();
                         }
                     }
@@ -118,43 +169,44 @@ public class ScreenshotService implements Drawable, ConfigManager {
                     @Override
                     public void onFailure(Throwable throwable) {
                     }
-                }, Fireshot.getInstance().getExecutorService());
+                }, Fireshotapp.getInstance().getExecutorService());
     }
 
+    /**
+     * Create a sub-image with fitting bounds.
+     *
+     * @param x      selection coordinate
+     * @param y      selection coordinate
+     * @param width  selection width
+     * @param height selection height
+     * @return a {@link BufferedImage#getSubimage(int, int, int, int)}
+     */
     private BufferedImage takeScreenshot(int x, int y, int width, int height) {
         if (width == 0 || height == 0 || image == null) return null;
-        try {
-            return this.image.getSubimage(x, y, width, height);
-        } catch (RasterFormatException e) {
-            //Selection over top left corner
-            if (x < this.image.getMinX() && y < this.image.getMinY()) {
-                return this.image.getSubimage(this.image.getMinX(), this.image.getMinY(), width - Math.abs(x), height - Math.abs(y));
-            } //Selection over bot right corner
-            else if (x + width > this.image.getMinX() + this.image.getWidth() && y + height > this.image.getMinY() + this.image.getHeight()) {
-                return this.image.getSubimage(x, y, width - ((x + width) - this.image.getWidth()), height - ((y + height) - this.image.getHeight()));
-            } //Selection over bot left corner
-            else if (x < this.image.getMinX() && y + height > this.image.getMinY() + this.image.getHeight()) {
-                return this.image.getSubimage(this.image.getMinX(), y, width - Math.abs(x), height - ((y + height) - this.image.getHeight()));
-            } //Selection over top right corner
-            else if (x + width > this.image.getMinX() + this.image.getWidth() && y < this.image.getMinY()) {
-                return this.image.getSubimage(x, this.image.getMinY(), width - ((x + width) - this.image.getWidth()), height - Math.abs(y));
-            } //Selection over left side
-            else if (x < this.image.getMinX()) {
-                return this.image.getSubimage(this.image.getMinX(), y, width - Math.abs(x), height);
-            } //Selection over bot side
-            else if (y < this.image.getMinY()) {
-                return this.image.getSubimage(x, this.image.getMinY(), width, height - Math.abs(y));
-            } //Selection over right side
-            else if (x + width > this.image.getMinX() + this.image.getWidth()) {
-                return this.image.getSubimage(x, y, width - ((x + width) - this.image.getWidth()), height);
-            } //Selection over top side
-            else if (y + height > this.image.getMinY() + this.image.getHeight()) {
-                return this.image.getSubimage(x, y, width, height - ((y + height) - this.image.getHeight()));
-            }
-            return null;
+
+        if (x < 0) {
+            width += x;
+            x = 0;
+        } else if (x + width > this.image.getWidth()) {
+            width = this.image.getWidth() - x;
         }
+
+        if (y < 0) {
+            height += y;
+            y = 0;
+        } else if (y + height > this.image.getHeight()) {
+            height = this.image.getHeight() - y;
+        }
+
+        return this.image.getSubimage(x, y, width, height);
     }
 
+    /**
+     * Draw the selected part of the image so it has normal brightness
+     *
+     * @param g2d       {@link Graphics2D} to draw
+     * @param selection selected part
+     */
     private void drawSelected(Graphics2D g2d, Rectangle selection) {
         int x = selection.x;
         int y = selection.y;
@@ -177,13 +229,31 @@ public class ScreenshotService implements Drawable, ConfigManager {
         }
     }
 
+    /**
+     * Draw the zoom under the cursor and replace it,
+     * if it goes out of the screen
+     *
+     * @param g2d {@link Graphics2D} to draw
+     */
     private void drawZoom(Graphics2D g2d) {
-        ScreenshotService screenshotService = Fireshot.getInstance().getScreenshotService();
+        ScreenshotService screenshotService = Fireshotapp.getInstance().getScreenshotService();
         Point pointerLocation = MouseInfo.getPointerInfo().getLocation();
 
         int screenWidth = screenshotFrame.getWidth();
         int screenHeight = screenshotFrame.getHeight();
+        int screenX = screenshotFrame.getX();
+        int screenY = screenshotFrame.getY();
 
+        if (screenX < 0 || screenY < 0) {
+            if (screenX < 0 && screenY < 0) {
+                pointerLocation.x -= screenX;
+                pointerLocation.y -= screenY;
+            } else if (screenX < 0) {
+                pointerLocation.x -= screenX;
+            } else {
+                pointerLocation.y -= screenY;
+            }
+        }
 
         if (pointerLocation.x + 160 > screenWidth) {
             pointerLocation.x -= 140;
@@ -196,28 +266,37 @@ public class ScreenshotService implements Drawable, ConfigManager {
         Shape shape = new Ellipse2D.Float(pointerLocation.x, pointerLocation.y, 140, 140);
         g2d.setClip(shape);
 
-        Image subImage = screenshotService.takeScreenshot(pointerLocation.x - 6,
+        BufferedImage subImage = screenshotService.takeScreenshot(pointerLocation.x - 6,
                 pointerLocation.y - 6,
                 11, 11);
         if (subImage == null) return;
+
         g2d.drawImage(subImage, pointerLocation.x, pointerLocation.y, 140,
                 140, null);
 
         this.drawZoomRaster(g2d, pointerLocation);
-        g2d.setStroke(this.widthTwoStroke);
-        g2d.setColor(Color.white);
+        g2d.setStroke(Strokes.WIDTH_TWO_STROKE.get());
+        g2d.setColor(Color.WHITE);
         g2d.draw(shape);
+
+        pointerLocation.x += 140;
+        pointerLocation.y += 140;
+        this.drawWidthHeightAndXY(g2d, pointerLocation);
     }
 
+    /**
+     * Draw the raster/grid for the zoom
+     *
+     * @param g2d             to draw
+     * @param pointerLocation as location to draw
+     */
     private void drawZoomRaster(Graphics2D g2d, Point pointerLocation) {
-        //g2d.setColor(new Color(35, 255, 255, 77));
         g2d.setColor(this.zoomCrossColor);
         g2d.fillRect(pointerLocation.x + 64, pointerLocation.y, 12, 65);
-        g2d.fillRect(pointerLocation.x + 64, pointerLocation.y + 74, 12, 65);
+        g2d.fillRect(pointerLocation.x + 64, pointerLocation.y + 75, 12, 65);
         g2d.fillRect(pointerLocation.x, pointerLocation.y + 64, 65, 12);
-        g2d.fillRect(pointerLocation.x + 74, pointerLocation.y + 64, 65, 12);
+        g2d.fillRect(pointerLocation.x + 75, pointerLocation.y + 64, 65, 12);
 
-        //g2d.setColor(new Color(0, 0, 0, 100));
         g2d.setColor(this.zoomRasterColor);
 
         int count = 0;
@@ -233,17 +312,59 @@ public class ScreenshotService implements Drawable, ConfigManager {
             if (count == 3) continue;
             count++;
         }
-        g2d.setColor(Color.white);
-        g2d.setStroke(this.widthOneStroke);
+        g2d.setColor(Color.WHITE);
+        g2d.setStroke(Strokes.WIDTH_ONE_STROKE.get());
         g2d.drawRect(pointerLocation.x + 64, pointerLocation.y + 64, 11, 11);
         g2d.setClip(null);
+    }
+
+    /**
+     * Draw coordinate labels for mouse location
+     * and width and height of the selection
+     *
+     * @param g2d   {@link Graphics2D} to draw
+     * @param point mouse location
+     */
+    private void drawWidthHeightAndXY(Graphics2D g2d, Point point) {
+        g2d.setStroke(Strokes.WIDTH_ONE_STROKE.get());
+        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+        String xy = "x: " + mouseLocation.x + "  y: " + mouseLocation.y;
+        g2d.setFont(this.font);
+        if (this.zoom) {
+            g2d.setColor(ColorPalette.DARK_BLUE_170.get());
+            g2d.fillRoundRect(point.x - 120, point.y + 10, xy.length() * 7, 20, 10, 10);
+            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170.get());
+            g2d.drawRoundRect(point.x - 120, point.y + 10, xy.length() * 7, 20, 10, 10);
+            g2d.setColor(Color.white);
+            g2d.drawString(xy, point.x - 110, point.y + 25);
+        } else {
+            g2d.setColor(ColorPalette.DARK_BLUE_170.get());
+            g2d.fillRoundRect(point.x - 50, point.y + 15, xy.length() * 7, 20, 10, 10);
+            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170.get());
+            g2d.drawRoundRect(point.x - 50, point.y + 15, xy.length() * 7, 20, 10, 10);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString(xy, point.x - 40, point.y + 30);
+        }
+
+
+        if (this.selectionRectangle.x < 0 && this.selectionRectangle.y < 0) return;
+        String widthHeight = Math.abs(selectionRectangle.width) + " x " + Math.abs(selectionRectangle.height);
+        g2d.setColor(ColorPalette.DARK_BLUE_170.get());
+        g2d.fillRoundRect(selectionRectangle.x, selectionRectangle.y - 25,
+                widthHeight.length() * 9, 20, 10, 10);
+
+        g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170.get());
+        g2d.drawRoundRect(selectionRectangle.x, selectionRectangle.y - 25,
+                widthHeight.length() * 9, 20, 10, 10);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString(widthHeight, selectionRectangle.x + 10, selectionRectangle.y - 10);
     }
 
     @Override
     public void applyConfig(Config config) {
         ScreenshotConfig screenshotConfig = config.getScreenshotConfig();
         Color color = Color.decode(screenshotConfig.getDimColor());
-        this.dimColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 200);
+        this.dimColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 120);
         color = Color.decode(screenshotConfig.getZoomCrossColor());
         this.zoomCrossColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 77);
         color = Color.decode(screenshotConfig.getZoomRasterColor());
@@ -251,7 +372,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
         this.localSave = screenshotConfig.isLocalSave();
         this.upload = screenshotConfig.isUpload();
         this.zoom = screenshotConfig.isZoom();
-        TrayIcon trayIcon = Fireshot.getInstance().getSystemTray();
+        TrayIcon trayIcon = Fireshotapp.getInstance().getSystemTray();
         trayIcon.getLocalSaveItem().setState(this.localSave);
         trayIcon.getUploadItem().setState(this.upload);
     }
@@ -270,8 +391,12 @@ public class ScreenshotService implements Drawable, ConfigManager {
             //Draw selected image part
             this.drawSelected(g2d, this.selectionRectangle);
 
-            if (this.zoom && !this.drawService.isDraw()) this.drawZoom(g2d);
-            if (this.zoom && !this.drawService.isDraw()) this.drawZoom(g2d);
+            if (this.zoom && !this.drawService.isDraw()) {
+                this.drawZoom(g2d);
+            } else if (!this.zoom && !this.drawService.isDraw()) {
+                Point pointerLocation = MouseInfo.getPointerInfo().getLocation();
+                this.drawWidthHeightAndXY(g2d, pointerLocation);
+            }
         }
     }
 }

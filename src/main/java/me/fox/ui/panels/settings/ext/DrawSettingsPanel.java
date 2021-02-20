@@ -1,7 +1,7 @@
 package me.fox.ui.panels.settings.ext;
 
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.config.Config;
 import me.fox.config.DrawConfig;
 import me.fox.services.JsonService;
@@ -66,26 +66,26 @@ public class DrawSettingsPanel extends SettingsPanel {
     }
 
     private void defaultThicknessChanged(ChangeEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         int value = this.defaultThicknessComponent.getValue();
         jsonService.getConfig().getDrawConfig().setDefaultThickness(value);
     }
 
     private void thicknessIncreased(ChangeEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         int value = this.thicknessIncreaseComponent.getValue();
         jsonService.getConfig().getDrawConfig().setThicknessIncrease(value);
     }
 
     private void thicknessDecreased(ChangeEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         int value = this.thicknessDecreaseComponent.getValue();
         jsonService.getConfig().getDrawConfig().setThicknessDecrease(value);
     }
 
     private void colorChanged(ActionEvent event) {
         this.colorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         Color color = this.colorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getDrawConfig().setColor(hex);

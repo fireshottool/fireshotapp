@@ -2,7 +2,7 @@ package me.fox.services;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.components.ConfigManager;
 import me.fox.components.ResourceManager;
 import me.fox.config.Config;
@@ -49,20 +49,35 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     private float currentStrokeWidth;
     private float decreaseThickness, increaseThickness;
 
+    /**
+     * Constructor for {@link DrawService}
+     * Set {@link DrawService#drawListener}
+     */
     public DrawService() {
         this.drawListener = new DrawListener(this);
         this.registerDrawable(this, 1);
     }
 
+    /**
+     * If {@link DrawService#currentStrokeWidth} minus {@link DrawService#decreaseThickness}
+     * is not equal zero or smaller than zero
+     * Decrease the {@link DrawService#currentStrokeWidth} with {@link DrawService#decreaseThickness}
+     */
     public void decreaseThickness() {
         if (this.currentStrokeWidth - this.decreaseThickness <= 0) return;
         this.currentStrokeWidth -= this.decreaseThickness;
     }
 
+    /**
+     * Increase the {@link DrawService#currentStrokeWidth} with {@link DrawService#increaseThickness}
+     */
     public void increaseThickness() {
         this.currentStrokeWidth += this.increaseThickness;
     }
 
+    /**
+     * Reset all draw values which could be changed while taking a screenshot
+     */
     public void resetDraw() {
         this.drawings.clear();
         this.undoDrawings.clear();
@@ -92,24 +107,54 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
         }
     }
 
+    /**
+     * Increase the {@link DrawService#currentIndex} by one
+     * Add a new {@link Rectangle} to {@link DrawService#drawings} with the {@code point}
+     * and the current {@link DrawService#drawColor}, {@link DrawService#currentStrokeWidth}
+     * and {@link DrawService#fillRectangle}
+     *
+     * @param point where the rectangle starts
+     */
     public void addRectangle(Point point) {
         this.currentIndex++;
         this.drawings.add(new Rectangle(point.x, point.y, drawColor, currentStrokeWidth, fillRectangle));
     }
 
+    /**
+     * Resize the {@link DrawService#currentIndex} {@link Rectangle} in {@link DrawService#drawings}
+     * and set the size to the {@code point} minus the start {@link Point},
+     * which was set in {@link DrawService#addRectangle(Point)}, because this is the width and height
+     *
+     * @param point to set the size of the {@link Rectangle}
+     */
     public void resizeRectangle(Point point) {
         Rectangle rectangle = (Rectangle) this.drawings.get(this.currentIndex);
         rectangle.setSize(point.x - rectangle.x, point.y - rectangle.y);
     }
 
+    /**
+     * Increase the {@link DrawService#currentIndex} by one
+     * Add a new {@link Circle} to {@link DrawService#drawings} with the {@code point}
+     * and the current {@link DrawService#drawColor}, {@link DrawService#currentStrokeWidth}
+     * and {@link DrawService#fillCircle}
+     *
+     * @param point where the circle center is
+     */
     public void addCircle(Point point) {
         this.currentIndex++;
         this.drawings.add(new Circle(point.x, point.y, drawColor, currentStrokeWidth, fillCircle));
     }
 
+    /**
+     * Resize the {@link DrawService#currentIndex} {@link Circle} in {@link DrawService#drawings}.
+     * If control (keyChar 17) is pressed set the radius of the {@link Circle} (1:1),
+     * else set width and height of the {@link Circle}
+     *
+     * @param point to set the radius or width and height of the {@link Circle}
+     */
     public void resizeCurrentCircle(Point point) {
         Circle circle = (Circle) this.drawings.get(this.currentIndex);
-        if (Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(17)) {
+        if (Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(17)) {
             int radius = (int) Math.sqrt(Math.pow(circle.getX() - point.x, 2) + (Math.pow(circle.getY() - point.y, 2)));
             circle.setSize(radius * 2, radius * 2);
             return;
@@ -120,15 +165,31 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
         circle.setSize(width, height);
     }
 
-    public void addPoint(Point point) {
-        ((Line) this.drawings.get(this.currentIndex)).addPoint(point);
-    }
-
+    /**
+     * Increase the {@link DrawService#currentIndex} by one
+     * Add a new {@link Line} to {@link DrawService#drawings}
+     */
     public void addLine() {
         this.currentIndex++;
         this.drawings.add(new Line());
     }
 
+    /**
+     * Add a new {@link Point} to the {@link DrawService#currentIndex} {@link Line}
+     *
+     * @param point to add to the line
+     */
+    public void addPoint(Point point) {
+        ((Line) this.drawings.get(this.currentIndex)).addPoint(point);
+    }
+
+    /**
+     * If drawings contains a {@link Drawable} remove the latest one from the list
+     * and add it do the {@link DrawService#undoDrawings} {@link List}
+     * so the user is able to redo it
+     *
+     * @see DrawService#redoDrawing()
+     */
     public void undoDrawing() {
         if (this.drawings.size() != 0) {
             this.currentIndex--;
@@ -137,6 +198,13 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
         }
     }
 
+    /**
+     * If drawings contains a {@link Drawable} remove the latest one from the list
+     * and add it do the {@link DrawService#drawings} {@link List}
+     * so the user is able to undo it again
+     *
+     * @see DrawService#undoDrawing()
+     */
     public void redoDrawing() {
         if (this.undoDrawings.size() > 0) {
             this.currentIndex++;

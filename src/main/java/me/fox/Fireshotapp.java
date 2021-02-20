@@ -3,6 +3,7 @@ package me.fox;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import lombok.Getter;
+import me.fox.components.Version;
 import me.fox.services.*;
 import me.fox.ui.components.TrayIcon;
 import me.fox.ui.frames.ScreenshotFrame;
@@ -16,10 +17,12 @@ import java.util.concurrent.Executors;
  */
 
 @Getter
-public class Fireshot {
+public class Fireshotapp {
 
     @Getter
-    private static Fireshot instance;
+    private static Fireshotapp instance;
+
+    public static final Version VERSION = new Version("0.3.0.5");
 
     private final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(2));
 
@@ -32,10 +35,12 @@ public class Fireshot {
     private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
     private final TrayIcon systemTray = new TrayIcon("Fireshot");
     private final FileService fileService = new FileService(screenService, systemTray, drawService);
+    private final UpdateService updateService = new UpdateService(requestService, jsonService);
 
     private void load(String[] args) {
         this.readJson();
         this.fileService.loadResources();
+        this.updateService.checkUpdate(false);
         this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
     }
 
@@ -57,7 +62,7 @@ public class Fireshot {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        instance = new Fireshot();
+        instance = new Fireshotapp();
         instance.load(args);
     }
 }

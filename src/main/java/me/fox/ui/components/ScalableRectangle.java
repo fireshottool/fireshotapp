@@ -9,6 +9,9 @@ import me.fox.ui.frames.ScreenshotFrame;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author (Ausgefuchster)
@@ -24,6 +27,8 @@ public class ScalableRectangle extends Rectangle implements Drawable {
     private final ScalePoint[] scalePoints = this.createPoints();
     private final ScalableRectListener listener = new ScalableRectListener(this);
     private final Stroke stroke = new BasicStroke();
+    private Stroke dashedStroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
+            3.0f, new float[]{6}, 0);
     private int cursor = 1;
 
     /**
@@ -40,6 +45,7 @@ public class ScalableRectangle extends Rectangle implements Drawable {
         screenshotFrame.registerMouseListener(this.listener);
 
         this.setRect(-10, -10, 0, 0);
+        this.strokeChange();
     }
 
     /**
@@ -73,6 +79,22 @@ public class ScalableRectangle extends Rectangle implements Drawable {
         return this;
     }
 
+    private void strokeChange() {
+        Timer timer = new Timer();
+        AtomicInteger count = new AtomicInteger(0);
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                dashedStroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
+                        3.0f, new float[]{6}, count.get());
+                if (count.get() == 12) {
+                    count.set(0);
+                }
+                count.set(count.get() + 1);
+            }
+        }, 100, 50);
+    }
+
     @Override
     public void draw(Graphics2D g2d) {
         //Draw scalePoints
@@ -86,10 +108,9 @@ public class ScalableRectangle extends Rectangle implements Drawable {
             g2d.drawRect(var.x, var.y, var.width, var.height);
         });
         //Draw self
-        Stroke dashed = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
-                0, new float[]{3}, 0);
 
-        g2d.setStroke(dashed);
+
+        g2d.setStroke(dashedStroke);
 
         g2d.drawLine(this.x, this.y, this.x + this.width - 1, this.y);
         g2d.drawLine(this.x + this.width, this.y, this.x + this.width, this.y + this.height - 1);

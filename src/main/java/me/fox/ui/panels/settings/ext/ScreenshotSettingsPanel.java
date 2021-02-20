@@ -1,7 +1,7 @@
 package me.fox.ui.panels.settings.ext;
 
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.config.Config;
 import me.fox.config.FileConfig;
 import me.fox.config.ScreenshotConfig;
@@ -89,7 +89,7 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
 
     private void zoomCrossColorChanged(ActionEvent event) {
         this.zoomCrossColorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         Color color = this.zoomCrossColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getScreenshotConfig().setZoomCrossColor(hex);
@@ -97,7 +97,7 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
 
     private void zoomRasterColorChanged(ActionEvent event) {
         this.zoomRasterColorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         Color color = this.zoomRasterColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getScreenshotConfig().setZoomRasterColor(hex);
@@ -105,24 +105,24 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
 
     private void dimColorChanged(ActionEvent event) {
         this.dimColorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         Color color = this.dimColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getScreenshotConfig().setDimColor(hex);
     }
 
     private void saveCheckBoxActionPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         jsonService.getConfig().getScreenshotConfig().setLocalSave(this.saveCheckBox.getCheckBox().isSelected());
     }
 
     private void uploadCheckBoxActionPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         jsonService.getConfig().getScreenshotConfig().setUpload(this.uploadCheckBox.getCheckBox().isSelected());
     }
 
     private void zoomCheckBoxActionPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         jsonService.getConfig().getScreenshotConfig().setZoom(this.zoomCheckBox.getCheckBox().isSelected());
     }
 
@@ -137,5 +137,6 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
         this.locationChooserComponent.setLocationText(fileConfig.getImageLocation());
         this.uploadCheckBox.getCheckBox().setSelected(screenshotConfig.isUpload());
         this.saveCheckBox.getCheckBox().setSelected(screenshotConfig.isLocalSave());
+        this.zoomCheckBox.getCheckBox().setSelected(screenshotConfig.isZoom());
     }
 }

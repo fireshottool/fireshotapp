@@ -21,6 +21,15 @@ public class Circle implements Drawable {
     private int width;
     private int height;
 
+    /**
+     * Constructor for {@link Circle}
+     *
+     * @param x           to initialize {@link Circle#x}
+     * @param y           to initialize {@link Circle#y}
+     * @param color       to initialize {@link Circle#color}
+     * @param strokeWidth to initialize {@link Circle#stroke}
+     * @param fill        to initialize {@link Circle#fill}
+     */
     public Circle(int x, int y, Color color, float strokeWidth, boolean fill) {
         this.x = x;
         this.y = y;
@@ -29,6 +38,12 @@ public class Circle implements Drawable {
         this.stroke = new BasicStroke(strokeWidth);
     }
 
+    /**
+     * Sets the width and height of the {@link Circle}
+     *
+     * @param width  to set width
+     * @param height to set height
+     */
     public void setSize(int width, int height) {
         this.width = width;
         this.height = height;

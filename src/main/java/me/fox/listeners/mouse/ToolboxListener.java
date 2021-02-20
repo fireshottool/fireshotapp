@@ -16,6 +16,11 @@ public class ToolboxListener extends MouseAdapter {
     private final Toolbox toolbox;
     private int distanceX, distanceY;
 
+    /**
+     * Constructor for {@link ToolboxListener}
+     *
+     * @param toolbox to set {@link ToolboxListener#toolbox}
+     */
     public ToolboxListener(Toolbox toolbox) {
         this.toolbox = toolbox;
     }
@@ -29,11 +34,6 @@ public class ToolboxListener extends MouseAdapter {
     @Override
     public void mouseDragged(MouseEvent event) {
         this.toolbox.setLocation(event.getXOnScreen() - distanceX, event.getYOnScreen() - distanceY);
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent event) {
-
     }
 
     @Override

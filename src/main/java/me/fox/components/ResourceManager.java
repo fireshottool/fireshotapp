@@ -10,5 +10,10 @@ import java.util.List;
 
 public interface ResourceManager {
 
+    /**
+     * Apply the resources (images)
+     *
+     * @param files {@link List} of resources
+     */
     void applyResources(List<File> files);
 }

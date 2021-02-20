@@ -2,8 +2,12 @@ package me.fox.ui.components;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
+import me.fox.components.ConfigManager;
 import me.fox.components.ResourceManager;
+import me.fox.config.Config;
+import me.fox.config.ScreenshotConfig;
+import me.fox.services.JsonService;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -22,11 +26,11 @@ import java.util.Optional;
 
 @Getter
 @Setter
-public class TrayIcon extends java.awt.TrayIcon implements ResourceManager {
+public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, ConfigManager {
 
     private final PopupMenu popupMenu = new PopupMenu();
 
-    private MenuItem exitItem, settingsItem, reloadItem;
+    private MenuItem exitItem, settingsItem, reloadItem, updateItem, versionItem, switchItem;
     private CheckboxMenuItem localSaveItem, uploadItem;
 
     public TrayIcon(String tooltip) {
@@ -42,15 +46,36 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager {
         }
     }
 
+    public void info(String caption, String message) {
+        this.displayMessage(caption, message, MessageType.INFO);
+    }
+
+    public void warn(String caption, String message) {
+        this.displayMessage(caption, message, MessageType.WARNING);
+    }
+
+    public void error(String caption, String message) {
+        this.displayMessage(caption, message, MessageType.ERROR);
+    }
+
     private void setup() {
         this.exitItem = new MenuItem("Exit");
         this.exitItem.addActionListener(this::exitItemActionPerformed);
+
+        this.updateItem = new MenuItem("Check for updates...");
+        this.updateItem.addActionListener(this::updateItemActionPerformed);
 
         this.settingsItem = new MenuItem("Open settings");
         this.settingsItem.addActionListener(this::settingsItemActionPerformed);
 
         this.reloadItem = new MenuItem("Reload resources");
         this.reloadItem.addActionListener(this::reloadItemActionPerformed);
+
+        this.switchItem = new MenuItem("Switch upload and save");
+        this.switchItem.addActionListener(this::switchItemActionPerformed);
+
+        this.versionItem = new MenuItem("Version: " + Fireshotapp.VERSION.get());
+        this.versionItem.addActionListener(this::versionItemActionPerformed);
 
         this.localSaveItem = new CheckboxMenuItem("Save image");
         this.localSaveItem.addItemListener(this::localSaveItemStateChanged);
@@ -63,7 +88,10 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager {
         this.popupMenu.addSeparator();
         this.popupMenu.add(localSaveItem);
         this.popupMenu.add(uploadItem);
+        this.popupMenu.add(switchItem);
         this.popupMenu.addSeparator();
+        this.popupMenu.add(updateItem);
+        this.popupMenu.add(versionItem);
         this.popupMenu.add(exitItem);
     }
 
@@ -73,6 +101,44 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager {
 
     public void setUpload(boolean upload) {
         this.uploadItem.setState(upload);
+    }
+
+    private void exitItemActionPerformed(ActionEvent event) {
+        System.exit(200);
+    }
+
+    private void versionItemActionPerformed(ActionEvent event) {
+    }
+
+    private void switchItemActionPerformed(ActionEvent event) {
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        jsonService.getConfig().getScreenshotConfig().setLocalSave(!localSaveItem.getState());
+        jsonService.getConfig().getScreenshotConfig().setUpload(!uploadItem.getState());
+        jsonService.saveAndApply();
+    }
+
+    private void settingsItemActionPerformed(ActionEvent event) {
+        Fireshotapp.getInstance().getScreenService().getSettingsFrame().setVisible(true);
+    }
+
+    private void localSaveItemStateChanged(ItemEvent event) {
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        jsonService.getConfig().getScreenshotConfig().setLocalSave(this.localSaveItem.getState());
+        jsonService.saveAndApply();
+    }
+
+    private void uploadItemStateChanged(ItemEvent event) {
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        jsonService.getConfig().getScreenshotConfig().setUpload(this.uploadItem.getState());
+        jsonService.saveAndApply();
+    }
+
+    private void updateItemActionPerformed(ActionEvent event) {
+        Fireshotapp.getInstance().getUpdateService().checkUpdate(true);
+    }
+
+    private void reloadItemActionPerformed(ActionEvent event) {
+        Fireshotapp.getInstance().getFileService().loadResources();
     }
 
     @Override
@@ -89,23 +155,10 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager {
         });
     }
 
-    private void exitItemActionPerformed(ActionEvent event) {
-        System.exit(200);
-    }
-
-    private void settingsItemActionPerformed(ActionEvent event) {
-        Fireshot.getInstance().getScreenService().getSettingsFrame().setVisible(true);
-    }
-
-    private void localSaveItemStateChanged(ItemEvent event) {
-
-    }
-
-    private void uploadItemStateChanged(ItemEvent event) {
-
-    }
-
-    private void reloadItemActionPerformed(ActionEvent event) {
-        Fireshot.getInstance().getFileService().loadResources();
+    @Override
+    public void applyConfig(Config config) {
+        ScreenshotConfig screenshotConfig = config.getScreenshotConfig();
+        this.setLocalSave(screenshotConfig.isLocalSave());
+        this.setUpload(screenshotConfig.isUpload());
     }
 }

@@ -14,6 +14,11 @@ public class FoldEdgeLabelListener extends MouseAdapter {
 
     private final FoldEdgeLabel foldEdgeLabel;
 
+    /**
+     * Constructor for {@link FoldEdgeLabelListener}
+     *
+     * @param foldEdgeLabel to set {@link FoldEdgeLabelListener#foldEdgeLabel}
+     */
     public FoldEdgeLabelListener(FoldEdgeLabel foldEdgeLabel) {
         this.foldEdgeLabel = foldEdgeLabel;
     }

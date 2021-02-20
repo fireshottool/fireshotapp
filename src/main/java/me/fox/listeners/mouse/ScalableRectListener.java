@@ -1,7 +1,7 @@
 package me.fox.listeners.mouse;
 
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.ui.components.ScalableRectangle;
 
 import java.awt.*;
@@ -31,10 +31,25 @@ public class ScalableRectListener extends MouseAdapter {
         this.scalableRectangle = scalableRectangle;
     }
 
+    /**
+     * Update the {@link ScalableRectangle#getCursor()}
+     *
+     * @param event to update the cursor
+     */
+    private void updateCursor(MouseEvent event) {
+        this.scalableRectangle.setCursor(Cursor.CROSSHAIR_CURSOR);
+        if (this.scalableRectangle.contains(event.getPoint())) {
+            this.scalableRectangle.setCursor(Cursor.MOVE_CURSOR);
+        }
+        Arrays.stream(this.scalableRectangle.getScalePoints()).filter(var ->
+                var.contains(event.getPoint())).forEach(var -> this.scalableRectangle.setCursor(var.getDirection()));
+        this.scalableRectangle.getScreenshotFrame().updateCursor(this.scalableRectangle.getCursor());
+    }
+
     @Override
     public void mousePressed(MouseEvent event) {
         if (this.scalableRectangle.getDrawService().isDraw()) return;
-        Fireshot.getInstance().getScreenService().getScreenshotToolbox().hideSelf();
+        Fireshotapp.getInstance().getScreenService().getScreenshotToolbox().hideSelf();
 
         if (this.scalableRectangle.contains(event.getPoint()) &&
                 this.scalableRectangle.getCursor() == Cursor.MOVE_CURSOR) {
@@ -109,7 +124,7 @@ public class ScalableRectListener extends MouseAdapter {
             }
             this.scalableRectangle.setRect(this.scalableRectangle.reCalcRect());
         }
-        Fireshot.getInstance().getScreenService().getScreenshotToolbox().showSelf();
+        Fireshotapp.getInstance().getScreenService().getScreenshotToolbox().showSelf();
     }
 
     @Override
@@ -146,20 +161,5 @@ public class ScalableRectListener extends MouseAdapter {
     public void mouseMoved(MouseEvent event) {
         if (this.scalableRectangle.getDrawService().isDraw()) return;
         this.updateCursor(event);
-    }
-
-    /**
-     * Update the {@link ScalableRectangle#getCursor()}
-     *
-     * @param event to update the cursor
-     */
-    private void updateCursor(MouseEvent event) {
-        this.scalableRectangle.setCursor(Cursor.CROSSHAIR_CURSOR);
-        if (this.scalableRectangle.contains(event.getPoint())) {
-            this.scalableRectangle.setCursor(Cursor.MOVE_CURSOR);
-        }
-        Arrays.stream(this.scalableRectangle.getScalePoints()).filter(var ->
-                var.contains(event.getPoint())).forEach(var -> this.scalableRectangle.setCursor(var.getDirection()));
-        this.scalableRectangle.getScreenshotFrame().updateCursor(this.scalableRectangle.getCursor());
     }
 }

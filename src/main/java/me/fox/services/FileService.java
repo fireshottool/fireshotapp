@@ -1,14 +1,12 @@
 package me.fox.services;
 
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.collect.Lists;
 import lombok.Setter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.components.ConfigManager;
 import me.fox.components.ResourceManager;
 import me.fox.config.Config;
 import me.fox.config.FileConfig;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,9 +16,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author (Ausgefuchster)
@@ -31,88 +31,109 @@ import java.util.Objects;
 public class FileService implements ConfigManager {
 
     private final String fileSeparator = System.getProperty("file.separator");
-    private final String resourcePath = System.getProperty("user.home") +
-            fileSeparator + "fireshot" + fileSeparator + "resources" + fileSeparator;
+    private final String resourcePath = System.getenv("LOCALAPPDATA") +
+            fileSeparator + "Programs" + fileSeparator + fileSeparator +
+            "Fireshotapp" + fileSeparator + "data" + fileSeparator + "resources" + fileSeparator;
 
     private final List<File> resources = new ArrayList<>();
-    private final List<String> requiredFiles = List.of(
-            "decrease.png", "increase.png", "pencil.png", "redo.png", "undo.png",
-            "save.png", "toolboxbg.png", "trayIcon.png", "ocr.png", "googlesearch.png", "cross.png"
+    private final List<String> requiredFiles = Lists.newArrayList(
+            "decrease.png", "increase.png", "pencil.png", "pencilw.png", "redo.png", "undo.png",
+            "save.png", "trayIcon.png", "ocr.png", "googlesearch.png", "cross.png"
     );
     private final List<ResourceManager> resourceManagers = new ArrayList<>();
 
-    private Path screenshotPath = Path.of(System.getProperty("user.home") +
+    private Path screenshotPath = Paths.get(System.getProperty("user.home") +
             fileSeparator + "fireshot" + fileSeparator + "screenshots");
     private String imageType = "png";
 
+    /**
+     * Constructor for {@link FileService}.
+     *
+     * @param resourceManager to add to {@link FileService#resourceManagers}.
+     */
     public FileService(ResourceManager... resourceManager) {
-        this.resourceManagers.addAll(List.of(resourceManager));
+        this.resourceManagers.addAll(Lists.newArrayList(resourceManager));
     }
 
+    /**
+     * Save an image, if the directories does exist.
+     *
+     * @param image    to save
+     * @param fileName name of the image
+     * @throws IOException if an I/O error occurs
+     */
     public void saveImage(BufferedImage image, String fileName) throws IOException {
         if (!Files.exists(this.screenshotPath)) {
-            Files.createDirectories(screenshotPath);
+            Files.createDirectories(this.screenshotPath);
         }
-        File file = new File(this.screenshotPath.toString() + fileSeparator + fileName + "." + this.imageType);
+        File file = new File(this.screenshotPath.toString() + this.fileSeparator + fileName + "." + this.imageType);
         ImageIO.write(image, this.imageType, file);
     }
 
+    /**
+     * Clear all {@link FileService#resources} and
+     * load all files from the {@link FileService#resourcePath}
+     */
     public void loadResources() {
         this.resources.clear();
         File file = new File(resourcePath);
-        if (file.exists() && file.isDirectory()) {
+        if (file.exists()) {
             File[] files = file.listFiles(File::isFile);
             if (files != null) {
-                this.resources.addAll(List.of(files));
+                this.resources.addAll(Lists.newArrayList(files));
                 this.invokeResourceManager();
-                return;
+            }
+        } else {
+            try {
+                Files.createDirectories(file.toPath());
+                this.invokeResourceManager();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-        this.downLoadResources();
     }
 
-    private void downLoadResources() {
-        this.requiredFiles.forEach(var -> resources.add(this.getAndWriteImage(var)));
-    }
-
+    /**
+     * Check if all {@link FileService#requiredFiles} are loaded and
+     * invoke all {@link FileService#resourceManagers} with {@link ResourceManager#applyResources(List)}
+     */
     private void invokeResourceManager() {
         this.checkRequiredFiles();
         this.resourceManagers.forEach(var -> var.applyResources(this.resources));
     }
 
+    /**
+     * Check if all {@link FileService#requiredFiles} could be loaded into {@link FileService#resources}.
+     */
     private void checkRequiredFiles() {
         this.requiredFiles.stream()
                 .filter(var -> this.resources.stream().noneMatch(file -> file.getName().equals(var)))
                 .forEach(var -> this.resources.add(this.getAndWriteImage(var)));
     }
 
+    /**
+     * Download an image from the server and write it into the {@link FileService#resourcePath}
+     *
+     * @param imageName to get the image from the server
+     * @return the file from the image
+     */
     private File getAndWriteImage(String imageName) {
-        RequestService requestService = Fireshot.getInstance().getRequestService();
-        Futures.addCallback(requestService.requestImage(imageName), new FutureCallback<>() {
-            @Override
-            public void onSuccess(@Nullable Image image) {
-                Objects.requireNonNull(image);
-                try {
-                    ImageIO.write((RenderedImage) image, "png",
-                            new File(resourcePath + imageName));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                // TODO warning - could not load all resources
-                System.out.println("Could not load all resources");
-            }
-        }, Fireshot.getInstance().getExecutorService());
-        return new File(resourcePath + imageName + ".png");
+        RequestService requestService = Fireshotapp.getInstance().getRequestService();
+        try {
+            Image image = requestService.requestImage(imageName).get();
+            Objects.requireNonNull(image);
+            ImageIO.write((RenderedImage) image, "png",
+                    new File(resourcePath + imageName));
+        } catch (InterruptedException | IOException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return new File(resourcePath + imageName);
     }
 
     @Override
     public void applyConfig(Config config) {
         FileConfig fileConfig = config.getFileConfig();
-        this.screenshotPath = Path.of(fileConfig.getImageLocation());
+        this.screenshotPath = Paths.get(fileConfig.getImageLocation());
         this.imageType = fileConfig.getImageType();
     }
 }

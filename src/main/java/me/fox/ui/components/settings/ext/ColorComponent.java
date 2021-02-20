@@ -1,7 +1,7 @@
 package me.fox.ui.components.settings.ext;
 
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.ui.components.settings.FoldEdgeLabel;
 import me.fox.ui.components.settings.SettingsComponent;
 import me.fox.ui.frames.ColorPickerDialog;
@@ -64,7 +64,7 @@ public class ColorComponent extends SettingsComponent {
 
     private void cancelPerformed(ActionEvent event) {
         this.colorPickerDialog.setVisible(false);
-        this.foldEdgeLabel.setColor(Fireshot.getInstance().getDrawService().getDrawColor());
+        this.foldEdgeLabel.setColor(Fireshotapp.getInstance().getDrawService().getDrawColor());
     }
 
     private void colorChanged(ChangeEvent event) {

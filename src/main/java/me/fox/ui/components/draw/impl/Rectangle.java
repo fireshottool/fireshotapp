@@ -19,6 +19,15 @@ public class Rectangle extends java.awt.Rectangle implements Drawable {
     private final Stroke stroke;
     private final boolean fill;
 
+    /**
+     * Constructor for {@link Rectangle}
+     *
+     * @param x           to initialize {@link Rectangle#x}
+     * @param y           to initialize {@link Rectangle#y}
+     * @param color       to initialize {@link Rectangle#color}
+     * @param strokeWidth to initialize {@link Rectangle#stroke}
+     * @param fill        to initialize {@link Rectangle#fill}
+     */
     public Rectangle(int x, int y, Color color, float strokeWidth, boolean fill) {
         this.x = x;
         this.y = y;
@@ -31,47 +40,24 @@ public class Rectangle extends java.awt.Rectangle implements Drawable {
     public void draw(Graphics2D g2d) {
         g2d.setColor(color);
         g2d.setStroke(this.stroke);
+        int x = this.x;
+        int y = this.y;
+        int width = Math.abs(this.width);
+        int height = Math.abs(this.height);
+
+        if (width == 0 || height == 0)
+            return;
+        if (this.width < 0) {
+            x -= width;
+        }
+        if (this.height < 0) {
+            y -= height;
+        }
 
         if (this.fill) {
-            this.drawFillRect(g2d);
+            g2d.fillRect(x, y, width, height);
             return;
         }
-        this.drawRect(g2d);
-    }
-
-    private void drawRect(Graphics2D g2d) {
-        int x = this.x;
-        int y = this.y;
-        int width = Math.abs(this.width);
-        int height = Math.abs(this.height);
-        if (width != 0 && height != 0) {
-            if (this.width < 0 && this.height < 0) {
-                g2d.drawRect(x - width, y - height, width, height);
-            } else if (this.width < 0) {
-                g2d.drawRect(x - width, y, width, height);
-            } else if (this.height < 0) {
-                g2d.drawRect(x, y - height, width, height);
-            } else {
-                g2d.drawRect(x, y, width, height);
-            }
-        }
-    }
-
-    private void drawFillRect(Graphics2D g2d) {
-        int x = this.x;
-        int y = this.y;
-        int width = Math.abs(this.width);
-        int height = Math.abs(this.height);
-        if (width != 0 && height != 0) {
-            if (this.width < 0 && this.height < 0) {
-                g2d.fillRect(x - width, y - height, width, height);
-            } else if (this.width < 0) {
-                g2d.fillRect(x - width, y, width, height);
-            } else if (this.height < 0) {
-                g2d.fillRect(x, y - height, width, height);
-            } else {
-                g2d.fillRect(x, y, width, height);
-            }
-        }
+        g2d.drawRect(x, y, width, height);
     }
 }

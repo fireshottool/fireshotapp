@@ -13,10 +13,7 @@ import me.fox.listeners.keyboard.HotkeyListener;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author (Ausgefuchster)
@@ -27,25 +24,18 @@ import java.util.Optional;
 @Setter
 public class HotkeyService implements ConfigManager {
 
-    private final Map<String, HotkeyFunc> hotkeyMap = Map.ofEntries(
-            Map.entry("screenshot", this::screenshot),
-            Map.entry("escape", this::escape),
-            Map.entry("draw", this::draw),
-            Map.entry("redo", this::redo),
-            Map.entry("undo", this::undo),
-            Map.entry("confirm", this::confirm),
-            Map.entry("zoom", this::zoom)
-    );
-    private final DrawService drawService;
-    private final ScreenService screenService;
-    private final ScreenshotService screenshotService;
+    private final Map<String, HotkeyFunc> hotkeyMap = new HashMap<>();
+
     private final HotkeyListener hotkeyListener = new HotkeyListener(this);
     private final List<Integer> pressedKeys = new ArrayList<>();
     private final List<Hotkey> hotkeys = new ArrayList<>();
-    private final ToolboxComponent drawComponent;
     private final GlobalKeyboardHook globalKeyboardHook;
+    private final ScreenshotService screenshotService;
+    private final ToolboxComponent drawComponent;
+    private final ScreenService screenService;
+    private final DrawService drawService;
 
-    private boolean changingHotkey;
+    private boolean changingHotkey, listening;
 
 
     /**
@@ -55,22 +45,29 @@ public class HotkeyService implements ConfigManager {
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
         globalKeyboardHook = new GlobalKeyboardHook(true);
         globalKeyboardHook.addKeyListener(this.hotkeyListener);
-
         this.screenshotService = screenshotService;
         this.screenService = screenService;
         this.drawService = drawService;
         this.drawComponent = ((ScreenshotToolbox) this.screenService.getScreenshotToolbox()).getDrawComponent();
+
+        this.hotkeyMap.put("screenshot", this::screenshot);
+        this.hotkeyMap.put("escape", this::escape);
+        this.hotkeyMap.put("draw", this::draw);
+        this.hotkeyMap.put("redo", this::redo);
+        this.hotkeyMap.put("undo", this::undo);
+        this.hotkeyMap.put("confirm", this::confirm);
+        this.hotkeyMap.put("zoom", this::zoom);
     }
 
     /**
      * Invoke a {@link HotkeyService#hotkeyMap} method
-     * if the {@link Hotkey} is present and {@link Hotkey#isValid(GlobalKeyEvent, HotkeyService)}
+     * if the {@link Hotkey} is present and {@link Hotkey#canInvoke(GlobalKeyEvent, HotkeyService)}
      *
-     * @param event for the {@link Hotkey#isValid(GlobalKeyEvent, HotkeyService)} method
+     * @param event for the {@link Hotkey#canInvoke(GlobalKeyEvent, HotkeyService)} method
      */
     public void invokeIfPresent(GlobalKeyEvent event) {
         Optional<Hotkey> optionalHotkey = this.hotkeys
-                .stream().filter(var -> var.isValid(event, this) &&
+                .stream().filter(var -> var.canInvoke(event, this) &&
                         hotkeyMap.containsKey(var.getName())).findFirst();
         optionalHotkey.ifPresent(var -> hotkeyMap.get(var.getName()).invoke());
     }

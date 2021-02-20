@@ -1,6 +1,6 @@
 package me.fox.listeners.mouse;
 
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.services.DrawService;
 import me.fox.ui.components.draw.impl.Line;
 
@@ -17,6 +17,11 @@ public class DrawListener extends MouseAdapter {
     private final DrawService drawService;
     private boolean second;
 
+    /**
+     * Constructor for {@link DrawListener}
+     *
+     * @param drawService to set {@link DrawListener#drawService}
+     */
     public DrawListener(DrawService drawService) {
         this.drawService = drawService;
     }
@@ -32,7 +37,7 @@ public class DrawListener extends MouseAdapter {
                 this.drawService.addRectangle(event.getPoint());
                 return;
             }
-            if (Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
+            if (Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
                 this.drawService.addPoint(event.getPoint());
                 return;
             }
@@ -63,7 +68,7 @@ public class DrawListener extends MouseAdapter {
                 this.drawService.resizeRectangle(event.getPoint());
                 return;
             }
-            if (drawService.isLine() || Fireshot.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
+            if (drawService.isLine() || Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
                 Line line = (Line) this.drawService.getDrawings().get(this.drawService.getCurrentIndex());
                 if (line.getPoints().size() == 1) {
                     line.getPoints().add(event.getPoint());
@@ -81,10 +86,9 @@ public class DrawListener extends MouseAdapter {
     @Override
     public void mouseMoved(MouseEvent event) {
         if (this.drawService.isDraw() &&
-                !Fireshot.getInstance().getScreenshotFrame().getCursor().getName().equals("drawing")) {
-            System.out.println("Test" + this.drawService.getDrawCursor());
-            Fireshot.getInstance().getScreenshotFrame().setCursor(this.drawService.getDrawCursor());
-            Fireshot.getInstance().getScreenshotFrame().setCursor(this.drawService.getDrawCursor());
+                !Fireshotapp.getInstance().getScreenshotFrame().getCursor().getName().equals("drawing")) {
+            Fireshotapp.getInstance().getScreenshotFrame().setCursor(this.drawService.getDrawCursor());
+            Fireshotapp.getInstance().getScreenshotFrame().setCursor(this.drawService.getDrawCursor());
         }
     }
 }

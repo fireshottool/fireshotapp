@@ -10,6 +10,6 @@ import lombok.Data;
 @Data
 public class RequestConfig {
 
-    private String uploadURL = "https://firedata.eu:8443/upload", imageURL = "https://firedata.eu:8443/image",
-            imageDetectionURL = "https://firedata.eu:8433/imageDetectiopn";
+    private String uploadURL = "https://fireshotapp.eu/storage/upload/", imageURL = "https://fireshotapp.eu/storage/media/",
+            imageDetectionURL = "https://fireshotapp.eu/tesseract/ocr/";
 }

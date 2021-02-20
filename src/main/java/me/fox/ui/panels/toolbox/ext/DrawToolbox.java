@@ -1,7 +1,7 @@
 package me.fox.ui.panels.toolbox.ext;
 
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.enums.ToolboxType;
 import me.fox.services.DrawService;
 import me.fox.ui.components.toolbox.ToolboxComponent;
@@ -54,7 +54,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void line(ActionEvent event) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
         drawService.setRectangle(false);
         this.rectangleComponent.unselect();
         drawService.setCircle(false);
@@ -63,7 +63,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void circle(ActionEvent event) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
         drawService.setRectangle(false);
         this.rectangleComponent.unselect();
         drawService.setLine(false);
@@ -77,7 +77,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void rectangle(ActionEvent event) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
         drawService.setCircle(false);
         this.circleComponent.unselect();
         drawService.setLine(false);
@@ -91,7 +91,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void drawCircle(Graphics2D g2d) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
 
         g2d.setStroke(this.stroke);
         g2d.setColor(drawService.getDrawColor());
@@ -108,7 +108,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void drawRect(Graphics2D g2d) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
 
         g2d.setStroke(this.stroke);
         g2d.setColor(drawService.getDrawColor());
@@ -125,7 +125,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void drawLine(Graphics2D g2d) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
 
         g2d.setStroke(this.stroke);
         g2d.setColor(drawService.getDrawColor());
@@ -134,19 +134,19 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void undo(ActionEvent event) {
-        Fireshot.getInstance().getDrawService().undoDrawing();
+        Fireshotapp.getInstance().getDrawService().undoDrawing();
     }
 
     private void redo(ActionEvent event) {
-        Fireshot.getInstance().getDrawService().redoDrawing();
+        Fireshotapp.getInstance().getDrawService().redoDrawing();
     }
 
     private void increase(ActionEvent event) {
-        Fireshot.getInstance().getDrawService().increaseThickness();
+        Fireshotapp.getInstance().getDrawService().increaseThickness();
     }
 
     private void decrease(ActionEvent event) {
-        Fireshot.getInstance().getDrawService().decreaseThickness();
+        Fireshotapp.getInstance().getDrawService().decreaseThickness();
     }
 
     private void colorPicker(ActionEvent event) {
@@ -154,7 +154,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void colorChanged(ChangeEvent event) {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
         if (this.oldColor == null) {
             this.oldColor = drawService.getDrawColor();
         }
@@ -162,7 +162,7 @@ public class DrawToolbox extends Toolbox {
     }
 
     private void colorPickerCancel(ActionEvent event) {
-        Fireshot.getInstance().getDrawService().setDrawColor(this.oldColor);
+        Fireshotapp.getInstance().getDrawService().setDrawColor(this.oldColor);
         this.colorPickerDialog.setVisible(false);
         this.oldColor = null;
     }
@@ -176,12 +176,15 @@ public class DrawToolbox extends Toolbox {
     public void loadToolboxComponents() {
         this.colorPickerComponent = new DefaultToolboxComponent(this::colorPicker);
         this.addComponent(this.colorPickerComponent);
+        this.colorPickerComponent.setToolTipText("Pick color");
+
         this.lineComponent = new PaintedToolBoxComponent(
                 this::line,
                 true,
                 false,
                 this::drawLine);
         this.addComponent(this.lineComponent);
+        this.lineComponent.setToolTipText("Draw Line");
 
         this.circleComponent = new PaintedToolBoxComponent(
                 this::circle,
@@ -189,6 +192,7 @@ public class DrawToolbox extends Toolbox {
                 true,
                 this::drawCircle);
         this.addComponent(this.circleComponent);
+        this.circleComponent.setToolTipText("Draw Circle");
 
         this.rectangleComponent = new PaintedToolBoxComponent(
                 this::rectangle,
@@ -196,6 +200,7 @@ public class DrawToolbox extends Toolbox {
                 true,
                 this::drawRect);
         this.addComponent(this.rectangleComponent);
+        this.rectangleComponent.setToolTipText("Draw Rectangle");
 
         this.increaseComponent = new DefaultToolboxComponent(this::increase);
         this.addComponent(this.increaseComponent);
@@ -221,7 +226,7 @@ public class DrawToolbox extends Toolbox {
 
     @Override
     public void reset() {
-        DrawService drawService = Fireshot.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
         if (drawService.isDraw()) {
             if (drawService.isCircle()) {
                 this.circleComponent.unselect();

@@ -19,7 +19,6 @@ public class SettingsButton extends JButton {
         this.setContentAreaFilled(false);
         this.setBorder(BorderFactory.createLoweredBevelBorder());
         this.setBorder(BorderFactory.createRaisedBevelBorder());
-        //this.setBorder(BorderFactory.createMatteBorder(0,0,1,0, Color.BLACK));
         this.addActionListener(actionListener);
     }
 }

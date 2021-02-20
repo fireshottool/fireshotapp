@@ -94,12 +94,6 @@ public class ScreenshotFrame extends JFrame {
         this.addMouseWheelListener(mouseAdapter);
     }
 
-    public void unregisterMouseListener(MouseAdapter mouseAdapter) {
-        this.removeMouseListener(mouseAdapter);
-        this.removeMouseMotionListener(mouseAdapter);
-        this.removeMouseWheelListener(mouseAdapter);
-    }
-
     /**
      * Update the cursor
      *

@@ -1,7 +1,7 @@
 package me.fox.ui.frames;
 
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.components.ConfigManager;
 import me.fox.config.Config;
 import me.fox.services.JsonService;
@@ -9,6 +9,8 @@ import me.fox.ui.panels.PanelManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 /**
  * @author (Ausgefuchster)
@@ -16,7 +18,7 @@ import java.awt.event.ActionEvent;
  */
 
 @Getter
-public class SettingsFrame extends JFrame implements ConfigManager {
+public class SettingsFrame extends JFrame implements ConfigManager, WindowListener {
 
     private final PanelManager panelManager = new PanelManager(this);
     private final JButton okButton, cancelButton, applyButton;
@@ -39,7 +41,8 @@ public class SettingsFrame extends JFrame implements ConfigManager {
         this.setFocusable(true);
         this.setVisible(false);
         this.setLayout(null);
-        this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.addWindowListener(this);
     }
 
     private void setupButtons() {
@@ -61,24 +64,63 @@ public class SettingsFrame extends JFrame implements ConfigManager {
     }
 
     private void okPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         jsonService.saveAndApply();
         this.setVisible(false);
     }
 
     private void cancelPerformed(ActionEvent event) {
         this.setVisible(false);
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         jsonService.read();
     }
 
     private void applyPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
         jsonService.saveAndApply();
+    }
+
+    @Override
+    public void setVisible(boolean b) {
+        super.setVisible(b);
+        if (!b) return;
+        this.applyConfig(Fireshotapp.getInstance().getJsonService().getConfig());
     }
 
     @Override
     public void applyConfig(Config config) {
         this.panelManager.applyConfig(config);
+    }
+
+    @Override
+    public void windowClosed(WindowEvent event) {
+        this.setVisible(false);
+        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        jsonService.read();
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+    }
+
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
     }
 }

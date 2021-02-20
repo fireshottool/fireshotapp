@@ -11,9 +11,10 @@ import lombok.Data;
 public class Config {
     public static final Config DEFAULT_CONFIG = new Config();
 
-    private FileConfig fileConfig = new FileConfig();
-    private DrawConfig drawConfig = new DrawConfig();
-    private HotkeyConfig hotkeyConfig = new HotkeyConfig();
-    private RequestConfig requestConfig = new RequestConfig();
-    private ScreenshotConfig screenshotConfig = new ScreenshotConfig();
+    private final FileConfig fileConfig = new FileConfig();
+    private final DrawConfig drawConfig = new DrawConfig();
+    private final HotkeyConfig hotkeyConfig = new HotkeyConfig();
+    private final UpdateConfig updateConfig = new UpdateConfig();
+    private final RequestConfig requestConfig = new RequestConfig();
+    private final ScreenshotConfig screenshotConfig = new ScreenshotConfig();
 }

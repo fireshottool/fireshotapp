@@ -1,7 +1,7 @@
 package me.fox.listeners.keyboard;
 
+import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
-import me.fox.adapter.KeyboardListenerAdapter;
 import me.fox.services.HotkeyService;
 
 /**
@@ -9,7 +9,7 @@ import me.fox.services.HotkeyService;
  * @version (~ 22.10.2020)
  */
 
-public class HotkeyListener extends KeyboardListenerAdapter {
+public class HotkeyListener extends GlobalKeyAdapter {
 
     private final HotkeyService hotkeyService;
 

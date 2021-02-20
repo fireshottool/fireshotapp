@@ -1,5 +1,6 @@
 package me.fox.config;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
 import me.fox.components.Hotkey;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 public class HotkeyConfig {
 
-    private List<Hotkey> hotkeys = List.of(
+    private List<Hotkey> hotkeys = Lists.newArrayList(
             new Hotkey("screenshot", "Create screenshot", 44),
             new Hotkey("escape", "Escape", 27),
             new Hotkey("draw", "Switch to draw", 68, 17),

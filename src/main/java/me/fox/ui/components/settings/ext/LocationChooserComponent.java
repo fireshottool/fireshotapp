@@ -1,16 +1,16 @@
 package me.fox.ui.components.settings.ext;
 
+import com.sun.javafx.application.PlatformImpl;
+import javafx.stage.DirectoryChooser;
 import lombok.Getter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.services.JsonService;
 import me.fox.ui.components.settings.SettingsComponent;
-import me.fox.ui.panels.FileChooser;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
-import java.nio.file.Path;
 
 /**
  * @author (Ausgefuchster)
@@ -24,13 +24,12 @@ public class LocationChooserComponent extends SettingsComponent {
     private final JLabel label;
     private final String labelText;
 
-    private final FileChooser fileChooser;
+    private final DirectoryChooser fileChooser = new DirectoryChooser();
 
     public LocationChooserComponent(Point location, String label) {
         super(location);
 
         this.labelText = label;
-        this.fileChooser = new FileChooser(new File(System.getProperty("user.home")), this::locationChanged);
         this.button = new JButton("Choose Location");
         this.button.setSize(120, 30);
         this.button.setLocation(20, 40);
@@ -47,14 +46,14 @@ public class LocationChooserComponent extends SettingsComponent {
         this.label.setText(labelText + string);
     }
 
-    private void locationChanged(ActionEvent event) {
-        JsonService jsonService = Fireshot.getInstance().getJsonService();
-        Path path = this.fileChooser.getSelectedFile().toPath();
-        jsonService.getConfig().getFileConfig().setImageLocation(path.toString());
-        this.label.setText(labelText + path.toString());
-    }
-
     private void actionPerformed(ActionEvent event) {
-        this.fileChooser.showDialog(this, "Select Folder");
+        PlatformImpl.startup(() -> {
+            File file = this.fileChooser.showDialog(null);
+            if (file == null) return;
+            JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+            String filePath = file.toString();
+            jsonService.getConfig().getFileConfig().setImageLocation(filePath);
+            this.label.setText(labelText + filePath);
+        });
     }
 }

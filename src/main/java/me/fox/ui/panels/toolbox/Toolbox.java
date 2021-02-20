@@ -2,8 +2,9 @@ package me.fox.ui.panels.toolbox;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.Fireshot;
+import me.fox.Fireshotapp;
 import me.fox.components.ResourceManager;
+import me.fox.enums.ColorPalette;
 import me.fox.enums.ToolboxType;
 import me.fox.listeners.mouse.ToolboxListener;
 import me.fox.ui.components.ScalableRectangle;
@@ -207,28 +208,31 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
      * Show the {@link Toolbox}
      */
     public void showSelf() {
-        this.updateLocation(Fireshot.getInstance().getScreenshotService().getSelectionRectangle());
+        this.updateLocation(Fireshotapp.getInstance().getScreenshotService().getSelectionRectangle());
         this.setVisible(true);
     }
 
     @Override
     public void applyResources(List<File> files) {
         Optional<File> optionalFile = files.stream().filter(var -> var.getName().equals("toolboxbg.png")).findFirst();
-        optionalFile.ifPresentOrElse(var -> {
+        optionalFile.ifPresent(var -> {
             try {
                 this.setBackgroundImage(ImageIO.read(var));
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }, () -> this.setBackgroundImage(null));
+        });
+        if (optionalFile.isPresent()) return;
+        this.setBackgroundImage(null);
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        if (this.backgroundImage != null) {
-            g.drawImage(this.backgroundImage, 0, 0, this.getWidth(), this.getHeight(), null);
-        }
-        repaint();
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(1));
+        g2d.setColor(ColorPalette.DARK_BLUE_200.get());
+        g2d.fillRoundRect(0, 0, this.getWidth(), this.getHeight(), 10, 10);
+        g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_200.get());
+        g2d.drawRoundRect(0, 0, this.getWidth() - 1, this.getHeight() - 1, 10, 10);
     }
 }

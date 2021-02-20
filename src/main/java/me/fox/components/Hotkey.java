@@ -34,7 +34,7 @@ public class Hotkey {
      * @param hotkeyService to check if the {@link Hotkey#requiredKeys} are pressed
      * @return whether the {@link Hotkey} can be invoked or not
      */
-    public boolean isValid(GlobalKeyEvent event, HotkeyService hotkeyService) {
+    public boolean canInvoke(GlobalKeyEvent event, HotkeyService hotkeyService) {
         if (this.hotkey != event.getVirtualKeyCode()) return false;
         if (this.requiredKeys == null) return true;
         return this.requiredKeysPressed(hotkeyService);

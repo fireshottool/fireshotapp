@@ -1,5 +1,6 @@
 package me.fox.services;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import me.fox.config.Config;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,16 +24,24 @@ public class JsonService {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final String fileSeparator = System.getProperty("file.separator");
-    private final Path jsonPath = Path.of(System.getProperty("user.home") +
-            fileSeparator + "fireshot" + fileSeparator + "fireshot.json");
+    private final Path jsonPath = Paths.get(System.getenv("LOCALAPPDATA") +
+            fileSeparator + "Programs" + fileSeparator + fileSeparator +
+            "Fireshotapp" + fileSeparator + "data" + fileSeparator + "fireshot.json");
 
     private final List<ConfigManager> configManagers = new ArrayList<>();
 
     private Config config;
 
+    /**
+     * Read the config file - {@link JsonService#jsonPath},
+     * if the file does not exist or is empty create a default {@link Config} ({@link Config#DEFAULT_CONFIG}).
+     * Invoke all {@link ConfigManager}, when the config is loaded
+     *
+     * @param configManagers to invoke
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void read(ConfigManager... configManagers) {
-        this.configManagers.addAll(List.of(configManagers));
+        this.configManagers.addAll(Lists.newArrayList(configManagers));
         try {
             File file = this.jsonPath.toFile();
 
@@ -41,21 +51,41 @@ public class JsonService {
                 }
                 file.createNewFile();
 
-                FileWriter writer = new FileWriter(file);
-                this.gson.toJson(Config.DEFAULT_CONFIG, writer);
-
-                writer.flush();
-                writer.close();
+                this.config = this.createDefault(file);
+                Arrays.stream(configManagers).forEach(var -> var.applyConfig(this.config));
+                return;
             }
 
             this.config = this.gson.fromJson(new BufferedReader(new FileReader(file)), Config.class);
+            if (this.config == null)
+                this.config = this.createDefault(file);
 
-            Arrays.stream(configManagers).forEach(var -> var.applyConfig(this.config));
+            this.invokeConfigManager();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Save the current {@link JsonService#config}
+     * and read it to invoke all {@link JsonService#configManagers}
+     */
+    public void saveAndApply() {
+        this.save();
+        this.invokeConfigManager();
+    }
+
+    /**
+     * Invoke all {@link JsonService#configManagers}
+     */
+    private void invokeConfigManager() {
+        this.configManagers.forEach(var -> var.applyConfig(this.config));
+    }
+
+    /**
+     * Save the current {@link JsonService#config} to the {@link JsonService#jsonPath}
+     * Create the file and folders if they do not exist
+     */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void save() {
         try {
@@ -78,12 +108,22 @@ public class JsonService {
         }
     }
 
-    public void saveAndApply() {
-        this.save();
-        this.read(this.configManagers.toArray(ConfigManager[]::new));
-    }
+    /**
+     * Create the {@link Config#DEFAULT_CONFIG}
+     *
+     * @param file to create the default config
+     * @return the default config
+     * @throws IOException if there was a problem writing to the writer
+     * @see Gson#toJson(Object, Appendable)
+     */
+    private Config createDefault(File file) throws IOException {
+        FileWriter writer = new FileWriter(file);
+        Config config = Config.DEFAULT_CONFIG;
+        this.gson.toJson(config, writer);
 
-    public void registerConfigManagers(ConfigManager... configManagers) {
-        this.configManagers.addAll(List.of(configManagers));
+        writer.flush();
+        writer.close();
+
+        return config;
     }
 }
