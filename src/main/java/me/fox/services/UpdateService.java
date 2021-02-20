@@ -47,12 +47,12 @@ public class UpdateService {
                         Pair<Integer, Boolean> pair = OptionCheckboxFrame.showDialog(null, "Update for Fireshotapp available from "
                                 + Fireshotapp.VERSION.get() + " to " + string, "Fireshotapp - Update");
                         if (pair.getKey() == JOptionPane.YES_OPTION) {
-                            update(string);
                             if (pair.getValue()) {
                                 jsonService.getConfig().getUpdateConfig().setAskForUpdate(false);
                                 jsonService.getConfig().getUpdateConfig().setUpdate(true);
                                 jsonService.saveAndApply();
                             }
+                            update(string);
                         } else if (pair.getKey() == JOptionPane.NO_OPTION && pair.getValue()) {
                             jsonService.getConfig().getUpdateConfig().setAskForUpdate(false);
                             jsonService.getConfig().getUpdateConfig().setUpdate(false);
