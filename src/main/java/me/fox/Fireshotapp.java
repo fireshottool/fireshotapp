@@ -37,7 +37,7 @@ public class Fireshotapp {
     private final FileService fileService = new FileService(screenService, systemTray, drawService);
     private final UpdateService updateService = new UpdateService(requestService, jsonService);
 
-    private void load(String[] args) {
+    private void load() {
         this.readJson();
         this.fileService.loadResources();
         this.updateService.checkUpdate(false);
@@ -63,6 +63,6 @@ public class Fireshotapp {
             e.printStackTrace();
         }
         instance = new Fireshotapp();
-        instance.load(args);
+        instance.load();
     }
 }
