@@ -59,14 +59,14 @@ public class HotkeyService implements ConfigManager {
     }
 
     /**
-     * Invokes a {@link HotkeyService#hotkeyMap} method if the {@link Hotkey} is present
-     * and {@link Hotkey#canInvoke(GlobalKeyEvent, HotkeyService)}.
+     * Invokes a {@link HotkeyService#hotkeyMap} method if the {@link Hotkey}
+     * is present and {@link Hotkey#canInvoke(GlobalKeyEvent, List)}.
      *
-     * @param event for the {@link Hotkey#canInvoke(GlobalKeyEvent, HotkeyService)} method
+     * @param event for the {@link Hotkey#canInvoke(GlobalKeyEvent, List)} method
      */
     public void invokeIfPresent(GlobalKeyEvent event) {
         Optional<Hotkey> optionalHotkey = this.hotkeys
-                .stream().filter(var -> var.canInvoke(event, this) &&
+                .stream().filter(var -> var.canInvoke(event, this.getPressedKeys()) &&
                         this.hotkeyMap.containsKey(var.getName())).findFirst();
         optionalHotkey.ifPresent(var -> this.hotkeyMap.get(var.getName()).run());
     }

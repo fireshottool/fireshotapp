@@ -3,9 +3,9 @@ package me.fox.components;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import lombok.Getter;
 import lombok.Setter;
-import me.fox.services.HotkeyService;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author (Ausgefuchster)
@@ -30,24 +30,23 @@ public class Hotkey {
     /**
      * Checks if the {@link Hotkey} fits and can be invoked.
      *
-     * @param event         to get the pressed keyCode
-     * @param hotkeyService to check if the {@link Hotkey#requiredKeys} are pressed
-     * @return whether the {@link Hotkey} can be invoked or not
+     * @param event to get the pressed keyCode
+     * @param keys  the keys to check
+     * @return whether the {@link Hotkey} can be invoked
      */
-    public boolean canInvoke(GlobalKeyEvent event, HotkeyService hotkeyService) {
+    public boolean canInvoke(GlobalKeyEvent event, List<Integer> keys) {
         if (this.hotkey != event.getVirtualKeyCode()) return false;
         if (this.requiredKeys == null) return true;
-        return this.requiredKeysPressed(hotkeyService);
+        return this.requiredKeysPressed(keys);
     }
 
     /**
      * Checks whether the {@link Hotkey#requiredKeys} are pressed.
      *
-     * @param hotkeyService to get the {@link java.util.List}
-     *                      of pressed keys {@link HotkeyService#getPressedKeys()}
-     * @return whether the {@link Hotkey#requiredKeys} are pressed or not
+     * @param keys the keys to check
+     * @return whether the {@link Hotkey#requiredKeys} are pressed
      */
-    private boolean requiredKeysPressed(HotkeyService hotkeyService) {
-        return hotkeyService.getPressedKeys().containsAll(Arrays.asList(this.requiredKeys));
+    private boolean requiredKeysPressed(List<Integer> keys) {
+        return keys.containsAll(Arrays.asList(this.requiredKeys));
     }
 }
