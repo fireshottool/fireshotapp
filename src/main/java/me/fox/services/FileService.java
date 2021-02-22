@@ -47,7 +47,7 @@ public class FileService implements ConfigManager {
     private String imageType = "png";
 
     /**
-     * Constructor for {@link FileService}.
+     * Constructor for {@link FileService}
      *
      * @param resourceManager to add to {@link FileService#resourceManagers}.
      */
@@ -56,7 +56,7 @@ public class FileService implements ConfigManager {
     }
 
     /**
-     * Save an image, if the directories does exist.
+     * Saves an image, if the directories exist.
      *
      * @param image    to save
      * @param fileName name of the image
@@ -71,8 +71,8 @@ public class FileService implements ConfigManager {
     }
 
     /**
-     * Clear all {@link FileService#resources} and
-     * load all files from the {@link FileService#resourcePath}
+     * Clears all {@link FileService#resources} and
+     * loads all files from the {@link FileService#resourcePath}.
      */
     public void loadResources() {
         this.resources.clear();
@@ -94,8 +94,8 @@ public class FileService implements ConfigManager {
     }
 
     /**
-     * Check if all {@link FileService#requiredFiles} are loaded and
-     * invoke all {@link FileService#resourceManagers} with {@link ResourceManager#applyResources(List)}
+     * Checks if all {@link FileService#requiredFiles} are loaded and
+     * invokes all {@link FileService#resourceManagers} with {@link ResourceManager#applyResources(List)}.
      */
     private void invokeResourceManager() {
         this.checkRequiredFiles();
@@ -103,7 +103,7 @@ public class FileService implements ConfigManager {
     }
 
     /**
-     * Check if all {@link FileService#requiredFiles} could be loaded into {@link FileService#resources}.
+     * Checks if all {@link FileService#requiredFiles} could be loaded into {@link FileService#resources}.
      */
     private void checkRequiredFiles() {
         this.requiredFiles.stream()
@@ -112,7 +112,7 @@ public class FileService implements ConfigManager {
     }
 
     /**
-     * Download an image from the server and write it into the {@link FileService#resourcePath}
+     * Downloads an image from the server and writes it into the {@link FileService#resourcePath}.
      *
      * @param imageName to get the image from the server
      * @return the file from the image

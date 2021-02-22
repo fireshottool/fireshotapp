@@ -20,8 +20,10 @@ public class ScreenshotFrame extends JFrame {
 
     /**
      * Constructor for {@link ScreenshotFrame}
-     * Call the super Constructor from {@link JFrame} to set the title to {@param title}
-     * Load the basic properties for the {@link JFrame}
+     * <p>
+     * Calls the super constructor from {@link JFrame} to set
+     * the title to {@param title}.
+     * Loads the basic properties for the {@link JFrame}.
      *
      * @param title for the {@link JFrame}
      */
@@ -32,7 +34,7 @@ public class ScreenshotFrame extends JFrame {
     }
 
     /**
-     * Load the basic properties for the {@link JFrame}
+     * Loads the basic properties for the {@link JFrame}.
      */
     private void loadFrame() {
         this.setFocusable(true);
@@ -47,9 +49,9 @@ public class ScreenshotFrame extends JFrame {
     }
 
     /**
-     * Calculate the {@link JFrame} {@link JFrame#getSize()} and {@link JFrame#getLocation()}
-     * {@link Arrays#stream(Object[])} through all connected {@link GraphicsDevice} and calculate the lowest
-     * value for x and y and the width and height for all connected {@link GraphicsDevice} together
+     * Calculates the {@link JFrame} {@link JFrame#getSize()} and {@link JFrame#getLocation()}
+     * {@link Arrays#stream(Object[])} through all connected {@link GraphicsDevice} and calculates
+     * the lowest value for x and y and the width and height for all connected {@link GraphicsDevice}.
      */
     private void calculateFrameSize() {
         AtomicInteger width = new AtomicInteger(0);
@@ -84,7 +86,7 @@ public class ScreenshotFrame extends JFrame {
     }
 
     /**
-     * Register a new {@link MouseAdapter} to the {@link JFrame}
+     * Registers a new {@link MouseAdapter} to the {@link JFrame}.
      *
      * @param mouseAdapter to register
      */
@@ -95,7 +97,7 @@ public class ScreenshotFrame extends JFrame {
     }
 
     /**
-     * Update the cursor
+     * Updates the cursor.
      *
      * @param cursorType to update with {@link Cursor} class
      */

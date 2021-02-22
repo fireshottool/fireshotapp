@@ -40,7 +40,7 @@ public class HotkeyService implements ConfigManager {
 
     /**
      * Constructor for {@link HotkeyService}
-     * registers the {@link HotkeyService#hotkeyListener}
+     * Registers the {@link HotkeyService#hotkeyListener}.
      */
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
         globalKeyboardHook = new GlobalKeyboardHook(true);
@@ -60,8 +60,8 @@ public class HotkeyService implements ConfigManager {
     }
 
     /**
-     * Invoke a {@link HotkeyService#hotkeyMap} method
-     * if the {@link Hotkey} is present and {@link Hotkey#canInvoke(GlobalKeyEvent, HotkeyService)}
+     * Invokes a {@link HotkeyService#hotkeyMap} method if the {@link Hotkey} is present
+     * and {@link Hotkey#canInvoke(GlobalKeyEvent, HotkeyService)}.
      *
      * @param event for the {@link Hotkey#canInvoke(GlobalKeyEvent, HotkeyService)} method
      */
@@ -73,7 +73,7 @@ public class HotkeyService implements ConfigManager {
     }
 
     /**
-     * Register a key if pressed to {@link HotkeyService#pressedKeys}
+     * Registers a key if pressed to {@link HotkeyService#pressedKeys}.
      *
      * @param keyCode key to register
      */
@@ -84,7 +84,7 @@ public class HotkeyService implements ConfigManager {
     }
 
     /**
-     * Unregister a key if released from {@link HotkeyService#pressedKeys}
+     * Unregisters a key if released from {@link HotkeyService#pressedKeys}.
      *
      * @param keyCode key to unregister
      */
