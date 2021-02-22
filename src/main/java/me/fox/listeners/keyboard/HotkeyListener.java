@@ -2,25 +2,17 @@ package me.fox.listeners.keyboard;
 
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
+import lombok.AllArgsConstructor;
 import me.fox.services.HotkeyService;
 
 /**
  * @author (Ausgefuchster)
  * @version (~ 22.10.2020)
  */
-
+@AllArgsConstructor
 public class HotkeyListener extends GlobalKeyAdapter {
 
     private final HotkeyService hotkeyService;
-
-    /**
-     * Constructor for {@link HotkeyService}
-     *
-     * @param hotkeyService to set {@link HotkeyListener#hotkeyService}
-     */
-    public HotkeyListener(HotkeyService hotkeyService) {
-        this.hotkeyService = hotkeyService;
-    }
 
     @Override
     public void keyPressed(GlobalKeyEvent event) {

@@ -1,5 +1,6 @@
 package me.fox.listeners.mouse;
 
+import lombok.AllArgsConstructor;
 import me.fox.Fireshotapp;
 import me.fox.ui.components.settings.ext.HotkeyComponent;
 
@@ -11,19 +12,10 @@ import java.awt.event.MouseEvent;
  * @author (Ausgefuchster)
  * @version (~ 29.11.2020)
  */
-
+@AllArgsConstructor
 public class HotkeyComponentListener extends MouseAdapter {
 
     private final HotkeyComponent hotkeyComponent;
-
-    /**
-     * Constructor for {@link HotkeyComponentListener}
-     *
-     * @param hotkeyComponent to set {@link HotkeyComponentListener#hotkeyComponent}
-     */
-    public HotkeyComponentListener(HotkeyComponent hotkeyComponent) {
-        this.hotkeyComponent = hotkeyComponent;
-    }
 
     @Override
     public void mouseClicked(MouseEvent event) {
