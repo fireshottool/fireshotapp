@@ -24,20 +24,8 @@ public class Switcher<L, R> {
         return this.current.equals(this.left);
     }
 
-    public boolean isLeft(Object o) {
-        return this.left.equals(o);
-    }
-
     public boolean isRight() {
         return this.current.equals(this.right);
-    }
-
-    public boolean isRight(Object o) {
-        return this.right.equals(o);
-    }
-
-    public boolean isEither(Object v) {
-        return this.isLeft(v) || this.isRight(v);
     }
 
     public void switchSides() {
