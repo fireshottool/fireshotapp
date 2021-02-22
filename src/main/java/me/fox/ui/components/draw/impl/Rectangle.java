@@ -38,7 +38,7 @@ public class Rectangle extends java.awt.Rectangle implements Drawable {
 
     @Override
     public void draw(Graphics2D g2d) {
-        g2d.setColor(color);
+        g2d.setColor(this.color);
         g2d.setStroke(this.stroke);
         int x = this.x;
         int y = this.y;

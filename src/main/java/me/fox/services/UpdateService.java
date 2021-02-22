@@ -86,8 +86,8 @@ public class UpdateService {
         StringBuilder urlBuilder = new StringBuilder("https://github.com/fireshottool/fireshotapp/releases/download/v")
                 .append(newVersion).append("/fireshotapp-setup-").append(newVersion).append(".exe");
         StringBuilder builder = new StringBuilder(System.getenv("LOCALAPPDATA"));
-        builder.append(fileSeparator).append("Programs").append(fileSeparator)
-                .append(fileSeparator).append("Fireshotapp").append(fileSeparator)
+        builder.append(this.fileSeparator).append("Programs").append(fileSeparator)
+                .append(this.fileSeparator).append("Fireshotapp").append(fileSeparator)
                 .append("fireshotapp-setup-").append(newVersion).append(".exe");
 
         try {

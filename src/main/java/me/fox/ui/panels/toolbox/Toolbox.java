@@ -47,7 +47,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
         this.toolboxType = toolboxType;
         this.load();
         this.loadToolboxComponents();
-        this.registerMouseListener(toolboxListener);
+        this.registerMouseListener(this.toolboxListener);
     }
 
     public abstract void loadToolboxComponents();

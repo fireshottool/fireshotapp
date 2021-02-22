@@ -76,7 +76,7 @@ public class FileService implements ConfigManager {
      */
     public void loadResources() {
         this.resources.clear();
-        File file = new File(resourcePath);
+        File file = new File(this.resourcePath);
         if (file.exists()) {
             File[] files = file.listFiles(File::isFile);
             if (files != null) {
@@ -123,11 +123,11 @@ public class FileService implements ConfigManager {
             Image image = requestService.requestImage(imageName).get();
             Objects.requireNonNull(image);
             ImageIO.write((RenderedImage) image, "png",
-                    new File(resourcePath + imageName));
+                    new File(this.resourcePath + imageName));
         } catch (InterruptedException | IOException | ExecutionException e) {
             e.printStackTrace();
         }
-        return new File(resourcePath + imageName);
+        return new File(this.resourcePath + imageName);
     }
 
     @Override

@@ -53,7 +53,7 @@ public class ClipboardImage {
         @SuppressWarnings("NullableProblems")
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (isDataFlavorSupported(flavor)) {
-                return image;
+                return this.image;
             } else {
                 throw new UnsupportedFlavorException(flavor);
             }

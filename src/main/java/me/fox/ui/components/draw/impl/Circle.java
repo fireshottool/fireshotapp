@@ -51,7 +51,7 @@ public class Circle implements Drawable {
 
     @Override
     public void draw(Graphics2D g2d) {
-        g2d.setColor(color);
+        g2d.setColor(this.color);
         g2d.setStroke(this.stroke);
         if (this.width != 0 && this.height != 0) {
             if (this.fill) {

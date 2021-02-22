@@ -53,9 +53,9 @@ public class ScalableRectListener extends MouseAdapter {
 
         if (this.scalableRectangle.contains(event.getPoint()) &&
                 this.scalableRectangle.getCursor() == Cursor.MOVE_CURSOR) {
-            drag = true;
-            distanceX = event.getX() - this.scalableRectangle.x;
-            distanceY = event.getY() - this.scalableRectangle.y;
+            this.drag = true;
+            this.distanceX = event.getX() - this.scalableRectangle.x;
+            this.distanceY = event.getY() - this.scalableRectangle.y;
             return;
         }
         int x = this.scalableRectangle.x;
@@ -66,34 +66,34 @@ public class ScalableRectListener extends MouseAdapter {
         switch (this.scalableRectangle.getCursor()) {
             case Cursor.SW_RESIZE_CURSOR:
                 this.scalableRectangle.setRect(x + width, y, -width, height);
-                diagonal = true;
+                this.diagonal = true;
                 break;
             case Cursor.SE_RESIZE_CURSOR:
-                diagonal = true;
+                this.diagonal = true;
                 break;
             case Cursor.NW_RESIZE_CURSOR:
                 this.scalableRectangle.setRect(x + width, y + height, -width, -height);
-                diagonal = true;
+                this.diagonal = true;
                 break;
             case Cursor.NE_RESIZE_CURSOR:
                 this.scalableRectangle.setRect(x, y + height, width, -height);
-                diagonal = true;
+                this.diagonal = true;
                 break;
             case Cursor.N_RESIZE_CURSOR:
                 this.scalableRectangle.setRect(x, y + height, width, -height);
-                diagonal = false;
+                this.diagonal = false;
                 break;
             case Cursor.W_RESIZE_CURSOR:
                 this.scalableRectangle.setRect(x + width, y, -width, height);
-                diagonal = false;
+                this.diagonal = false;
                 break;
             case Cursor.E_RESIZE_CURSOR:
             case Cursor.S_RESIZE_CURSOR:
-                diagonal = false;
+                this.diagonal = false;
                 break;
             case Cursor.CROSSHAIR_CURSOR:
                 this.scalableRectangle.setRect(event.getX(), event.getY(), 0, 0);
-                diagonal = true;
+                this.diagonal = true;
         }
     }
 
@@ -101,8 +101,8 @@ public class ScalableRectListener extends MouseAdapter {
     public void mouseReleased(MouseEvent event) {
         if (this.scalableRectangle.getDrawService().isDraw()) return;
 
-        if (drag) {
-            drag = false;
+        if (this.drag) {
+            this.drag = false;
         } else {
             int x = this.scalableRectangle.x;
             int y = this.scalableRectangle.y;
@@ -131,9 +131,9 @@ public class ScalableRectListener extends MouseAdapter {
     public void mouseDragged(MouseEvent event) {
         if (this.scalableRectangle.getDrawService().isDraw()) return;
 
-        if (drag) {
-            this.scalableRectangle.x = event.getX() - distanceX;
-            this.scalableRectangle.y = event.getY() - distanceY;
+        if (this.drag) {
+            this.scalableRectangle.x = event.getX() - this.distanceX;
+            this.scalableRectangle.y = event.getY() - this.distanceY;
             return;
         }
 
@@ -142,7 +142,7 @@ public class ScalableRectListener extends MouseAdapter {
         int height = this.scalableRectangle.height;
         int width = this.scalableRectangle.width;
 
-        if (diagonal) {
+        if (this.diagonal) {
             this.scalableRectangle.setRect(x, y, event.getX() - x, event.getY() - y);
         } else {
             switch (this.scalableRectangle.getCursor()) {

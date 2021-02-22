@@ -85,7 +85,7 @@ public class ScreenService implements ResourceManager {
         this.screenshotFrame.setVisible(false);
         DrawService drawService = Fireshotapp.getInstance().getDrawService();
         drawToolbox.reset();
-        screenshotToolbox.reset();
+        this.screenshotToolbox.reset();
         drawService.resetDraw();
         this.drawToolbox.hideSelf();
         this.screenshotToolbox.hideSelf();
@@ -94,6 +94,6 @@ public class ScreenService implements ResourceManager {
     @Override
     public void applyResources(List<File> files) {
         drawToolbox.applyResources(files);
-        screenshotToolbox.applyResources(files);
+        this.screenshotToolbox.applyResources(files);
     }
 }

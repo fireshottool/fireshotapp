@@ -110,7 +110,7 @@ public class ScalableRectangle extends Rectangle implements Drawable {
         //Draw self
 
 
-        g2d.setStroke(dashedStroke);
+        g2d.setStroke(this.dashedStroke);
 
         g2d.drawLine(this.x, this.y, this.x + this.width - 1, this.y);
         g2d.drawLine(this.x + this.width, this.y, this.x + this.width, this.y + this.height - 1);

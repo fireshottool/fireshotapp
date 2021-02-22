@@ -27,7 +27,7 @@ public class ScalePoint extends Rectangle {
     }
 
     public void updateLocation(Rectangle rect) {
-        switch (direction) {
+        switch (this.direction) {
             case Cursor.SW_RESIZE_CURSOR:
                 setLocation(rect.x - 5, rect.y + rect.height - 5);
                 break;

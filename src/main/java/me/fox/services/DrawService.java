@@ -118,7 +118,7 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      */
     public void addRectangle(Point point) {
         this.currentIndex++;
-        this.drawings.add(new Rectangle(point.x, point.y, drawColor, currentStrokeWidth, fillRectangle));
+        this.drawings.add(new Rectangle(point.x, point.y, this.drawColor, currentStrokeWidth, fillRectangle));
     }
 
     /**
@@ -144,7 +144,7 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      */
     public void addCircle(Point point) {
         this.currentIndex++;
-        this.drawings.add(new Circle(point.x, point.y, drawColor, currentStrokeWidth, fillCircle));
+        this.drawings.add(new Circle(point.x, point.y, this.drawColor, this.currentStrokeWidth, this.fillCircle));
     }
 
     /**
@@ -254,7 +254,7 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
                         new Point(5, 25),
                         "drawing"
                 );
-                System.out.println("Test" + drawCursor);
+                System.out.println("Test" + this.drawCursor);
             }
             catch (IOException e) {
                 e.printStackTrace();

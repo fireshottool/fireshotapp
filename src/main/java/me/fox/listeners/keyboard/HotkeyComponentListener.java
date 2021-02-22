@@ -21,7 +21,7 @@ public class HotkeyComponentListener extends GlobalKeyAdapter {
                     || event.getVirtualKeyCode() == 17
                     || event.getVirtualKeyCode() == 16
                     || event.getVirtualKeyCode() == 18) return;
-            hotkeyComponent.updateHotkey(event);
+            this.hotkeyComponent.updateHotkey(event);
         }
     }
 }

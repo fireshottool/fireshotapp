@@ -54,7 +54,7 @@ public abstract class ToolboxComponent extends JButton {
             case 0:
                 this.setBorderPainted(false);
                 this.setBackground(Color.decode("#9c9c9c"));
-                if (doubleSelect) {
+                if (this.doubleSelect) {
                     this.stage = 1;
                 } else {
                     this.stage = 2;

@@ -53,13 +53,13 @@ public class SpinnerNumberComponent extends SettingsComponent {
     private void setupLabel() {
         this.label.setSize(180, 30);
         this.label.setLocation(5, 10);
-        this.add(label);
+        this.add(this.label);
     }
 
     private void setupSpinnerModel(ChangeListener changeListener) {
         this.spinner.setSize(100, 30);
         this.spinner.setLocation(200, 10);
         this.spinner.addChangeListener(changeListener);
-        this.add(spinner);
+        this.add(this.spinner);
     }
 }

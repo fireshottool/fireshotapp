@@ -42,14 +42,14 @@ public class DrawListener extends MouseAdapter {
                 return;
             }
             if (this.drawService.isLine()) {
-                if (!second) {
+                if (!this.second) {
                     this.drawService.addLine();
                     this.drawService.addPoint(event.getPoint());
-                    second = true;
+                    this.second = true;
                     return;
                 }
                 this.drawService.addPoint(event.getPoint());
-                second = false;
+                this.second = false;
                 return;
             }
             this.drawService.addLine();
@@ -59,7 +59,7 @@ public class DrawListener extends MouseAdapter {
 
     @Override
     public void mouseDragged(MouseEvent event) {
-        if (drawService.isDraw()) {
+        if (this.drawService.isDraw()) {
             if (this.drawService.isCircle()) {
                 this.drawService.resizeCurrentCircle(event.getPoint());
                 return;
@@ -68,11 +68,11 @@ public class DrawListener extends MouseAdapter {
                 this.drawService.resizeRectangle(event.getPoint());
                 return;
             }
-            if (drawService.isLine() || Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
+            if (this.drawService.isLine() || Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
                 Line line = (Line) this.drawService.getDrawings().get(this.drawService.getCurrentIndex());
                 if (line.getPoints().size() == 1) {
                     line.getPoints().add(event.getPoint());
-                    second = false;
+                    this.second = false;
                 } else {
                     line.getPoints().set(line.getPoints().size() - 1, event.getPoint());
                 }

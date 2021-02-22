@@ -48,6 +48,6 @@ public class Hotkey {
      * @return whether the {@link Hotkey#requiredKeys} are pressed or not
      */
     private boolean requiredKeysPressed(HotkeyService hotkeyService) {
-        return hotkeyService.getPressedKeys().containsAll(Arrays.asList(requiredKeys));
+        return hotkeyService.getPressedKeys().containsAll(Arrays.asList(this.requiredKeys));
     }
 }

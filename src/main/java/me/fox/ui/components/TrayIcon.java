@@ -83,16 +83,16 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, Conf
         this.uploadItem = new CheckboxMenuItem("Upload image");
         this.uploadItem.addItemListener(this::uploadItemStateChanged);
 
-        this.popupMenu.add(settingsItem);
-        this.popupMenu.add(reloadItem);
+        this.popupMenu.add(this.settingsItem);
+        this.popupMenu.add(this.reloadItem);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(localSaveItem);
-        this.popupMenu.add(uploadItem);
-        this.popupMenu.add(switchItem);
+        this.popupMenu.add(this.localSaveItem);
+        this.popupMenu.add(this.uploadItem);
+        this.popupMenu.add(this.switchItem);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(updateItem);
-        this.popupMenu.add(versionItem);
-        this.popupMenu.add(exitItem);
+        this.popupMenu.add(this.updateItem);
+        this.popupMenu.add(this.versionItem);
+        this.popupMenu.add(this.exitItem);
     }
 
     public void setLocalSave(boolean localSave) {

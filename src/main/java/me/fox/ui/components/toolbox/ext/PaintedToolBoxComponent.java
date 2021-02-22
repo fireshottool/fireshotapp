@@ -28,6 +28,6 @@ public class PaintedToolBoxComponent extends DefaultToolboxComponent {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        drawable.draw((Graphics2D) g);
+        this.drawable.draw((Graphics2D) g);
     }
 }

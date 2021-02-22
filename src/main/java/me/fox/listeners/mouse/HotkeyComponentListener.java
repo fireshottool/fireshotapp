@@ -19,7 +19,7 @@ public class HotkeyComponentListener extends MouseAdapter {
 
     @Override
     public void mouseClicked(MouseEvent event) {
-        if (hotkeyComponent.isInside()) {
+        if (this.hotkeyComponent.isInside()) {
             this.hotkeyComponent.getHotkeyLabel().setForeground(Color.GRAY);
             Fireshotapp.getInstance().getHotkeyService().setChangingHotkey(true);
         }

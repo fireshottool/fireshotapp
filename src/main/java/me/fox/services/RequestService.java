@@ -61,7 +61,7 @@ public class RequestService implements ConfigManager {
             }
             request.setEntity(entity);
 
-            HttpResponse response = client.execute(request);
+            HttpResponse response = this.client.execute(request);
             entity = response.getEntity();
 
             if (response.getStatusLine().getStatusCode() != 200) {
@@ -109,7 +109,7 @@ public class RequestService implements ConfigManager {
         return Fireshotapp.getInstance().getExecutorService().submit(() -> {
             HttpGet request = new HttpGet("https://fireshotapp.eu/tool/version");
             try {
-                HttpResponse response = client.execute(request);
+                HttpResponse response = this.client.execute(request);
                 if (response.getStatusLine().getStatusCode() != 200) {
                     return "";
                 }

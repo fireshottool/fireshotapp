@@ -42,8 +42,8 @@ public class HotkeyService implements ConfigManager {
      * Registers the {@link HotkeyService#hotkeyListener}.
      */
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
-        globalKeyboardHook = new GlobalKeyboardHook(true);
-        globalKeyboardHook.addKeyListener(this.hotkeyListener);
+        this.globalKeyboardHook = new GlobalKeyboardHook(true);
+        this.globalKeyboardHook.addKeyListener(this.hotkeyListener);
         this.screenshotService = screenshotService;
         this.screenService = screenService;
         this.drawService = drawService;
@@ -67,8 +67,8 @@ public class HotkeyService implements ConfigManager {
     public void invokeIfPresent(GlobalKeyEvent event) {
         Optional<Hotkey> optionalHotkey = this.hotkeys
                 .stream().filter(var -> var.canInvoke(event, this) &&
-                        hotkeyMap.containsKey(var.getName())).findFirst();
-        optionalHotkey.ifPresent(var -> hotkeyMap.get(var.getName()).run());
+                        this.hotkeyMap.containsKey(var.getName())).findFirst();
+        optionalHotkey.ifPresent(var -> this.hotkeyMap.get(var.getName()).run());
     }
 
     /**
@@ -77,8 +77,8 @@ public class HotkeyService implements ConfigManager {
      * @param keyCode key to register
      */
     public void registerKey(int keyCode) {
-        if (!pressedKeys.contains(keyCode)) {
-            pressedKeys.add(keyCode);
+        if (!this.pressedKeys.contains(keyCode)) {
+            this.pressedKeys.add(keyCode);
         }
     }
 
@@ -88,8 +88,8 @@ public class HotkeyService implements ConfigManager {
      * @param keyCode key to unregister
      */
     public void unregisterKey(int keyCode) {
-        if (pressedKeys.contains(keyCode)) {
-            pressedKeys.remove((Integer) keyCode);
+        if (this.pressedKeys.contains(keyCode)) {
+            this.pressedKeys.remove((Integer) keyCode);
         }
     }
 

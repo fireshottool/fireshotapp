@@ -27,13 +27,13 @@ public class ToolboxListener extends MouseAdapter {
 
     @Override
     public void mousePressed(MouseEvent event) {
-        distanceX = event.getXOnScreen() - this.toolbox.getX();
-        distanceY = event.getYOnScreen() - this.toolbox.getY();
+        this.distanceX = event.getXOnScreen() - this.toolbox.getX();
+        this.distanceY = event.getYOnScreen() - this.toolbox.getY();
     }
 
     @Override
     public void mouseDragged(MouseEvent event) {
-        this.toolbox.setLocation(event.getXOnScreen() - distanceX, event.getYOnScreen() - distanceY);
+        this.toolbox.setLocation(event.getXOnScreen() - this.distanceX, event.getYOnScreen() - this.distanceY);
     }
 
     @Override

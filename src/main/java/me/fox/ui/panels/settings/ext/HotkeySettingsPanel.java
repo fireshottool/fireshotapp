@@ -26,15 +26,15 @@ public class HotkeySettingsPanel extends SettingsPanel {
     public HotkeySettingsPanel(PanelManager panelManager) {
         super(panelManager);
         this.setPreferredSize(new Dimension(561, 1000));
-        jScrollPane = new JScrollPane(this,
+        this.jScrollPane = new JScrollPane(this,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        jScrollPane.setSize(580, 500);
-        jScrollPane.setLocation(this.getLocation());
-        jScrollPane.setVisible(false);
-        jScrollPane.setWheelScrollingEnabled(true);
-        jScrollPane.getVerticalScrollBar().setUnitIncrement(10);
-        jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        this.jScrollPane.setSize(580, 500);
+        this.jScrollPane.setLocation(this.getLocation());
+        this.jScrollPane.setVisible(false);
+        this.jScrollPane.setWheelScrollingEnabled(true);
+        this.jScrollPane.getVerticalScrollBar().setUnitIncrement(10);
+        this.jScrollPane.setBorder(BorderFactory.createEmptyBorder());
         this.setAutoscrolls(true);
     }
 
@@ -48,7 +48,7 @@ public class HotkeySettingsPanel extends SettingsPanel {
 
     @Override
     public void setVisible(boolean aFlag) {
-        if (jScrollPane == null) return;
+        if (this.jScrollPane == null) return;
         this.jScrollPane.setVisible(aFlag);
     }
 

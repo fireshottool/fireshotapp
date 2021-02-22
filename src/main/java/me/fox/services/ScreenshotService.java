@@ -240,10 +240,10 @@ public class ScreenshotService implements Drawable, ConfigManager {
         ScreenshotService screenshotService = Fireshotapp.getInstance().getScreenshotService();
         Point pointerLocation = MouseInfo.getPointerInfo().getLocation();
 
-        int screenWidth = screenshotFrame.getWidth();
-        int screenHeight = screenshotFrame.getHeight();
-        int screenX = screenshotFrame.getX();
-        int screenY = screenshotFrame.getY();
+        int screenWidth = this.screenshotFrame.getWidth();
+        int screenHeight = this.screenshotFrame.getHeight();
+        int screenX = this.screenshotFrame.getX();
+        int screenY = this.screenshotFrame.getY();
 
         if (screenX < 0 || screenY < 0) {
             if (screenX < 0 && screenY < 0) {
@@ -349,16 +349,16 @@ public class ScreenshotService implements Drawable, ConfigManager {
 
 
         if (this.selectionRectangle.x < 0 && this.selectionRectangle.y < 0) return;
-        String widthHeight = Math.abs(selectionRectangle.width) + " x " + Math.abs(selectionRectangle.height);
+        String widthHeight = Math.abs(this.selectionRectangle.width) + " x " + Math.abs(this.selectionRectangle.height);
         g2d.setColor(ColorPalette.DARK_BLUE_170.get());
-        g2d.fillRoundRect(selectionRectangle.x, selectionRectangle.y - 25,
+        g2d.fillRoundRect(this.selectionRectangle.x, this.selectionRectangle.y - 25,
                 widthHeight.length() * 9, 20, 10, 10);
 
         g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170.get());
-        g2d.drawRoundRect(selectionRectangle.x, selectionRectangle.y - 25,
+        g2d.drawRoundRect(this.selectionRectangle.x, this.selectionRectangle.y - 25,
                 widthHeight.length() * 9, 20, 10, 10);
         g2d.setColor(Color.WHITE);
-        g2d.drawString(widthHeight, selectionRectangle.x + 10, selectionRectangle.y - 10);
+        g2d.drawString(widthHeight, this.selectionRectangle.x + 10, this.selectionRectangle.y - 10);
     }
 
     @Override
@@ -383,7 +383,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
         if (this.image != null) {
             int width = this.screenshotFrame.getWidth();
             int height = this.screenshotFrame.getHeight();
-            g2d.drawImage(image, 0, 0, width, height, null);
+            g2d.drawImage(this.image, 0, 0, width, height, null);
 
             //Draw black overlay
             g2d.setColor(this.dimColor);
