@@ -1,5 +1,7 @@
 package me.fox.components;
 
+import lombok.NonNull;
+
 /**
  * @author (Stackoverflow)
  * Yoinked from https://stackoverflow.com/a/11024200
@@ -9,9 +11,7 @@ public class Version implements Comparable<Version> {
 
     private final String version;
 
-    public Version(String version) throws IllegalArgumentException {
-        if (version == null)
-            throw new IllegalArgumentException("Version can not be null");
+    public Version(@NonNull String version) throws IllegalArgumentException {
         if (!version.matches("[0-9]+(\\.[0-9]+)*"))
             throw new IllegalArgumentException("Invalid version format");
         this.version = version;

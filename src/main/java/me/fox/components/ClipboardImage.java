@@ -1,5 +1,7 @@
 package me.fox.components;
 
+import lombok.NonNull;
+
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -35,11 +37,8 @@ public class ClipboardImage {
      * Places an image on the system clipboard.
      *
      * @param image - the image to be added to the system clipboard
-     * @throws IllegalArgumentException if the image is null.
      */
-    public static void write(Image image) throws IllegalArgumentException {
-        if (image == null) throw new IllegalArgumentException("Image can't be null");
-
+    public static void write(@NonNull Image image) {
         ImageTransferable transferable = new ImageTransferable(image);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferable, null);
     }
