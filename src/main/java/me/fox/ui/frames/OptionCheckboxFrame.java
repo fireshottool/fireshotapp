@@ -23,7 +23,7 @@ public class OptionCheckboxFrame extends JPanel {
 
     /**
      * Shows a dialog with the options Yes, No and Cancel
-     * And it also contains a checkbox with "Don't ask me again"
+     * containing a checkbox saying "Don't ask me again".
      *
      * @param parent  determines the Frame in which the dialog is displayed,
      *                also see {@link JOptionPane#showConfirmDialog(Component, Object)}

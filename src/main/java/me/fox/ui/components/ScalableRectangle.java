@@ -49,7 +49,7 @@ public class ScalableRectangle extends Rectangle implements Drawable {
     }
 
     /**
-     * Create all 8 scale points
+     * Creates all 8 scale points.
      *
      * @return the array of scale points
      */

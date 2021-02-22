@@ -57,7 +57,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     public abstract void reset();
 
     /**
-     * Load the fundamentals of the {@link JPanel}
+     * Loads the fundamentals of the {@link JPanel}.
      */
     private void load() {
         this.setVisible(false);
@@ -65,7 +65,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Add a new {@link ToolboxComponent} to {@link Toolbox#toolboxComponents}
+     * Adds a new {@link ToolboxComponent} to {@link Toolbox#toolboxComponents}.
      *
      * @param toolboxComponent the {@link ToolboxComponent} add
      */
@@ -76,7 +76,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Update the location of the {@link Toolbox}
+     * Updates the location of the {@link Toolbox}.
      *
      * @param scalableRectangle rectangle needed to update the location
      */
@@ -97,7 +97,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Adjust the {@link Toolbox} size
+     * Adjusts the {@link Toolbox} size.
      */
     private void adjust() {
         int height = 0;
@@ -118,8 +118,8 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Calculates the new {@link Toolbox#getWidth()}
-     * Relocates the x coordinate {@link Toolbox#toolboxComponents}
+     * Calculates the new {@link Toolbox#getWidth()}.
+     * Relocates the x coordinate {@link Toolbox#toolboxComponents}.
      *
      * @return the new {@link Toolbox#getWidth()}
      */
@@ -135,8 +135,8 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Calculates the new {@link Toolbox#getHeight()}
-     * Relocates the y coordinate {@link Toolbox#toolboxComponents}
+     * Calculates the new {@link Toolbox#getHeight()}.
+     * Relocates the y coordinate {@link Toolbox#toolboxComponents}.
      *
      * @return the new {@link Toolbox#getHeight()}
      */
@@ -152,7 +152,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Calculates the new minimum needed {@link Toolbox#getWidth()}
+     * Calculates the new minimum needed {@link Toolbox#getWidth()}.
      *
      * @return the new minimum needed {@link Toolbox#getWidth()}
      */
@@ -169,7 +169,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Calculates the new minimum needed {@link Toolbox#getHeight()}
+     * Calculates the new minimum needed {@link Toolbox#getHeight()}.
      *
      * @return the new minimum needed {@link Toolbox#getHeight()}
      */
@@ -186,7 +186,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Register a new {@link MouseAdapter} to the {@link JPanel}
+     * Register a new {@link MouseAdapter} to the {@link JPanel}.
      *
      * @param mouseListenerAdapter to register
      */
@@ -197,15 +197,15 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     }
 
     /**
-     * Hide the {@link Toolbox}
+     * Hides the {@link Toolbox}.
      */
     public void hideSelf() {
         this.setVisible(false);
     }
 
     /**
-     * Update the location of the {@link Toolbox}
-     * Show the {@link Toolbox}
+     * Updates the location of the {@link Toolbox}.
+     * Shows the {@link Toolbox}.
      */
     public void showSelf() {
         this.updateLocation(Fireshotapp.getInstance().getScreenshotService().getSelectionRectangle());

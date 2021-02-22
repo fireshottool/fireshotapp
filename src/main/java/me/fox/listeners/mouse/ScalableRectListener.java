@@ -32,7 +32,7 @@ public class ScalableRectListener extends MouseAdapter {
     }
 
     /**
-     * Update the {@link ScalableRectangle#getCursor()}
+     * Updates the {@link ScalableRectangle#getCursor()}.
      *
      * @param event to update the cursor
      */

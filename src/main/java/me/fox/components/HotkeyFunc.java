@@ -8,7 +8,7 @@ package me.fox.components;
 public interface HotkeyFunc {
 
     /**
-     * Invoke the {@link Hotkey} function
+     * Invokes the {@link Hotkey} function.
      */
     void invoke();
 }

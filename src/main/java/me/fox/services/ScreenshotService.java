@@ -68,7 +68,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Create a new screenshot with the size of {@link ScreenshotService#screenshotFrame}
+     * Creates a new screenshot with the size of {@link ScreenshotService#screenshotFrame}.
      */
     public void createScreenshot() {
         try {
@@ -79,8 +79,8 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Confirm a screenshot width the {@link ScreenshotService#selectionRectangle}
-     * And save the image local or upload it
+     * Confirms a screenshot with the {@link ScreenshotService#selectionRectangle}
+     * and saves it locally or uploads it.
      *
      * @param imageDetection whether it should use OCR or not
      * @param googleSearch   whether it should be searched on google or not
@@ -108,9 +108,9 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Generate an random name for the image file,
-     * save the image with {@link FileService#saveImage(BufferedImage, String)}
-     * and copy the image to the Clipboard with {@link ClipboardImage#write(Image)}
+     * Generates a random name for the image file,
+     * saves the image with {@link FileService#saveImage(BufferedImage, String)}
+     * and copies the image to the Clipboard with {@link ClipboardImage#write(Image)}.
      *
      * @param screenshot to save
      * @throws IOException if an I/O error occurs
@@ -124,10 +124,11 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Show the user a dialog to confirm the upload to the server,
-     * if it is not already confirmed.
-     * Cancel the upload if the user chooses the {@link JOptionPane#NO_OPTION}.
-     * After the upload is complete delete the image
+     * Shows the user a dialog to confirm the upload to
+     * the server, if it has not already been confirmed.
+     * <p>
+     * Cancels the upload if the user chooses the {@link JOptionPane#NO_OPTION}.
+     * After the upload is complete, delete the image will be deleted.
      *
      * @param screenshot     to upload
      * @param imageDetection whether it should use OCR or not
@@ -173,7 +174,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Create a sub-image with fitting bounds.
+     * Creates a sub-image with fitting bounds.
      *
      * @param x      selection coordinate
      * @param y      selection coordinate
@@ -202,7 +203,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Draw the selected part of the image so it has normal brightness
+     * Draws the selected part of the image so it has normal brightness.
      *
      * @param g2d       {@link Graphics2D} to draw
      * @param selection selected part
@@ -230,8 +231,8 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Draw the zoom under the cursor and replace it,
-     * if it goes out of the screen
+     * Draws the zoom under the cursor and replaces it
+     * if it goes out of the screen.
      *
      * @param g2d {@link Graphics2D} to draw
      */
@@ -285,7 +286,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Draw the raster/grid for the zoom
+     * Draws the raster/grid for the zoom.
      *
      * @param g2d             to draw
      * @param pointerLocation as location to draw
@@ -319,8 +320,8 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     /**
-     * Draw coordinate labels for mouse location
-     * and width and height of the selection
+     * Draws coordinate labels for the mouse location
+     * and the width and height of the selection.
      *
      * @param g2d   {@link Graphics2D} to draw
      * @param point mouse location

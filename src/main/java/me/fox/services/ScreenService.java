@@ -31,9 +31,9 @@ public class ScreenService implements ResourceManager {
     private final SettingsFrame settingsFrame = new SettingsFrame();
 
     /**
-     * Constructor for {@link ScreenService}.
-     * Add {@link ScreenService#drawToolbox} and {@link ScreenService#screenshotToolbox}
-     * to {@link ScreenService#screenshotFrame}
+     * Constructor for {@link ScreenService}
+     * Adds {@link ScreenService#drawToolbox} and {@link ScreenService#screenshotToolbox}
+     * to {@link ScreenService#screenshotFrame}.
      *
      * @param screenshotFrame   to initialize {@link ScreenService#screenshotFrame}
      *                          and {@link ScreenService#drawToolbox}
@@ -48,7 +48,7 @@ public class ScreenService implements ResourceManager {
     }
 
     /**
-     * Show the frame to the user
+     * Shows the frame to the user.
      *
      * @see ScreenshotService#createScreenshot()
      */
@@ -58,7 +58,7 @@ public class ScreenService implements ResourceManager {
     }
 
     /**
-     * Hide the {@link ScreenService#screenshotFrame} and confirm the screenshot
+     * Hides the {@link ScreenService#screenshotFrame} and confirms the screenshot.
      *
      * @param imageDetection whether to use OCR or not
      * @param googleSearch   whether to use google image search or not
@@ -74,8 +74,8 @@ public class ScreenService implements ResourceManager {
     }
 
     /**
-     * Reset the screen for image selection and all values.
-     * Hide the screen again
+     * Resets the screen for image selection and all values.
+     * Hides the screen again.
      */
     public void resetAndHide() {
         this.screenshotService.setImage(null);

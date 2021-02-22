@@ -24,7 +24,7 @@ public class Line implements Drawable {
             BasicStroke.JOIN_ROUND);
 
     /**
-     * Adds a {@link Point} to {@link Line#points}
+     * Adds a {@link Point} to {@link Line#points}.
      *
      * @param point to add to {@link Line#points}
      */

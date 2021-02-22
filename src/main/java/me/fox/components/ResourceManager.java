@@ -11,7 +11,7 @@ import java.util.List;
 public interface ResourceManager {
 
     /**
-     * Apply the resources (images)
+     * Applies the resources (images).
      *
      * @param files {@link List} of resources
      */

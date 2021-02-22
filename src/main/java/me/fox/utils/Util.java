@@ -13,7 +13,7 @@ import java.util.Random;
 public class Util {
 
     /**
-     * Check whether the {@param cursorType} is valid or not
+     * Checks whether the {@param cursorType} is valid.
      *
      * @param cursorType to check
      * @return if the specified cursor type is invalid

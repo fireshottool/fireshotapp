@@ -35,7 +35,7 @@ public class RequestService implements ConfigManager {
     private final HttpClient client = HttpClientBuilder.create().build();
 
     /**
-     * Upload am image to the server
+     * Uploads an image to the server.
      *
      * @param file           image to upload
      * @param imageDetection whether it should use OCR or not
@@ -83,7 +83,7 @@ public class RequestService implements ConfigManager {
     }
 
     /**
-     * Request an image from the server
+     * Requests an image from the server.
      *
      * @param imageName to request it
      * @return {@link ListenableFuture} with the {@link Image}
@@ -101,7 +101,7 @@ public class RequestService implements ConfigManager {
     }
 
     /**
-     * Get the current {@link me.fox.components.Version} from the {@link Fireshotapp}
+     * Gets the current {@link me.fox.components.Version} from the {@link Fireshotapp}.
      *
      * @return {@link ListenableFuture} with the {@link me.fox.components.Version} as {@link String}
      */

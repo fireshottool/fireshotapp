@@ -33,9 +33,11 @@ public class JsonService {
     private Config config;
 
     /**
-     * Read the config file - {@link JsonService#jsonPath},
-     * if the file does not exist or is empty create a default {@link Config} ({@link Config#DEFAULT_CONFIG}).
-     * Invoke all {@link ConfigManager}, when the config is loaded
+     * Reads the config file - {@link JsonService#jsonPath}.
+     * If the file does not exist, or if it is empty, a default
+     * {@link Config} {@link Config#DEFAULT_CONFIG} is created.
+     * <p>
+     * When the config is loaded, all {@link ConfigManager} are invoked.
      *
      * @param configManagers to invoke
      */
@@ -67,8 +69,8 @@ public class JsonService {
     }
 
     /**
-     * Save the current {@link JsonService#config}
-     * and read it to invoke all {@link JsonService#configManagers}
+     * Saves the current {@link JsonService#config} and reads
+     * it to invoke all {@link JsonService#configManagers}.
      */
     public void saveAndApply() {
         this.save();
@@ -76,15 +78,15 @@ public class JsonService {
     }
 
     /**
-     * Invoke all {@link JsonService#configManagers}
+     * Invokes all {@link JsonService#configManagers}.
      */
     private void invokeConfigManager() {
         this.configManagers.forEach(var -> var.applyConfig(this.config));
     }
 
     /**
-     * Save the current {@link JsonService#config} to the {@link JsonService#jsonPath}
-     * Create the file and folders if they do not exist
+     * Saves the current {@link JsonService#config} to the {@link JsonService#jsonPath}.
+     * Creates the file and folders if they do not exist.
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void save() {
@@ -109,7 +111,7 @@ public class JsonService {
     }
 
     /**
-     * Create the {@link Config#DEFAULT_CONFIG}
+     * Creates the {@link Config#DEFAULT_CONFIG}.
      *
      * @param file to create the default config
      * @return the default config

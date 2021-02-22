@@ -14,7 +14,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 public class ClipboardImage {
 
     /**
-     * Retrieve an image from the system clipboard.
+     * Retrieves an image from the system clipboard.
      *
      * @return the image from the clipboard or null if no image is found
      */
@@ -32,7 +32,7 @@ public class ClipboardImage {
     }
 
     /**
-     * Place an image on the system clipboard.
+     * Places an image on the system clipboard.
      *
      * @param image - the image to be added to the system clipboard
      */

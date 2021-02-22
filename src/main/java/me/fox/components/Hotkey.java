@@ -28,7 +28,7 @@ public class Hotkey {
     }
 
     /**
-     * Checks if the {@link Hotkey} fits and can be invoked
+     * Checks if the {@link Hotkey} fits and can be invoked.
      *
      * @param event         to get the pressed keyCode
      * @param hotkeyService to check if the {@link Hotkey#requiredKeys} are pressed
@@ -41,7 +41,7 @@ public class Hotkey {
     }
 
     /**
-     * Check if the {@link Hotkey#requiredKeys} are pressed
+     * Checks whether the {@link Hotkey#requiredKeys} are pressed.
      *
      * @param hotkeyService to get the {@link java.util.List}
      *                      of pressed keys {@link HotkeyService#getPressedKeys()}

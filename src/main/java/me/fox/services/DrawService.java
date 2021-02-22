@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
 /**
  * @author (Ausgefuchster)
  * @version (~ 22.10.2020)
@@ -59,9 +60,9 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * If {@link DrawService#currentStrokeWidth} minus {@link DrawService#decreaseThickness}
-     * is not equal zero or smaller than zero
-     * Decrease the {@link DrawService#currentStrokeWidth} with {@link DrawService#decreaseThickness}
+     * Decreases the {@link DrawService#currentStrokeWidth} by
+     * {@link DrawService#decreaseThickness} if {@link DrawService#currentStrokeWidth}
+     * minus {@link DrawService#decreaseThickness} is not equal to zero or smaller than zero.
      */
     public void decreaseThickness() {
         if (this.currentStrokeWidth - this.decreaseThickness <= 0) return;
@@ -69,27 +70,27 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Increase the {@link DrawService#currentStrokeWidth} with {@link DrawService#increaseThickness}
+     * Increases the {@link DrawService#currentStrokeWidth} with {@link DrawService#increaseThickness}.
      */
     public void increaseThickness() {
         this.currentStrokeWidth += this.increaseThickness;
     }
 
     /**
-     * Reset all draw values which could be changed while taking a screenshot
+     * Resets all draw values which could be changed while taking a screenshot.
      */
     public void resetDraw() {
         this.drawings.clear();
         this.undoDrawings.clear();
         this.currentIndex = -1;
-        this.draw = false;
-        this.line = false;
-        this.circle = false;
-        this.rectangle = false;
+        this.draw         = false;
+        this.line         = false;
+        this.circle       = false;
+        this.rectangle    = false;
     }
 
     /**
-     * Register a new {@link Drawable}
+     * Registers a new {@link Drawable}.
      *
      * @param drawable to register
      */
@@ -108,10 +109,10 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Increase the {@link DrawService#currentIndex} by one
-     * Add a new {@link Rectangle} to {@link DrawService#drawings} with the {@code point}
-     * and the current {@link DrawService#drawColor}, {@link DrawService#currentStrokeWidth}
-     * and {@link DrawService#fillRectangle}
+     * Increases the {@link DrawService#currentIndex} by one.
+     * Adds a new {@link Rectangle} to {@link DrawService#drawings} with
+     * the {@code point} and the current {@link DrawService#drawColor},
+     * {@link DrawService#currentStrokeWidth} and {@link DrawService#fillRectangle}.
      *
      * @param point where the rectangle starts
      */
@@ -121,9 +122,10 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Resize the {@link DrawService#currentIndex} {@link Rectangle} in {@link DrawService#drawings}
-     * and set the size to the {@code point} minus the start {@link Point},
-     * which was set in {@link DrawService#addRectangle(Point)}, because this is the width and height
+     * Resizes the {@link DrawService#currentIndex} {@link Rectangle} in
+     * {@link DrawService#drawings} and sets the size to the {@code point}
+     * minus the start {@link Point} which was set in {@link DrawService#addRectangle(Point)},
+     * because this is the width and height.
      *
      * @param point to set the size of the {@link Rectangle}
      */
@@ -133,10 +135,10 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Increase the {@link DrawService#currentIndex} by one
-     * Add a new {@link Circle} to {@link DrawService#drawings} with the {@code point}
+     * Increases the {@link DrawService#currentIndex} by one.
+     * Adds a new {@link Circle} to {@link DrawService#drawings} with the {@code point}
      * and the current {@link DrawService#drawColor}, {@link DrawService#currentStrokeWidth}
-     * and {@link DrawService#fillCircle}
+     * and {@link DrawService#fillCircle}.
      *
      * @param point where the circle center is
      */
@@ -146,9 +148,9 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Resize the {@link DrawService#currentIndex} {@link Circle} in {@link DrawService#drawings}.
-     * If control (keyChar 17) is pressed set the radius of the {@link Circle} (1:1),
-     * else set width and height of the {@link Circle}
+     * Resizes the {@link DrawService#currentIndex} {@link Circle} in {@link DrawService#drawings}.
+     * If control (keyChar 17) is pressed, it sets the radius of the {@link Circle} (1:1).
+     * Otherwise, it sets the width and height of the {@link Circle}.
      *
      * @param point to set the radius or width and height of the {@link Circle}
      */
@@ -166,8 +168,8 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Increase the {@link DrawService#currentIndex} by one
-     * Add a new {@link Line} to {@link DrawService#drawings}
+     * Increases the {@link DrawService#currentIndex} by one.
+     * Adds a new {@link Line} to {@link DrawService#drawings}.
      */
     public void addLine() {
         this.currentIndex++;
@@ -175,7 +177,7 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Add a new {@link Point} to the {@link DrawService#currentIndex} {@link Line}
+     * Adds a new {@link Point} to the {@link DrawService#currentIndex} {@link Line}.
      *
      * @param point to add to the line
      */
@@ -184,9 +186,8 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * If drawings contains a {@link Drawable} remove the latest one from the list
-     * and add it do the {@link DrawService#undoDrawings} {@link List}
-     * so the user is able to redo it
+     * Removes the latest {@link Drawable} from the list and adds it to the
+     * {@link DrawService#undoDrawings} {@link List}, so the user is able to redo it.
      *
      * @see DrawService#redoDrawing()
      */
@@ -199,9 +200,9 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * If drawings contains a {@link Drawable} remove the latest one from the list
-     * and add it do the {@link DrawService#drawings} {@link List}
-     * so the user is able to undo it again
+     * Removes the latest {@link Drawable} from the list and adds it
+     * to the {@link DrawService#drawings} {@link List} if drawings
+     * contains a {@link Drawable}, so the user is able to undo it.
      *
      * @see DrawService#undoDrawing()
      */
@@ -218,9 +219,9 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     public void applyConfig(Config config) {
         DrawConfig drawConfig = config.getDrawConfig();
         this.currentStrokeWidth = drawConfig.getDefaultThickness();
-        this.decreaseThickness = drawConfig.getThicknessDecrease();
-        this.increaseThickness = drawConfig.getThicknessIncrease();
-        this.drawColor = Color.decode(drawConfig.getColor());
+        this.decreaseThickness  = drawConfig.getThicknessDecrease();
+        this.increaseThickness  = drawConfig.getThicknessIncrease();
+        this.drawColor          = Color.decode(drawConfig.getColor());
     }
 
     @Override
@@ -228,7 +229,8 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
 
         this.firstLayer.forEach(var -> var.draw(g2d));
         this.secondLayer.forEach(var -> var.draw(g2d));
@@ -253,7 +255,8 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
                         "drawing"
                 );
                 System.out.println("Test" + drawCursor);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         });
