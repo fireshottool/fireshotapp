@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.components.ConfigManager;
 import me.fox.components.Hotkey;
-import me.fox.components.HotkeyFunc;
 import me.fox.config.Config;
 import me.fox.config.HotkeyConfig;
 import me.fox.listeners.keyboard.HotkeyListener;
@@ -24,7 +23,7 @@ import java.util.*;
 @Setter
 public class HotkeyService implements ConfigManager {
 
-    private final Map<String, HotkeyFunc> hotkeyMap = new HashMap<>();
+    private final Map<String, Runnable> hotkeyMap = new HashMap<>();
 
     private final HotkeyListener hotkeyListener = new HotkeyListener(this);
     private final List<Integer> pressedKeys = new ArrayList<>();
@@ -69,7 +68,7 @@ public class HotkeyService implements ConfigManager {
         Optional<Hotkey> optionalHotkey = this.hotkeys
                 .stream().filter(var -> var.canInvoke(event, this) &&
                         hotkeyMap.containsKey(var.getName())).findFirst();
-        optionalHotkey.ifPresent(var -> hotkeyMap.get(var.getName()).invoke());
+        optionalHotkey.ifPresent(var -> hotkeyMap.get(var.getName()).run());
     }
 
     /**
