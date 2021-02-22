@@ -35,8 +35,9 @@ public class ClipboardImage {
      * Places an image on the system clipboard.
      *
      * @param image - the image to be added to the system clipboard
+     * @throws IllegalArgumentException if the image is null.
      */
-    public static void write(Image image) {
+    public static void write(Image image) throws IllegalArgumentException {
         if (image == null) throw new IllegalArgumentException("Image can't be null");
 
         ImageTransferable transferable = new ImageTransferable(image);
