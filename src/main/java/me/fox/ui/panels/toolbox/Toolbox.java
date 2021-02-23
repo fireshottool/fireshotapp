@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.components.ResourceManager;
-import me.fox.enums.ColorPalette;
+import me.fox.components.ColorPalette;
 import me.fox.enums.ToolboxType;
 import me.fox.listeners.mouse.ToolboxListener;
 import me.fox.ui.components.ScalableRectangle;
@@ -230,9 +230,9 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     protected void paintComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setStroke(new BasicStroke(1));
-        g2d.setColor(ColorPalette.DARK_BLUE_200.get());
+        g2d.setColor(ColorPalette.DARK_BLUE_200);
         g2d.fillRoundRect(0, 0, this.getWidth(), this.getHeight(), 10, 10);
-        g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_200.get());
+        g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_200);
         g2d.drawRoundRect(0, 0, this.getWidth() - 1, this.getHeight() - 1, 10, 10);
     }
 }

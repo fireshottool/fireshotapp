@@ -10,8 +10,8 @@ import me.fox.components.ClipboardImage;
 import me.fox.components.ConfigManager;
 import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
-import me.fox.enums.ColorPalette;
-import me.fox.enums.Strokes;
+import me.fox.components.ColorPalette;
+import me.fox.components.Strokes;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.TrayIcon;
 import me.fox.ui.components.draw.Drawable;
@@ -276,7 +276,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
                 140, null);
 
         this.drawZoomRaster(g2d, pointerLocation);
-        g2d.setStroke(Strokes.WIDTH_TWO_STROKE.get());
+        g2d.setStroke(Strokes.WIDTH_TWO_STROKE);
         g2d.setColor(Color.WHITE);
         g2d.draw(shape);
 
@@ -314,7 +314,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
             count++;
         }
         g2d.setColor(Color.WHITE);
-        g2d.setStroke(Strokes.WIDTH_ONE_STROKE.get());
+        g2d.setStroke(Strokes.WIDTH_ONE_STROKE);
         g2d.drawRect(pointerLocation.x + 64, pointerLocation.y + 64, 11, 11);
         g2d.setClip(null);
     }
@@ -327,21 +327,21 @@ public class ScreenshotService implements Drawable, ConfigManager {
      * @param point mouse location
      */
     private void drawWidthHeightAndXY(Graphics2D g2d, Point point) {
-        g2d.setStroke(Strokes.WIDTH_ONE_STROKE.get());
+        g2d.setStroke(Strokes.WIDTH_ONE_STROKE);
         Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
         String xy = "x: " + mouseLocation.x + "  y: " + mouseLocation.y;
         g2d.setFont(this.font);
         if (this.zoom) {
-            g2d.setColor(ColorPalette.DARK_BLUE_170.get());
+            g2d.setColor(ColorPalette.DARK_BLUE_170);
             g2d.fillRoundRect(point.x - 120, point.y + 10, xy.length() * 7, 20, 10, 10);
-            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170.get());
+            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
             g2d.drawRoundRect(point.x - 120, point.y + 10, xy.length() * 7, 20, 10, 10);
             g2d.setColor(Color.white);
             g2d.drawString(xy, point.x - 110, point.y + 25);
         } else {
-            g2d.setColor(ColorPalette.DARK_BLUE_170.get());
+            g2d.setColor(ColorPalette.DARK_BLUE_170);
             g2d.fillRoundRect(point.x - 50, point.y + 15, xy.length() * 7, 20, 10, 10);
-            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170.get());
+            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
             g2d.drawRoundRect(point.x - 50, point.y + 15, xy.length() * 7, 20, 10, 10);
             g2d.setColor(Color.WHITE);
             g2d.drawString(xy, point.x - 40, point.y + 30);
@@ -350,11 +350,11 @@ public class ScreenshotService implements Drawable, ConfigManager {
 
         if (this.selectionRectangle.x < 0 && this.selectionRectangle.y < 0) return;
         String widthHeight = Math.abs(this.selectionRectangle.width) + " x " + Math.abs(this.selectionRectangle.height);
-        g2d.setColor(ColorPalette.DARK_BLUE_170.get());
+        g2d.setColor(ColorPalette.DARK_BLUE_170);
         g2d.fillRoundRect(this.selectionRectangle.x, this.selectionRectangle.y - 25,
                 widthHeight.length() * 9, 20, 10, 10);
 
-        g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170.get());
+        g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
         g2d.drawRoundRect(this.selectionRectangle.x, this.selectionRectangle.y - 25,
                 widthHeight.length() * 9, 20, 10, 10);
         g2d.setColor(Color.WHITE);
