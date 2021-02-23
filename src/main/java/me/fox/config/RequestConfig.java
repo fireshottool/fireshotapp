@@ -9,7 +9,7 @@ import lombok.Data;
 
 @Data
 public class RequestConfig {
-
-    private String uploadURL = "https://fireshotapp.eu/storage/upload/", imageURL = "https://fireshotapp.eu/storage/media/",
-            imageDetectionURL = "https://fireshotapp.eu/tesseract/ocr/";
+    private String uploadURL = "https://fireshotapp.eu/storage/upload/";
+    private String imageURL = "https://fireshotapp.eu/storage/media/";
+    private String imageDetectionURL = "https://fireshotapp.eu/tesseract/ocr/";
 }
