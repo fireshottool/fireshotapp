@@ -69,7 +69,7 @@ public class DrawListener extends MouseAdapter {
                 return;
             }
             if (this.drawService.isLine() || Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
-                Line line = (Line) this.drawService.getDrawings().get(this.drawService.getCurrentIndex());
+                Line line = (Line) this.drawService.getDrawings().peek();
                 if (line.getPoints().size() == 1) {
                     line.getPoints().add(event.getPoint());
                     this.second = false;

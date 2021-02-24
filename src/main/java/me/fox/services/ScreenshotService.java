@@ -12,6 +12,7 @@ import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
 import me.fox.components.ColorPalette;
 import me.fox.components.Strokes;
+import me.fox.enums.LayerType;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.TrayIcon;
 import me.fox.ui.components.draw.Drawable;
@@ -62,7 +63,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     public ScreenshotService(ScreenshotFrame screenshotFrame, DrawService drawService, RequestService requestService) {
         this.drawService = drawService;
         this.screenshotFrame = screenshotFrame;
-        this.drawService.registerDrawable(this, 0);
+        this.drawService.registerDrawable(this, LayerType.BACKGROUND);
         this.selectionRectangle = new ScalableRectangle(drawService, screenshotFrame);
         this.requestService = requestService;
     }
@@ -94,8 +95,6 @@ public class ScreenshotService implements Drawable, ConfigManager {
         BufferedImage screenshot = this.takeScreenshot(x, y, width, height);
         if (screenshot == null) return;
 
-        Graphics2D g2d = this.image.createGraphics();
-        this.drawService.draw(g2d);
         if (this.isUpload() || imageDetection) {
             this.uploadImage(screenshot, imageDetection, googleSearch);
 

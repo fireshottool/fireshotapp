@@ -2,6 +2,7 @@ package me.fox.ui.components;
 
 import lombok.Getter;
 import lombok.Setter;
+import me.fox.enums.LayerType;
 import me.fox.listeners.mouse.ScalableRectListener;
 import me.fox.services.DrawService;
 import me.fox.ui.components.draw.Drawable;
@@ -39,7 +40,7 @@ public class ScalableRectangle extends Rectangle implements Drawable {
      */
     public ScalableRectangle(DrawService drawService, ScreenshotFrame screenshotFrame) {
         this.drawService = drawService;
-        this.drawService.registerDrawable(this, 2);
+        this.drawService.registerDrawable(this, LayerType.FOREGROUND);
 
         this.screenshotFrame = screenshotFrame;
         screenshotFrame.registerMouseListener(this.listener);

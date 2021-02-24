@@ -1,12 +1,14 @@
 package me.fox.services;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.components.ConfigManager;
 import me.fox.components.ResourceManager;
 import me.fox.config.Config;
 import me.fox.config.DrawConfig;
+import me.fox.enums.LayerType;
 import me.fox.listeners.mouse.DrawListener;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.components.draw.impl.Circle;
@@ -18,9 +20,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -31,22 +33,26 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Setter
-public class DrawService extends JComponent implements Drawable, ConfigManager, ResourceManager {
+public class DrawService extends JComponent implements ConfigManager, ResourceManager {
 
     private final DrawListener drawListener;
 
-    private final List<Drawable> firstLayer = new ArrayList<>();
-    private final List<Drawable> secondLayer = new ArrayList<>();
-    private final List<Drawable> thirdLayer = new ArrayList<>();
-    private final List<Drawable> drawings = new CopyOnWriteArrayList<>();
-    private final List<Drawable> undoDrawings = new CopyOnWriteArrayList<>();
+    private final Stack<Drawable> drawings = new Stack<>();
+    private final Stack<Drawable> removedDrawings = new Stack<>();
+
+    private final List<Drawable> backgroundLayer = new CopyOnWriteArrayList<>();
+    private final List<Drawable> foregroundLayer = new CopyOnWriteArrayList<>();
 
     private Cursor drawCursor;
     private Color drawColor;
 
-    private boolean draw = false, line = false, circle = false, rectangle;
-    private boolean fillCircle = true, fillRectangle = true;
-    private int currentIndex = -1;
+    private boolean draw = false;
+    private boolean line = false;
+    private boolean circle = false;
+    private boolean rectangle;
+    private boolean fillCircle = true;
+    private boolean fillRectangle = true;
+
     private float currentStrokeWidth;
     private float decreaseThickness, increaseThickness;
 
@@ -56,7 +62,6 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      */
     public DrawService() {
         this.drawListener = new DrawListener(this);
-        this.registerDrawable(this, 1);
     }
 
     /**
@@ -81,8 +86,7 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      */
     public void resetDraw() {
         this.drawings.clear();
-        this.undoDrawings.clear();
-        this.currentIndex = -1;
+        this.removedDrawings.clear();
         this.draw         = false;
         this.line         = false;
         this.circle       = false;
@@ -94,22 +98,15 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      *
      * @param drawable to register
      */
-    public void registerDrawable(Drawable drawable, int layer) {
-        switch (layer) {
-            case 0:
-                this.firstLayer.add(drawable);
-                break;
-            case 1:
-                this.secondLayer.add(drawable);
-                break;
-            case 2:
-                this.thirdLayer.add(drawable);
-                break;
+    public void registerDrawable(Drawable drawable, @NonNull LayerType type) {
+        if (type == LayerType.FOREGROUND) {
+            this.foregroundLayer.add(drawable);
+        } else if (type == LayerType.BACKGROUND) {
+            this.backgroundLayer.add(drawable);
         }
     }
 
     /**
-     * Increases the {@link DrawService#currentIndex} by one.
      * Adds a new {@link Rectangle} to {@link DrawService#drawings} with
      * the {@code point} and the current {@link DrawService#drawColor},
      * {@link DrawService#currentStrokeWidth} and {@link DrawService#fillRectangle}.
@@ -117,25 +114,22 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      * @param point where the rectangle starts
      */
     public void addRectangle(Point point) {
-        this.currentIndex++;
-        this.drawings.add(new Rectangle(point.x, point.y, this.drawColor, currentStrokeWidth, fillRectangle));
+        this.drawings.push(new Rectangle(point.x, point.y, this.drawColor, currentStrokeWidth, fillRectangle));
     }
 
     /**
-     * Resizes the {@link DrawService#currentIndex} {@link Rectangle} in
-     * {@link DrawService#drawings} and sets the size to the {@code point}
+     * Sets the size to the {@code point}
      * minus the start {@link Point} which was set in {@link DrawService#addRectangle(Point)},
      * because this is the width and height.
      *
      * @param point to set the size of the {@link Rectangle}
      */
     public void resizeRectangle(Point point) {
-        Rectangle rectangle = (Rectangle) this.drawings.get(this.currentIndex);
+        Rectangle rectangle = (Rectangle) this.drawings.peek();
         rectangle.setSize(point.x - rectangle.x, point.y - rectangle.y);
     }
 
     /**
-     * Increases the {@link DrawService#currentIndex} by one.
      * Adds a new {@link Circle} to {@link DrawService#drawings} with the {@code point}
      * and the current {@link DrawService#drawColor}, {@link DrawService#currentStrokeWidth}
      * and {@link DrawService#fillCircle}.
@@ -143,19 +137,18 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      * @param point where the circle center is
      */
     public void addCircle(Point point) {
-        this.currentIndex++;
-        this.drawings.add(new Circle(point.x, point.y, this.drawColor, this.currentStrokeWidth, this.fillCircle));
+        this.drawings.push(new Circle(point.x, point.y, this.drawColor, this.currentStrokeWidth, this.fillCircle));
     }
 
     /**
-     * Resizes the {@link DrawService#currentIndex} {@link Circle} in {@link DrawService#drawings}.
+     * Resizes the {@link Circle} in {@link DrawService#drawings}.
      * If control (keyChar 17) is pressed, it sets the radius of the {@link Circle} (1:1).
      * Otherwise, it sets the width and height of the {@link Circle}.
      *
      * @param point to set the radius or width and height of the {@link Circle}
      */
     public void resizeCurrentCircle(Point point) {
-        Circle circle = (Circle) this.drawings.get(this.currentIndex);
+        Circle circle = (Circle) this.drawings.peek();
         if (Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(17)) {
             int radius = (int) Math.sqrt(Math.pow(circle.getX() - point.x, 2) + (Math.pow(circle.getY() - point.y, 2)));
             circle.setSize(radius * 2, radius * 2);
@@ -168,34 +161,31 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
     }
 
     /**
-     * Increases the {@link DrawService#currentIndex} by one.
      * Adds a new {@link Line} to {@link DrawService#drawings}.
      */
     public void addLine() {
-        this.currentIndex++;
-        this.drawings.add(new Line());
+        this.drawings.push(new Line());
     }
 
     /**
-     * Adds a new {@link Point} to the {@link DrawService#currentIndex} {@link Line}.
+     * Adds a new {@link Point} to the {@link Line}.
      *
      * @param point to add to the line
      */
     public void addPoint(Point point) {
-        ((Line) this.drawings.get(this.currentIndex)).addPoint(point);
+        ((Line) this.drawings.peek()).addPoint(point);
     }
 
     /**
      * Removes the latest {@link Drawable} from the list and adds it to the
-     * {@link DrawService#undoDrawings} {@link List}, so the user is able to redo it.
+     * {@link DrawService#removedDrawings} {@link List}, so the user is able to redo it.
      *
      * @see DrawService#redoDrawing()
      */
     public void undoDrawing() {
         if (this.drawings.size() != 0) {
-            this.currentIndex--;
-            this.undoDrawings.add(this.drawings.get(this.currentIndex + 1));
-            this.drawings.remove(this.currentIndex + 1);
+            this.removedDrawings.push(this.drawings.peek());
+            this.drawings.pop();
         }
     }
 
@@ -207,11 +197,10 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
      * @see DrawService#undoDrawing()
      */
     public void redoDrawing() {
-        if (this.undoDrawings.size() > 0) {
-            this.currentIndex++;
-            int size = this.undoDrawings.size();
-            this.drawings.add(this.undoDrawings.get(size - 1));
-            this.undoDrawings.remove(size - 1);
+        if (this.removedDrawings.size() > 0) {
+            int size = this.removedDrawings.size();
+            this.drawings.push(this.removedDrawings.get(size - 1));
+            this.removedDrawings.remove(size - 1);
         }
     }
 
@@ -232,15 +221,10 @@ public class DrawService extends JComponent implements Drawable, ConfigManager, 
                 RenderingHints.VALUE_ANTIALIAS_ON
         );
 
-        this.firstLayer.forEach(var -> var.draw(g2d));
-        this.secondLayer.forEach(var -> var.draw(g2d));
-        this.thirdLayer.forEach(var -> var.draw(g2d));
-        repaint();
-    }
-
-    @Override
-    public void draw(Graphics2D g2d) {
+        this.backgroundLayer.forEach(var -> var.draw(g2d));
         this.drawings.forEach(var -> var.draw(g2d));
+        this.foregroundLayer.forEach(var -> var.draw(g2d));
+        repaint();
     }
 
     @Override
