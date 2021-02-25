@@ -55,6 +55,7 @@ public class ScreenService implements ResourceManager {
     public void show() {
         this.screenshotService.createScreenshot();
         this.screenshotFrame.setVisible(true);
+        this.screenshotFrame.requestFocus();
     }
 
     /**
