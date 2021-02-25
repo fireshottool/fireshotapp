@@ -7,11 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.components.ClipboardImage;
+import me.fox.components.ColorPalette;
 import me.fox.components.ConfigManager;
+import me.fox.components.Strokes;
 import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
-import me.fox.components.ColorPalette;
-import me.fox.components.Strokes;
 import me.fox.enums.LayerType;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.TrayIcon;
@@ -212,21 +212,18 @@ public class ScreenshotService implements Drawable, ConfigManager {
         int y = selection.y;
         int width = Math.abs(selection.width);
         int height = Math.abs(selection.height);
-        if (width != 0 && height != 0) {
-            if (selection.width < 0 && selection.height < 0) {
-                BufferedImage overlayScreen = this.takeScreenshot(x - width, y - height, width, height);
-                g2d.drawImage(overlayScreen, Math.max(x - width, 0), Math.max(y - height, 0), null);
-            } else if (selection.width < 0) {
-                BufferedImage overlayScreen = this.takeScreenshot(x - width, y, width, height);
-                g2d.drawImage(overlayScreen, Math.max(x - width, 0), Math.max(y, 0), null);
-            } else if (selection.height < 0) {
-                BufferedImage overlayScreen = this.takeScreenshot(x, y - height, width, height);
-                g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y - height, 0), null);
-            } else {
-                BufferedImage overlayScreen = this.takeScreenshot(x, y, width, height);
-                g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y, 0), null);
-            }
+        if (width == 0 || height == 0) return;
+
+        if (selection.width < 0) {
+            x -= width;
         }
+
+        if (selection.height < 0) {
+            y -= height;
+        }
+
+        BufferedImage overlayScreen = this.takeScreenshot(x, y, width, height);
+        g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y, 0), null);
     }
 
     /**
