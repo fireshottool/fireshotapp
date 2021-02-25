@@ -64,7 +64,6 @@ public class ScreenService implements ResourceManager {
      * @param googleSearch   whether to use google image search or not
      */
     public void hideAndConfirm(boolean imageDetection, boolean googleSearch) {
-        this.screenshotFrame.setVisible(false);
         try {
             this.screenshotService.confirmScreenshot(imageDetection, googleSearch);
         } catch (IOException e) {
@@ -82,13 +81,13 @@ public class ScreenService implements ResourceManager {
         this.screenshotService.getSelectionRectangle().setRect(-10, -10, 0, 0);
         Arrays.stream(this.screenshotService.getSelectionRectangle().getScalePoints())
                 .forEach(var -> var.updateLocation(this.screenshotService.getSelectionRectangle()));
-        this.screenshotFrame.setVisible(false);
-        DrawService drawService = Fireshotapp.getInstance().getDrawService();
-        drawToolbox.reset();
+        this.drawToolbox.reset();
         this.screenshotToolbox.reset();
-        drawService.resetDraw();
+        this.screenshotFrame.setVisible(false);
         this.drawToolbox.hideSelf();
         this.screenshotToolbox.hideSelf();
+        DrawService drawService = Fireshotapp.getInstance().getDrawService();
+        drawService.resetDraw();
     }
 
     @Override

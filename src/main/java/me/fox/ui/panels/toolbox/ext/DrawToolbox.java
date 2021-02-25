@@ -226,6 +226,9 @@ public class DrawToolbox extends Toolbox {
 
     @Override
     public void reset() {
+        if (this.colorPickerDialog.isVisible())
+            this.colorPickerDialog.setVisible(false);
+
         DrawService drawService = Fireshotapp.getInstance().getDrawService();
         if (drawService.isDraw()) {
             if (drawService.isCircle()) {
