@@ -23,7 +23,6 @@ import java.util.List;
 public class JsonService {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private final String fileSeparator = System.getProperty("file.separator");
     private final Path jsonPath = Paths.get(
             System.getenv("LOCALAPPDATA"), "Programs", "Fireshotapp", "fireshot.json"
     );

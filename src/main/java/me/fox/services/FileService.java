@@ -33,7 +33,7 @@ public class FileService implements ConfigManager {
     private final String fileSeparator = System.getProperty("file.separator");
 
     private final String resourcePath = Paths.get(
-            System.getenv("LOCALAPPDATA") + "Programs" + "Fireshotapp" + "data" + "resources"
+            System.getenv("LOCALAPPDATA"), "Programs", "Fireshotapp", "data", "resources"
     ).toString();
 
     private final List<File> resources = new ArrayList<>();
