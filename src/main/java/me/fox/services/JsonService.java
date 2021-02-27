@@ -24,9 +24,9 @@ public class JsonService {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final String fileSeparator = System.getProperty("file.separator");
-    private final Path jsonPath = Paths.get(System.getenv("LOCALAPPDATA") +
-            fileSeparator + "Programs" + fileSeparator + fileSeparator +
-            "Fireshotapp" + fileSeparator + "data" + fileSeparator + "fireshot.json");
+    private final Path jsonPath = Paths.get(
+            System.getenv("LOCALAPPDATA"), "Programs", "Fireshotapp", "fireshot.json"
+    );
 
     private final List<ConfigManager> configManagers = new ArrayList<>();
 

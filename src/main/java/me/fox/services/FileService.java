@@ -31,9 +31,10 @@ import java.util.concurrent.ExecutionException;
 public class FileService implements ConfigManager {
 
     private final String fileSeparator = System.getProperty("file.separator");
-    private final String resourcePath = System.getenv("LOCALAPPDATA") +
-            fileSeparator + "Programs" + fileSeparator + fileSeparator +
-            "Fireshotapp" + fileSeparator + "data" + fileSeparator + "resources" + fileSeparator;
+
+    private final String resourcePath = Paths.get(
+            System.getenv("LOCALAPPDATA") + "Programs" + "Fireshotapp" + "data" + "resources"
+    ).toString();
 
     private final List<File> resources = new ArrayList<>();
     private final List<String> requiredFiles = Lists.newArrayList(
@@ -42,8 +43,9 @@ public class FileService implements ConfigManager {
     );
     private final List<ResourceManager> resourceManagers = new ArrayList<>();
 
-    private Path screenshotPath = Paths.get(System.getProperty("user.home") +
-            fileSeparator + "fireshot" + fileSeparator + "screenshots");
+    private Path screenshotPath = Paths.get(
+            System.getProperty("user.home"), "fireshot", "screenshots"
+    );
     private String imageType = "png";
 
     /**
