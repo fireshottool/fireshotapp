@@ -9,8 +9,6 @@ import me.fox.ui.components.TrayIcon;
 import me.fox.ui.frames.ScreenshotFrame;
 
 import javax.swing.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.Executors;
 
 /**
