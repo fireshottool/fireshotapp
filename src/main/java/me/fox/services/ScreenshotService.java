@@ -19,6 +19,7 @@ import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.frames.OptionCheckboxFrame;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.utils.Util;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import javax.imageio.ImageIO;
@@ -115,7 +116,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
      * @throws IOException if an I/O error occurs
      */
     private void saveImage(BufferedImage screenshot) throws IOException {
-        String fileName = Util.generateRandomString(18);
+        String fileName = RandomStringUtils.random(18);
 
         Fireshotapp.getInstance().getFileService().saveImage(screenshot, fileName);
         System.out.println("Saved!");
