@@ -36,9 +36,8 @@ public class ClipboardImage {
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (isDataFlavorSupported(flavor)) {
                 return this.image;
-            } else {
-                throw new UnsupportedFlavorException(flavor);
             }
+            throw new UnsupportedFlavorException(flavor);
         }
 
         public boolean isDataFlavorSupported(DataFlavor flavor) {
