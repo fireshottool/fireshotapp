@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.components.ResourceManager;
-import me.fox.components.ColorPalette;
+import me.fox.constants.ColorPalette;
 import me.fox.enums.ToolboxType;
 import me.fox.listeners.mouse.ToolboxListener;
 import me.fox.ui.components.ScalableRectangle;

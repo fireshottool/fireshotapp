@@ -1,4 +1,4 @@
-package me.fox.components;
+package me.fox.constants;
 
 import java.awt.*;
 
