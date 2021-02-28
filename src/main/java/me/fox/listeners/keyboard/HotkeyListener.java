@@ -16,7 +16,7 @@ public class HotkeyListener extends GlobalKeyAdapter {
 
     @Override
     public void keyPressed(GlobalKeyEvent event) {
-        if (event.getVirtualKeyCode() == 255) return;
+        if (event.getVirtualKeyCode() == GlobalKeyEvent.VK_SNAPSHOT) return;
         this.hotkeyService.registerKey(event.getVirtualKeyCode());
         if (this.hotkeyService.isChangingHotkey()) return;
         this.hotkeyService.invokeIfPresent(event);
@@ -25,7 +25,7 @@ public class HotkeyListener extends GlobalKeyAdapter {
     @Override
     public void keyReleased(GlobalKeyEvent event) {
         if (this.hotkeyService.isChangingHotkey()) return;
-        if (event.getVirtualKeyCode() == 255) return;
+        if (event.getVirtualKeyCode() == GlobalKeyEvent.VK_SNAPSHOT) return;
         this.hotkeyService.unregisterKey(event.getVirtualKeyCode());
     }
 }

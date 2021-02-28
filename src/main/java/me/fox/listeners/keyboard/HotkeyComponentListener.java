@@ -14,13 +14,15 @@ import me.fox.ui.components.settings.ext.HotkeyComponent;
 public class HotkeyComponentListener extends GlobalKeyAdapter {
 
     private final HotkeyComponent hotkeyComponent;
+
     @Override
     public void keyPressed(GlobalKeyEvent event) {
         if (this.hotkeyComponent.isInside() && Fireshotapp.getInstance().getHotkeyService().isChangingHotkey()) {
-            if (event.getVirtualKeyCode() == 91
-                    || event.getVirtualKeyCode() == 17
-                    || event.getVirtualKeyCode() == 16
-                    || event.getVirtualKeyCode() == 18) return;
+            if (event.getVirtualKeyCode() == GlobalKeyEvent.VK_LWIN
+                    || event.getVirtualKeyCode() == GlobalKeyEvent.VK_SHIFT
+                    || event.getVirtualKeyCode() == GlobalKeyEvent.VK_CONTROL
+                    || event.getVirtualKeyCode() == GlobalKeyEvent.VK_MENU)
+                return;
             this.hotkeyComponent.updateHotkey(event);
         }
     }
