@@ -22,6 +22,8 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 /**
@@ -73,7 +75,7 @@ public class RequestService implements ConfigManager {
             String content = EntityUtils.toString(entity);
 
             if (googleSearch) {
-                Util.googleSearch(content);
+                this.googleSearch(content);
                 return file;
             }
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(content), null);
@@ -120,6 +122,15 @@ public class RequestService implements ConfigManager {
             }
             return "";
         });
+    }
+
+    private void googleSearch(String imageUrl) {
+        System.out.println("google search");
+        try {
+            Desktop.getDesktop().browse(new URI("https://www.google.com/searchbyimage?image_url=" + imageUrl));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

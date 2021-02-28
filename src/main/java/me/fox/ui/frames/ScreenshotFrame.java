@@ -2,7 +2,6 @@ package me.fox.ui.frames;
 
 import lombok.Getter;
 import me.fox.services.DrawService;
-import me.fox.utils.Util;
 
 import javax.swing.*;
 import java.awt.*;
@@ -102,7 +101,22 @@ public class ScreenshotFrame extends JFrame {
      * @param cursorType to update with {@link Cursor} class
      */
     public void updateCursor(int cursorType) {
-        if (!Util.isValidCursor(cursorType)) return;
+        if (!this.isValidCursor(cursorType)) return;
         this.setCursor(Cursor.getPredefinedCursor(cursorType));
+    }
+
+    /**
+     * Checks whether the {@param cursorType} is valid.
+     *
+     * @param cursorType to check
+     * @return if the specified cursor type is invalid
+     */
+    private boolean isValidCursor(int cursorType) {
+        try {
+            Cursor.getPredefinedCursor(cursorType);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }
