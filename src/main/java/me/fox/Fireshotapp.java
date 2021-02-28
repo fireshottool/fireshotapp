@@ -23,7 +23,6 @@ public class Fireshotapp {
     private static Fireshotapp instance;
 
     public static final Version VERSION = new Version("0.3.1");
-
     private final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(2));
 
     private final DrawService drawService = new DrawService();

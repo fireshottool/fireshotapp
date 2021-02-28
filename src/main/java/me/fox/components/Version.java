@@ -1,5 +1,6 @@
 package me.fox.components;
 
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
 /**
@@ -7,6 +8,7 @@ import lombok.NonNull;
  * Yoinked from https://stackoverflow.com/a/11024200
  */
 
+@EqualsAndHashCode
 public class Version implements Comparable<Version> {
 
     private final String version;
@@ -40,16 +42,4 @@ public class Version implements Comparable<Version> {
         }
         return 0;
     }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that)
-            return true;
-        if (that == null)
-            return false;
-        if (this.getClass() != that.getClass())
-            return false;
-        return this.compareTo((Version) that) == 0;
-    }
-
 }

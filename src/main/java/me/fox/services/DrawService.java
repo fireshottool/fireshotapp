@@ -87,10 +87,10 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
     public void resetDraw() {
         this.drawings.clear();
         this.removedDrawings.clear();
-        this.draw         = false;
-        this.line         = false;
-        this.circle       = false;
-        this.rectangle    = false;
+        this.draw = false;
+        this.line = false;
+        this.circle = false;
+        this.rectangle = false;
     }
 
     /**
@@ -208,9 +208,9 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
     public void applyConfig(Config config) {
         DrawConfig drawConfig = config.getDrawConfig();
         this.currentStrokeWidth = drawConfig.getDefaultThickness();
-        this.decreaseThickness  = drawConfig.getThicknessDecrease();
-        this.increaseThickness  = drawConfig.getThicknessIncrease();
-        this.drawColor          = Color.decode(drawConfig.getColor());
+        this.decreaseThickness = drawConfig.getThicknessDecrease();
+        this.increaseThickness = drawConfig.getThicknessIncrease();
+        this.drawColor = Color.decode(drawConfig.getColor());
     }
 
     @Override
@@ -239,8 +239,7 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
                         "drawing"
                 );
                 System.out.println("Test" + this.drawCursor);
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });
