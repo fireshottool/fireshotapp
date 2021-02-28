@@ -18,7 +18,6 @@ import me.fox.ui.components.TrayIcon;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.frames.OptionCheckboxFrame;
 import me.fox.ui.frames.ScreenshotFrame;
-import me.fox.utils.Util;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -345,7 +344,8 @@ public class ScreenshotService implements Drawable, ConfigManager {
         }
 
 
-        if (this.selectionRectangle.x < 0 && this.selectionRectangle.y < 0) return;
+        if (this.selectionRectangle.x < 0 && this.selectionRectangle.y < 0)
+            return;
         String widthHeight = Math.abs(this.selectionRectangle.width) + " x " + Math.abs(this.selectionRectangle.height);
         g2d.setColor(ColorPalette.DARK_BLUE_170);
         g2d.fillRoundRect(this.selectionRectangle.x, this.selectionRectangle.y - 25,
