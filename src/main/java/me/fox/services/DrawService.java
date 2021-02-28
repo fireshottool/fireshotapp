@@ -70,8 +70,7 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
      * minus {@link DrawService#decreaseThickness} is not equal to zero or smaller than zero.
      */
     public void decreaseThickness() {
-        if (this.currentStrokeWidth - this.decreaseThickness <= 0) return;
-        this.currentStrokeWidth -= this.decreaseThickness;
+        this.currentStrokeWidth = Math.max(this.currentStrokeWidth - this.decreaseThickness, 0);
     }
 
     /**
@@ -149,11 +148,13 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
      */
     public void resizeCurrentCircle(Point point) {
         Circle circle = (Circle) this.drawings.peek();
+
         if (Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(17)) {
             int radius = (int) Math.sqrt(Math.pow(circle.getX() - point.x, 2) + (Math.pow(circle.getY() - point.y, 2)));
             circle.setSize(radius * 2, radius * 2);
             return;
         }
+
         int width = Math.abs(point.x - circle.getX()) * 2;
         int height = Math.abs(point.y - circle.getY()) * 2;
 

@@ -5,7 +5,6 @@ import me.fox.Fireshotapp;
 import me.fox.components.ConfigManager;
 import me.fox.config.Config;
 import me.fox.config.RequestConfig;
-import me.fox.utils.Util;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
