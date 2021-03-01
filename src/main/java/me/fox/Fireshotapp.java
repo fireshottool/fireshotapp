@@ -9,6 +9,7 @@ import me.fox.ui.components.TrayIcon;
 import me.fox.ui.frames.ScreenshotFrame;
 
 import javax.swing.*;
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 
 /**
@@ -39,7 +40,7 @@ public class Fireshotapp {
     private void load() {
         this.readJson();
         this.fileService.loadResources();
-        this.updateService.checkUpdate(false);
+        this.updateService.checkForUpdate(false);
         this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
     }
 
