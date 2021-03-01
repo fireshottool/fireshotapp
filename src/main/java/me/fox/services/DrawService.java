@@ -25,7 +25,6 @@ import java.util.Optional;
 import java.util.Stack;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
 /**
  * @author (Ausgefuchster)
  * @version (~ 22.10.2020)
@@ -228,17 +227,21 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
         repaint();
     }
 
+    private Cursor createCursor(Image image) {
+        return Toolkit.getDefaultToolkit().createCustomCursor(
+                image,
+                new Point(5, 25),
+                "drawing"
+        );
+    }
+
     @Override
     public void applyResources(List<File> files) {
         Optional<File> fileOptional = files.stream().filter(var -> var.getName().equals("pencilw.png")).findFirst();
 
         fileOptional.ifPresent(var -> {
             try {
-                this.drawCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-                        ImageIO.read(var),
-                        new Point(5, 25),
-                        "drawing"
-                );
+                this.drawCursor = this.createCursor(ImageIO.read(var));
                 System.out.println("Test" + this.drawCursor);
             } catch (IOException e) {
                 e.printStackTrace();

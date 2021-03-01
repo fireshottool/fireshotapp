@@ -49,13 +49,7 @@ public class HotkeyService implements ConfigManager {
         this.drawService = drawService;
         this.drawComponent = ((ScreenshotToolbox) this.screenService.getScreenshotToolbox()).getDrawComponent();
 
-        this.hotkeyMap.put("screenshot", this::screenshot);
-        this.hotkeyMap.put("escape", this::escape);
-        this.hotkeyMap.put("draw", this::draw);
-        this.hotkeyMap.put("redo", this::redo);
-        this.hotkeyMap.put("undo", this::undo);
-        this.hotkeyMap.put("confirm", this::confirm);
-        this.hotkeyMap.put("zoom", this::zoom);
+        this.registerHotkeys();
     }
 
     /**
@@ -91,6 +85,16 @@ public class HotkeyService implements ConfigManager {
         if (this.pressedKeys.contains(keyCode)) {
             this.pressedKeys.remove((Integer) keyCode);
         }
+    }
+
+    private void registerHotkeys() {
+        this.hotkeyMap.put("screenshot", this::screenshot);
+        this.hotkeyMap.put("escape", this::escape);
+        this.hotkeyMap.put("draw", this::draw);
+        this.hotkeyMap.put("redo", this::redo);
+        this.hotkeyMap.put("undo", this::undo);
+        this.hotkeyMap.put("confirm", this::confirm);
+        this.hotkeyMap.put("zoom", this::zoom);
     }
 
     private void screenshot() {

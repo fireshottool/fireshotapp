@@ -78,17 +78,27 @@ public class ScreenService implements ResourceManager {
      * Hides the screen again.
      */
     public void resetAndHide() {
+        this.reset();
+        this.hide();
+    }
+
+    private void reset() {
         this.screenshotService.setImage(null);
         this.screenshotService.getSelectionRectangle().setRect(-10, -10, 0, 0);
+
         Arrays.stream(this.screenshotService.getSelectionRectangle().getScalePoints())
                 .forEach(var -> var.updateLocation(this.screenshotService.getSelectionRectangle()));
+
         this.drawToolbox.reset();
         this.screenshotToolbox.reset();
+
+        Fireshotapp.getInstance().getDrawService().resetDraw();
+    }
+
+    private void hide() {
         this.screenshotFrame.setVisible(false);
         this.drawToolbox.hideSelf();
         this.screenshotToolbox.hideSelf();
-        DrawService drawService = Fireshotapp.getInstance().getDrawService();
-        drawService.resetDraw();
     }
 
     @Override
