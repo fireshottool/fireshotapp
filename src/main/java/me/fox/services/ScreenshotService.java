@@ -333,7 +333,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
 
         pointerLocation.x += 140;
         pointerLocation.y += 140;
-        this.drawWidthHeightAndXY(g2d, pointerLocation);
+        this.drawSelectionAndCursorInfo(g2d, pointerLocation);
     }
 
     /**
@@ -389,42 +389,50 @@ public class ScreenshotService implements Drawable, ConfigManager {
      * and the width and height of the selection.
      *
      * @param g2d   {@link Graphics2D} to draw
-     * @param point mouse location
+     * @param cursor mouse location
      */
-    private void drawWidthHeightAndXY(Graphics2D g2d, Point point) {
+    private void drawSelectionAndCursorInfo(Graphics2D g2d, Point cursor) {
+        this.drawCursorInfo(g2d, cursor);
+        if (this.selectionRectangle.x >= 0 || this.selectionRectangle.y >= 0) {
+            this.drawSelectionInfo(g2d);
+        }
+    }
+
+    private void drawCursorInfo(Graphics2D g2d, Point cursor) {
         g2d.setFont(this.font);
         g2d.setStroke(Strokes.WIDTH_ONE_STROKE);
+        g2d.setColor(ColorPalette.DARK_BLUE_170);
 
-        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-        String xy = "x: " + mouseLocation.x + "  y: " + mouseLocation.y;
+        String xy = String.format("x: %d  y: %d", cursor.x, cursor.y);
 
         if (this.zoom) {
-            g2d.setColor(ColorPalette.DARK_BLUE_170);
-            g2d.fillRoundRect(point.x - 120, point.y + 10, xy.length() * 7, 20, 10, 10);
+            g2d.fillRoundRect(cursor.x - 120, cursor.y + 10, xy.length() * 7, 20, 10, 10);
             g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
-            g2d.drawRoundRect(point.x - 120, point.y + 10, xy.length() * 7, 20, 10, 10);
-            g2d.setColor(Color.white);
-            g2d.drawString(xy, point.x - 110, point.y + 25);
-        } else {
-            g2d.fillRoundRect(point.x - 50, point.y + 15, xy.length() * 7, 20, 10, 10);
-            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
-            g2d.drawRoundRect(point.x - 50, point.y + 15, xy.length() * 7, 20, 10, 10);
+            g2d.drawRoundRect(cursor.x - 120, cursor.y + 10, xy.length() * 7, 20, 10, 10);
             g2d.setColor(Color.WHITE);
-            g2d.drawString(xy, point.x - 40, point.y + 30);
+            g2d.drawString(xy, cursor.x - 110, cursor.y + 25);
+        } else {
+            g2d.fillRoundRect(cursor.x - 50, cursor.y + 15, xy.length() * 7, 20, 10, 10);
+            g2d.drawRoundRect(cursor.x - 50, cursor.y + 15, xy.length() * 7, 20, 10, 10);
+            g2d.setColor(Color.WHITE);
+            g2d.drawString(xy, cursor.x - 40, cursor.y + 30);
         }
+    }
 
-        if (this.selectionRectangle.x < 0 && this.selectionRectangle.y < 0)
-            return;
-
+    private void drawSelectionInfo(Graphics2D g2d) {
         String widthHeight = Math.abs(this.selectionRectangle.width) + " x " + Math.abs(this.selectionRectangle.height);
 
         g2d.setColor(ColorPalette.DARK_BLUE_170);
-        g2d.fillRoundRect(this.selectionRectangle.x, this.selectionRectangle.y - 25,
-                widthHeight.length() * 9, 20, 10, 10);
+        g2d.fillRoundRect(
+                this.selectionRectangle.x, this.selectionRectangle.y - 25,
+                widthHeight.length() * 9, 20, 10, 10
+        );
 
         g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
-        g2d.drawRoundRect(this.selectionRectangle.x, this.selectionRectangle.y - 25,
-                widthHeight.length() * 9, 20, 10, 10);
+        g2d.drawRoundRect(
+                this.selectionRectangle.x, this.selectionRectangle.y - 25,
+                widthHeight.length() * 9, 20, 10, 10
+        );
 
         g2d.setColor(Color.WHITE);
         g2d.drawString(widthHeight, this.selectionRectangle.x + 10, this.selectionRectangle.y - 10);
@@ -439,15 +447,14 @@ public class ScreenshotService implements Drawable, ConfigManager {
         g2d.fillRect(0, 0, this.screenshotFrame.getWidth(), this.screenshotFrame.getHeight());
     }
 
-    // Todo: rename before committing
-    private void needHelpNamingThis(Graphics2D g2d) {
+    private void drawZoomOrSelectionInfo(Graphics2D g2d) {
         if (this.drawService.isDraw()) return;
 
         if (this.zoom) {
             this.drawZoom(g2d);
         } else {
             Point pointerLocation = MouseInfo.getPointerInfo().getLocation();
-            this.drawWidthHeightAndXY(g2d, pointerLocation);
+            this.drawSelectionAndCursorInfo(g2d, pointerLocation);
         }
     }
 
@@ -490,6 +497,6 @@ public class ScreenshotService implements Drawable, ConfigManager {
         this.drawImageWithScreenshotFrame(g2d);
         this.drawOverlay(g2d);
         this.drawSelected(g2d, this.selectionRectangle);
-        this.needHelpNamingThis(g2d);
+        this.drawZoomOrSelectionInfo(g2d);
     }
 }
