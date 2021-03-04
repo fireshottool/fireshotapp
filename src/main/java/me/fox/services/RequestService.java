@@ -7,6 +7,7 @@ import me.fox.config.Config;
 import me.fox.config.RequestConfig;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -32,8 +33,8 @@ import java.net.URL;
 
 public class RequestService implements ConfigManager {
 
-    private String uploadURL, imageURL, imageDetectionURL;
     private final HttpClient client = HttpClientBuilder.create().build();
+    private String uploadURL, imageURL, imageDetectionURL;
 
     /**
      * Uploads an image to the server.
@@ -45,40 +46,14 @@ public class RequestService implements ConfigManager {
      */
     public ListenableFuture<File> uploadImage(File file, boolean imageDetection, boolean googleSearch) {
         return Fireshotapp.getInstance().getExecutorService().submit(() -> {
-            HttpEntity entity;
-            HttpPost request;
-
-            if (imageDetection) {
-                request = new HttpPost(imageDetectionURL);
-                entity = MultipartEntityBuilder.create()
-                        .addPart("file", new FileBody(file, ContentType.IMAGE_PNG))
-                        .addTextBody("language", "eng")
-                        .build();
-            } else {
-                entity = MultipartEntityBuilder.create()
-                        .addPart("file", new FileBody(file, ContentType.IMAGE_PNG))
-                        .build();
-                request = new HttpPost(uploadURL);
-            }
-            request.setEntity(entity);
-
+            HttpPost request = this.buildRequest(file, imageDetection);
             HttpResponse response = this.client.execute(request);
-            entity = response.getEntity();
 
-            if (response.getStatusLine().getStatusCode() != 200) {
-                //TODO Implement error message
-                System.out.println("Response: " + response);
-                return file;
+            if (this.isStatusOk(response)) {
+                this.searchOrCopyToClipboard(this.getEntityAsString(response), googleSearch);
+            } else {
+                this.logErrorMessage(response);
             }
-
-            String content = EntityUtils.toString(entity);
-
-            if (googleSearch) {
-                this.googleSearch(content);
-                return file;
-            }
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(content), null);
-
             return file;
         });
     }
@@ -121,6 +96,45 @@ public class RequestService implements ConfigManager {
             }
             return "";
         });
+    }
+
+    private String getEntityAsString(HttpResponse response) throws IOException {
+        HttpEntity entity = response.getEntity();
+        return EntityUtils.toString(entity);
+    }
+
+    private void searchOrCopyToClipboard(String data, boolean search) {
+        if (search) {
+            this.googleSearch(data);
+        } else {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(data), null);
+        }
+    }
+
+    private boolean isStatusOk(HttpResponse response) {
+        return response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+    }
+
+    private void logErrorMessage(HttpResponse response) {
+        //TODO Implement error message
+        System.out.println("Response: " + response);
+    }
+
+    private HttpPost buildRequest(File file, boolean imageDetection) {
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create()
+                .addPart("file", new FileBody(file, ContentType.IMAGE_PNG));
+
+        HttpPost request;
+
+        if (imageDetection) {
+            request = new HttpPost(imageDetectionURL);
+            builder.addTextBody("language", "eng");
+        } else {
+            request = new HttpPost(uploadURL);
+        }
+
+        request.setEntity(builder.build());
+        return request;
     }
 
     private void googleSearch(String imageUrl) {

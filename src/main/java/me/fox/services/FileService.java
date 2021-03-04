@@ -19,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -120,16 +119,20 @@ public class FileService implements ConfigManager {
      * @return the file from the image
      */
     private File getAndWriteImage(String imageName) {
-        RequestService requestService = Fireshotapp.getInstance().getRequestService();
         try {
-            Image image = requestService.requestImage(imageName).get();
-            Objects.requireNonNull(image);
-            ImageIO.write((RenderedImage) image, "png",
-                    new File(this.resourcePath + imageName));
+            this.requestImageAndWrite(imageName);
         } catch (InterruptedException | IOException | ExecutionException e) {
             e.printStackTrace();
         }
         return new File(this.resourcePath + imageName);
+    }
+
+    private void requestImageAndWrite(String imageName) throws ExecutionException, InterruptedException, IOException {
+        RequestService requestService = Fireshotapp.getInstance().getRequestService();
+        Image image = requestService.requestImage(imageName).get();
+        if (image != null) {
+            ImageIO.write((RenderedImage) image, "png", new File(this.resourcePath, imageName));
+        }
     }
 
     @Override

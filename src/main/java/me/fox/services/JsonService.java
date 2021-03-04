@@ -47,21 +47,14 @@ public class JsonService {
             File file = this.jsonPath.toFile();
 
             if (!file.exists()) {
-                if (file.getParentFile() != null) {
-                    file.getParentFile().mkdirs();
-                }
-                file.createNewFile();
+                this.createFileAndParents(file);
 
                 this.config = this.createDefault(file);
                 Arrays.stream(configManagers).forEach(var -> var.applyConfig(this.config));
-                return;
+            } else {
+                this.readConfig(file);
+                this.invokeConfigManager();
             }
-
-            this.config = this.gson.fromJson(new BufferedReader(new FileReader(file)), Config.class);
-            if (this.config == null)
-                this.config = this.createDefault(file);
-
-            this.invokeConfigManager();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,6 +67,19 @@ public class JsonService {
     public void saveAndApply() {
         this.save();
         this.invokeConfigManager();
+    }
+
+    private void createFileAndParents(File file) throws IOException {
+        if (file.getParentFile() != null) {
+            file.getParentFile().mkdirs();
+        }
+        file.createNewFile();
+    }
+
+    private void readConfig(File file) throws IOException {
+        this.config = this.gson.fromJson(new BufferedReader(new FileReader(file)), Config.class);
+        if (this.config == null)
+            this.config = this.createDefault(file);
     }
 
     /**
@@ -93,10 +99,7 @@ public class JsonService {
             File file = this.jsonPath.toFile();
 
             if (!file.exists()) {
-                if (file.getParentFile() != null) {
-                    file.getParentFile().mkdirs();
-                }
-                file.createNewFile();
+                this.createFileAndParents(file);
             }
 
             FileWriter writer = new FileWriter(file);
