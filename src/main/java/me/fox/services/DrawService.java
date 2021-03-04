@@ -42,6 +42,8 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
     private final List<Drawable> backgroundLayer = new CopyOnWriteArrayList<>();
     private final List<Drawable> foregroundLayer = new CopyOnWriteArrayList<>();
 
+    private final Font font = new Font("Gadugi", Font.PLAIN, 14);
+
     private Cursor drawCursor;
     private Color drawColor;
 
@@ -204,6 +206,14 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
         }
     }
 
+    private Cursor createCursor(Image image) {
+        return Toolkit.getDefaultToolkit().createCustomCursor(
+                image,
+                new Point(5, 25),
+                "drawing"
+        );
+    }
+
     @Override
     public void applyConfig(Config config) {
         DrawConfig drawConfig = config.getDrawConfig();
@@ -211,28 +221,6 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
         this.decreaseThickness = drawConfig.getThicknessDecrease();
         this.increaseThickness = drawConfig.getThicknessIncrease();
         this.drawColor = Color.decode(drawConfig.getColor());
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON
-        );
-
-        this.backgroundLayer.forEach(var -> var.draw(g2d));
-        this.drawings.forEach(var -> var.draw(g2d));
-        this.foregroundLayer.forEach(var -> var.draw(g2d));
-        repaint();
-    }
-
-    private Cursor createCursor(Image image) {
-        return Toolkit.getDefaultToolkit().createCustomCursor(
-                image,
-                new Point(5, 25),
-                "drawing"
-        );
     }
 
     @Override
@@ -247,5 +235,20 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
                 e.printStackTrace();
             }
         });
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON
+        );
+        g2d.setFont(this.font);
+
+        this.backgroundLayer.forEach(var -> var.draw(g2d));
+        this.drawings.forEach(var -> var.draw(g2d));
+        this.foregroundLayer.forEach(var -> var.draw(g2d));
+        repaint();
     }
 }
