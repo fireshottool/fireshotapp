@@ -12,11 +12,11 @@ import me.fox.components.ConfigManager;
 import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
 import me.fox.constants.ColorPalette;
-import me.fox.constants.Strokes;
 import me.fox.enums.LayerType;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.TrayIcon;
 import me.fox.ui.components.draw.Drawable;
+import me.fox.ui.components.draw.impl.ImageZoom;
 import me.fox.ui.frames.OptionCheckboxFrame;
 import me.fox.ui.frames.ScreenshotFrame;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -26,7 +26,6 @@ import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -46,11 +45,10 @@ public class ScreenshotService implements Drawable, ConfigManager {
     private final RequestService requestService;
 
     private final Font font = new Font("Gadugi", Font.PLAIN, 14);
+    private final ImageZoom imageZoom = new ImageZoom();
 
     private BufferedImage image;
     private Color dimColor;
-    private Color zoomCrossColor;
-    private Color zoomRasterColor;
     private boolean localSave, upload, zoom;
 
     /**
@@ -102,6 +100,24 @@ public class ScreenshotService implements Drawable, ConfigManager {
         if (this.isLocalSave()) {
             this.saveImage(screenshot);
         }
+    }
+
+
+    /**
+     * Creates a sub-image with fitting bounds.
+     *
+     * @param x      selection coordinate
+     * @param y      selection coordinate
+     * @param width  selection width
+     * @param height selection height
+     * @return a {@link BufferedImage#getSubimage(int, int, int, int)}
+     */
+    public BufferedImage takeScreenshot(int x, int y, int width, int height) {
+        if (width == 0 || height == 0 || this.image == null) return null;
+
+        Rectangle corrected = this.correctImageCoordinates(x, y, width, height);
+
+        return this.image.getSubimage(corrected.x, corrected.y, corrected.width, corrected.height);
     }
 
     private BufferedImage takeScreenshotFromSelection() {
@@ -218,23 +234,6 @@ public class ScreenshotService implements Drawable, ConfigManager {
         return key == JOptionPane.NO_OPTION || key == JOptionPane.CANCEL_OPTION || key == JOptionPane.DEFAULT_OPTION;
     }
 
-    /**
-     * Creates a sub-image with fitting bounds.
-     *
-     * @param x      selection coordinate
-     * @param y      selection coordinate
-     * @param width  selection width
-     * @param height selection height
-     * @return a {@link BufferedImage#getSubimage(int, int, int, int)}
-     */
-    private BufferedImage takeScreenshot(int x, int y, int width, int height) {
-        if (width == 0 || height == 0 || this.image == null) return null;
-
-        Rectangle corrected = this.correctImageCoordinates(x, y, width, height);
-
-        return this.image.getSubimage(corrected.x, corrected.y, corrected.width, corrected.height);
-    }
-
     private Rectangle correctImageCoordinates(int x, int y, int width, int height) {
         if (x < 0) {
             width += x;
@@ -277,149 +276,11 @@ public class ScreenshotService implements Drawable, ConfigManager {
 
         BufferedImage overlayScreen = this.takeScreenshot(x, y, width, height);
         g2d.drawImage(overlayScreen, Math.max(x, 0), Math.max(y, 0), null);
-    }
-
-    /**
-     * Draws the zoom under the cursor and replaces it
-     * if it goes out of the screen.
-     *
-     * @param g2d {@link Graphics2D} to draw
-     */
-    private void drawZoom(Graphics2D g2d) {
-        ScreenshotService screenshotService = Fireshotapp.getInstance().getScreenshotService();
-        Point pointerLocation = MouseInfo.getPointerInfo().getLocation();
-
-        int screenWidth = this.screenshotFrame.getWidth();
-        int screenHeight = this.screenshotFrame.getHeight();
-
-        int screenX = this.screenshotFrame.getX();
-        int screenY = this.screenshotFrame.getY();
-
-        if (screenX < 0 || screenY < 0) {
-            if (screenX < 0 && screenY < 0) {
-                pointerLocation.x -= screenX;
-                pointerLocation.y -= screenY;
-            } else if (screenX < 0) {
-                pointerLocation.x -= screenX;
-            } else {
-                pointerLocation.y -= screenY;
-            }
-        }
-
-        if (pointerLocation.x + 160 > screenWidth) {
-            pointerLocation.x -= 140;
-        }
-        if (pointerLocation.y + 160 > screenHeight) {
-            pointerLocation.y -= 140;
-        }
-
-
-        Shape shape = new Ellipse2D.Float(pointerLocation.x, pointerLocation.y, 140, 140);
-        g2d.setClip(shape);
-
-        BufferedImage subImage = screenshotService.takeScreenshot(
-                pointerLocation.x - 6, pointerLocation.y - 6,
-                11, 11
-        );
-        if (subImage == null) return;
-
-        g2d.drawImage(subImage, pointerLocation.x, pointerLocation.y, 140,
-                140, null);
-
-        this.drawZoomGrid(g2d, pointerLocation);
-        g2d.setStroke(Strokes.WIDTH_TWO_STROKE);
-        g2d.setColor(Color.WHITE);
-        g2d.draw(shape);
-
-        pointerLocation.x += 140;
-        pointerLocation.y += 140;
-        this.drawSelectionAndCursorInfo(g2d, pointerLocation);
-    }
-
-    /**
-     * Draws the grid for the zoom.
-     *
-     * @param g2d    to draw
-     * @param cursor as location to draw
-     */
-    private void drawZoomGrid(Graphics2D g2d, Point cursor) {
-        this.drawZoomCrossAroundCursor(g2d, cursor);
-        this.drawZoomRasterAroundCursor(g2d, cursor);
-        this.drawZoomRectangleAroundCursor(g2d, cursor);
-    }
-
-    private void drawZoomRasterAroundCursor(Graphics2D g2d, Point cursor) {
-        g2d.setColor(this.zoomRasterColor);
-
-        int count = 0;
-        for (int i = 12; i < 70; i += 12) {
-            g2d.drawLine(cursor.x, cursor.y + i + count, cursor.x + 140, cursor.y + i + count);
-            g2d.drawLine(cursor.x + i + count, cursor.y, cursor.x + i + count, cursor.y + 140);
-            count++;
-        }
-
-        count = 0;
-        for (int i = 76; i < 140; i += 12) {
-            g2d.drawLine(cursor.x, cursor.y + i + count, cursor.x + 140, cursor.y + i + count);
-            g2d.drawLine(cursor.x + i + count, cursor.y, cursor.x + i + count, cursor.y + 140);
-            if (count != 3) {
-                count++;
-            }
-        }
-    }
-
-    private void drawZoomRectangleAroundCursor(Graphics2D g2d, Point cursor) {
-        g2d.setColor(Color.WHITE);
-        g2d.setStroke(Strokes.WIDTH_ONE_STROKE);
-        g2d.drawRect(cursor.x + 64, cursor.y + 64, 11, 11);
-        g2d.setClip(null);
-    }
-
-    private void drawZoomCrossAroundCursor(Graphics2D g2d, Point cursor) {
-        g2d.setColor(this.zoomCrossColor);
-
-        g2d.fillRect(cursor.x + 64, cursor.y, 12, 65);
-        g2d.fillRect(cursor.x + 64, cursor.y + 75, 12, 65);
-        g2d.fillRect(cursor.x, cursor.y + 64, 65, 12);
-        g2d.fillRect(cursor.x + 75, cursor.y + 64, 65, 12);
-    }
-
-    /**
-     * Draws coordinate labels for the mouse location
-     * and the width and height of the selection.
-     *
-     * @param g2d   {@link Graphics2D} to draw
-     * @param cursor mouse location
-     */
-    private void drawSelectionAndCursorInfo(Graphics2D g2d, Point cursor) {
-        this.drawCursorInfo(g2d, cursor);
-        if (this.selectionRectangle.x >= 0 || this.selectionRectangle.y >= 0) {
-            this.drawSelectionInfo(g2d);
-        }
-    }
-
-    private void drawCursorInfo(Graphics2D g2d, Point cursor) {
-        g2d.setFont(this.font);
-        g2d.setStroke(Strokes.WIDTH_ONE_STROKE);
-        g2d.setColor(ColorPalette.DARK_BLUE_170);
-
-        String xy = String.format("x: %d  y: %d", cursor.x, cursor.y);
-
-        if (this.zoom) {
-            g2d.fillRoundRect(cursor.x - 120, cursor.y + 10, xy.length() * 7, 20, 10, 10);
-            g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
-            g2d.drawRoundRect(cursor.x - 120, cursor.y + 10, xy.length() * 7, 20, 10, 10);
-            g2d.setColor(Color.WHITE);
-            g2d.drawString(xy, cursor.x - 110, cursor.y + 25);
-        } else {
-            g2d.fillRoundRect(cursor.x - 50, cursor.y + 15, xy.length() * 7, 20, 10, 10);
-            g2d.drawRoundRect(cursor.x - 50, cursor.y + 15, xy.length() * 7, 20, 10, 10);
-            g2d.setColor(Color.WHITE);
-            g2d.drawString(xy, cursor.x - 40, cursor.y + 30);
-        }
+        this.drawSelectionInfo(g2d);
     }
 
     private void drawSelectionInfo(Graphics2D g2d) {
+        if (this.selectionRectangle.x <= 0 || this.selectionRectangle.y <= 0) return;
         String widthHeight = Math.abs(this.selectionRectangle.width) + " x " + Math.abs(this.selectionRectangle.height);
 
         g2d.setColor(ColorPalette.DARK_BLUE_170);
@@ -447,21 +308,14 @@ public class ScreenshotService implements Drawable, ConfigManager {
         g2d.fillRect(0, 0, this.screenshotFrame.getWidth(), this.screenshotFrame.getHeight());
     }
 
-    private void drawZoomOrSelectionInfo(Graphics2D g2d) {
-        if (this.drawService.isDraw()) return;
-
-        if (this.zoom) {
-            this.drawZoom(g2d);
-        } else {
-            Point pointerLocation = MouseInfo.getPointerInfo().getLocation();
-            this.drawSelectionAndCursorInfo(g2d, pointerLocation);
-        }
-    }
-
     private void applyFieldsFromConfig(ScreenshotConfig config) {
         this.localSave = config.isLocalSave();
         this.upload = config.isUpload();
         this.zoom = config.isZoom();
+
+        this.imageZoom.setGrid(config.isZoomGrid());
+        this.imageZoom.setCross(config.isZoomCross());
+        this.imageZoom.setMiddleRect(config.isZoomMiddleRect());
     }
 
     private void applyTrayIconStateFromConfig(ScreenshotConfig config) {
@@ -475,10 +329,16 @@ public class ScreenshotService implements Drawable, ConfigManager {
         this.dimColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 120);
 
         color = Color.decode(config.getZoomCrossColor());
-        this.zoomCrossColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 77);
+        this.imageZoom.setCrossColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 77));
 
-        color = Color.decode(config.getZoomRasterColor());
-        this.zoomRasterColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), 100);
+        color = Color.decode(config.getZoomGridColor());
+        this.imageZoom.setGridColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 50));
+
+        color = Color.decode(config.getZoomBorderColor());
+        this.imageZoom.setBorderColor(color);
+
+        color = Color.decode(config.getZoomMiddleRectColor());
+        this.imageZoom.setMiddleRectColor(color);
     }
 
     @Override
@@ -497,6 +357,6 @@ public class ScreenshotService implements Drawable, ConfigManager {
         this.drawImageWithScreenshotFrame(g2d);
         this.drawOverlay(g2d);
         this.drawSelected(g2d, this.selectionRectangle);
-        this.drawZoomOrSelectionInfo(g2d);
+        this.imageZoom.draw(g2d);
     }
 }

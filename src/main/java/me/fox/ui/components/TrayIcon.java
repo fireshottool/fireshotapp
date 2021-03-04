@@ -134,7 +134,7 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, Conf
     }
 
     private void updateItemActionPerformed(ActionEvent event) {
-        Fireshotapp.getInstance().getUpdateService().checkUpdate(true);
+        Fireshotapp.getInstance().getUpdateService().checkForUpdate(true);
     }
 
     private void reloadItemActionPerformed(ActionEvent event) {

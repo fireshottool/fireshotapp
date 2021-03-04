@@ -53,7 +53,7 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
             this::zoomCheckBoxActionPerformed
     );
 
-    private final ColorComponent dimColorComponent, zoomCrossColorComponent, zoomRasterColorComponent;
+    private final ColorComponent dimColorComponent, zoomCrossColorComponent, zoomGridColorComponent;
 
     public ScreenshotSettingsPanel(PanelManager panelManager) {
         super(panelManager);
@@ -70,10 +70,10 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
                 this::zoomCrossColorChanged,
                 panelManager.getSettingsFrame()
         );
-        this.zoomRasterColorComponent = new ColorComponent(
+        this.zoomGridColorComponent = new ColorComponent(
                 "Zoom Raster color",
                 new Point(30, 390),
-                this::zoomRasterColorChanged,
+                this::zoomGridColorChanged,
                 panelManager.getSettingsFrame()
         );
 
@@ -84,7 +84,7 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
         this.add(this.saveCheckBox);
         this.add(this.zoomCheckBox);
         this.add(this.zoomCrossColorComponent);
-        this.add(this.zoomRasterColorComponent);
+        this.add(this.zoomGridColorComponent);
     }
 
     private void zoomCrossColorChanged(ActionEvent event) {
@@ -95,12 +95,12 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
         jsonService.getConfig().getScreenshotConfig().setZoomCrossColor(hex);
     }
 
-    private void zoomRasterColorChanged(ActionEvent event) {
-        this.zoomRasterColorComponent.getColorPickerDialog().setVisible(false);
+    private void zoomGridColorChanged(ActionEvent event) {
+        this.zoomGridColorComponent.getColorPickerDialog().setVisible(false);
         JsonService jsonService = Fireshotapp.getInstance().getJsonService();
-        Color color = this.zoomRasterColorComponent.getColor();
+        Color color = this.zoomGridColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-        jsonService.getConfig().getScreenshotConfig().setZoomRasterColor(hex);
+        jsonService.getConfig().getScreenshotConfig().setZoomGridColor(hex);
     }
 
     private void dimColorChanged(ActionEvent event) {
@@ -132,7 +132,7 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
         FileConfig fileConfig = config.getFileConfig();
         this.dimColorComponent.setColor(Color.decode(screenshotConfig.getDimColor()));
         this.zoomCrossColorComponent.setColor(Color.decode(screenshotConfig.getZoomCrossColor()));
-        this.zoomRasterColorComponent.setColor(Color.decode(screenshotConfig.getZoomRasterColor()));
+        this.zoomGridColorComponent.setColor(Color.decode(screenshotConfig.getZoomGridColor()));
         this.comboBoxComponent.getComboBox().setSelectedItem(fileConfig.getImageType());
         this.locationChooserComponent.setLocationText(fileConfig.getImageLocation());
         this.uploadCheckBox.getCheckBox().setSelected(screenshotConfig.isUpload());
