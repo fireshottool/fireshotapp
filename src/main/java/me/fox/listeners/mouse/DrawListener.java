@@ -88,7 +88,6 @@ public class DrawListener extends MouseAdapter {
         if (this.drawService.isDraw() &&
                 !Fireshotapp.getInstance().getScreenshotFrame().getCursor().getName().equals("drawing")) {
             Fireshotapp.getInstance().getScreenshotFrame().setCursor(this.drawService.getDrawCursor());
-            Fireshotapp.getInstance().getScreenshotFrame().setCursor(this.drawService.getDrawCursor());
         }
     }
 }
