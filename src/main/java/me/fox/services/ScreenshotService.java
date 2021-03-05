@@ -91,7 +91,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
         BufferedImage screenshot = this.takeScreenshotFromSelection();
         if (screenshot == null) return;
 
-        if (this.isUpload() || imageDetection) {
+        if (this.isUpload() || imageDetection || googleSearch) {
             this.uploadImage(screenshot, imageDetection, googleSearch);
 
             if (imageDetection) return;
@@ -155,12 +155,12 @@ public class ScreenshotService implements Drawable, ConfigManager {
      * @param googleSearch   whether it should be searched on google or not
      */
     private void uploadImage(BufferedImage screenshot, boolean imageDetection, boolean googleSearch) {
-        this.askUploadIfSetInConfig();
+        if (this.askUploadIfSetInConfig(imageDetection, googleSearch)) {
+            File file = new File("image.png");
 
-        File file = new File("image.png");
-
-        this.writeScreenshotToFile(screenshot, file);
-        this.deleteAfterUpload(file, imageDetection, googleSearch);
+            this.writeScreenshotToFile(screenshot, file);
+            this.deleteAfterUpload(file, imageDetection, googleSearch);
+        }
     }
 
     private void writeScreenshotToFile(BufferedImage screenshot, File file) {
@@ -191,28 +191,35 @@ public class ScreenshotService implements Drawable, ConfigManager {
         };
     }
 
-    private void askUploadIfSetInConfig() {
-        if (!this.shouldUpload()) {
-            Pair<Integer, Boolean> result = this.showUploadDialog();
+    private boolean askUploadIfSetInConfig(boolean imageDetection, boolean googleSearch) {
+        if (this.shouldAskForUpload()) {
+            Pair<Integer, Boolean> result = this.showUploadDialog(imageDetection, googleSearch);
 
             if (this.isCancelOption(result.getKey())) {
                 this.showUploadCanceledInfo();
+                return false;
             }
 
             if (result.getValue()) {
                 this.saveNoUploadToConfig();
             }
         }
+        return true;
     }
 
-    private boolean shouldUpload() {
+    private boolean shouldAskForUpload() {
         return Fireshotapp.getInstance().getJsonService().getConfig().getScreenshotConfig().isAskForUpload();
     }
 
-    private Pair<Integer, Boolean> showUploadDialog() {
+    private Pair<Integer, Boolean> showUploadDialog(boolean imageDetection, boolean googleSearch) {
+        String message = googleSearch ?
+                "Fireshot will send the image to the server to save it for 6h and use the image URL for google Search. Is that ok for you?" :
+                imageDetection ?
+                        "Fireshotapp will send the image to the server to use Tesseract to get the text (OCR). Is that ok for you?" :
+                        "Fireshotapp will send the image to the server to save it for 6h. Is that ok for you?";
         return OptionCheckboxFrame.showDialog(
-                null,
-                "Fireshotapp will send the image to our server to save it for 6h. Will you allow it my lord?",
+                Fireshotapp.getInstance().getScreenshotFrame(),
+                message,
                 "Fireshotapp - Image upload"
         );
     }
