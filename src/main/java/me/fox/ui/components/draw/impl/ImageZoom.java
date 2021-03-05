@@ -31,16 +31,19 @@ public class ImageZoom implements Drawable {
 
     private void drawZoom(Graphics2D g2d, Point point) {
         ScreenshotFrame screenshotFrame = Fireshotapp.getInstance().getScreenshotFrame();
-        if (point.x + size + zoomFactor > screenshotFrame.getWidth())
-            point.x -= size;
 
-        if (point.y + size + zoomFactor * 2 > screenshotFrame.getHeight())
-            point.y -= size;
         Rectangle rectangle = new Rectangle(
                 point.x - (size / (2 * zoomFactor)),
                 point.y - (size / (2 * zoomFactor)),
                 (size / zoomFactor), (size / zoomFactor)
         );
+
+        if (point.x + size + zoomFactor > screenshotFrame.getWidth())
+            point.x -= size;
+
+        if (point.y + size + zoomFactor * 2 > screenshotFrame.getHeight())
+            point.y -= size;
+
         BufferedImage image = Fireshotapp.getInstance().getScreenshotService().takeScreenshot(
                 rectangle.x,
                 rectangle.y,
