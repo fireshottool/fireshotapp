@@ -8,6 +8,7 @@ import me.fox.components.ResourceManager;
 import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
 import me.fox.services.JsonService;
+import me.fox.services.ScreenService;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -30,7 +31,6 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, Conf
 
     private final PopupMenu popupMenu = new PopupMenu();
 
-    private MenuItem exitItem, settingsItem, reloadItem, updateItem, versionItem, switchItem;
     private CheckboxMenuItem localSaveItem, uploadItem;
 
     public TrayIcon(String tooltip) {
@@ -59,23 +59,25 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, Conf
     }
 
     private void setup() {
-        this.exitItem = new MenuItem("Exit");
-        this.exitItem.addActionListener(this::exitItemActionPerformed);
+        MenuItem exitItem = new MenuItem("Exit");
+        exitItem.addActionListener(this::exitItemActionPerformed);
 
-        this.updateItem = new MenuItem("Check for updates...");
-        this.updateItem.addActionListener(this::updateItemActionPerformed);
+        MenuItem updateItem = new MenuItem("Check for updates...");
+        updateItem.addActionListener(this::updateItemActionPerformed);
 
-        this.settingsItem = new MenuItem("Open settings");
-        this.settingsItem.addActionListener(this::settingsItemActionPerformed);
+        MenuItem settingsItem = new MenuItem("Open settings");
+        settingsItem.addActionListener(this::settingsItemActionPerformed);
 
-        this.reloadItem = new MenuItem("Reload resources");
-        this.reloadItem.addActionListener(this::reloadItemActionPerformed);
+        MenuItem reloadItem = new MenuItem("Reload resources");
+        reloadItem.addActionListener(this::reloadItemActionPerformed);
 
-        this.switchItem = new MenuItem("Switch upload and save");
-        this.switchItem.addActionListener(this::switchItemActionPerformed);
+        MenuItem switchItem = new MenuItem("Switch upload and save");
+        switchItem.addActionListener(this::switchItemActionPerformed);
 
-        this.versionItem = new MenuItem("Version: " + Fireshotapp.VERSION.get());
-        this.versionItem.addActionListener(this::versionItemActionPerformed);
+        MenuItem versionItem = new MenuItem("Version: " + Fireshotapp.VERSION.get());
+
+        MenuItem screenshotItem = new MenuItem("Take screenshot");
+        screenshotItem.addActionListener(this::screenshotItemActionPerformed);
 
         this.localSaveItem = new CheckboxMenuItem("Save image");
         this.localSaveItem.addItemListener(this::localSaveItemStateChanged);
@@ -83,16 +85,18 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, Conf
         this.uploadItem = new CheckboxMenuItem("Upload image");
         this.uploadItem.addItemListener(this::uploadItemStateChanged);
 
-        this.popupMenu.add(this.settingsItem);
-        this.popupMenu.add(this.reloadItem);
+        this.popupMenu.add(screenshotItem);
+        this.popupMenu.addSeparator();
+        this.popupMenu.add(settingsItem);
+        this.popupMenu.add(reloadItem);
         this.popupMenu.addSeparator();
         this.popupMenu.add(this.localSaveItem);
         this.popupMenu.add(this.uploadItem);
-        this.popupMenu.add(this.switchItem);
+        this.popupMenu.add(switchItem);
         this.popupMenu.addSeparator();
-        this.popupMenu.add(this.updateItem);
-        this.popupMenu.add(this.versionItem);
-        this.popupMenu.add(this.exitItem);
+        this.popupMenu.add(updateItem);
+        this.popupMenu.add(versionItem);
+        this.popupMenu.add(exitItem);
     }
 
     public void setLocalSave(boolean localSave) {
@@ -107,7 +111,10 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, Conf
         System.exit(200);
     }
 
-    private void versionItemActionPerformed(ActionEvent event) {
+    private void screenshotItemActionPerformed(ActionEvent event) {
+        ScreenService screenService = Fireshotapp.getInstance().getScreenService();
+        if (screenService.getScreenshotFrame().isVisible()) return;
+        screenService.show();
     }
 
     private void switchItemActionPerformed(ActionEvent event) {
