@@ -132,8 +132,6 @@ public class UpdateService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        System.out.println("Updating...");
         System.exit(1);
     }
 
@@ -159,12 +157,10 @@ public class UpdateService {
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        this.downloadUpdate(downloadUrl, filename, progress -> {
-            SwingUtilities.invokeLater(() -> {
-                progressBar.setValue((int) progress.doubleValue());
-                label.setText(String.format("Progress: %.2f%%", progress));
-            });
-        });
+        this.downloadUpdate(downloadUrl, filename, progress -> SwingUtilities.invokeLater(() -> {
+            progressBar.setValue((int) progress.doubleValue());
+            label.setText(String.format("Progress: %.2f%%", progress));
+        }));
     }
 
     private void downloadUpdate(String downloadURL, String filename, Consumer<Double> progressConsumer) throws IOException {
