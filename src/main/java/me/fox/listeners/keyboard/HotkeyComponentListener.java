@@ -1,7 +1,8 @@
 package me.fox.listeners.keyboard;
 
-import lc.kra.system.keyboard.event.GlobalKeyAdapter;
-import lc.kra.system.keyboard.event.GlobalKeyEvent;
+import dev.lukasl.jwinkey.VirtualKey;
+import dev.lukasl.jwinkey.listener.UserInputEvent;
+import dev.lukasl.jwinkey.listener.UserInputListenerAdapter;
 import lombok.AllArgsConstructor;
 import me.fox.Fireshotapp;
 import me.fox.ui.components.settings.ext.HotkeyComponent;
@@ -11,17 +12,17 @@ import me.fox.ui.components.settings.ext.HotkeyComponent;
  * @version (~ 29.11.2020)
  */
 @AllArgsConstructor
-public class HotkeyComponentListener extends GlobalKeyAdapter {
+public class HotkeyComponentListener extends UserInputListenerAdapter {
 
     private final HotkeyComponent hotkeyComponent;
 
     @Override
-    public void keyPressed(GlobalKeyEvent event) {
+    public void keyPressed(UserInputEvent event) {
         if (this.hotkeyComponent.isInside() && Fireshotapp.getInstance().getHotkeyService().isChangingHotkey()) {
-            if (event.getVirtualKeyCode() == GlobalKeyEvent.VK_LWIN
-                    || event.getVirtualKeyCode() == GlobalKeyEvent.VK_SHIFT
-                    || event.getVirtualKeyCode() == GlobalKeyEvent.VK_CONTROL
-                    || event.getVirtualKeyCode() == GlobalKeyEvent.VK_MENU)
+            if (event.getKeyCode() == VirtualKey.VK_LEFT_WIN.getKeyCode()
+                    || event.getKeyCode() == VirtualKey.VK_SHIFT.getKeyCode()
+                    || event.getKeyCode() == VirtualKey.VK_CONTROL.getKeyCode()
+                    || event.getKeyCode() == VirtualKey.VK_MENU.getKeyCode())
                 return;
             this.hotkeyComponent.updateHotkey(event);
         }

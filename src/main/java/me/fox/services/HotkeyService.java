@@ -1,7 +1,7 @@
 package me.fox.services;
 
-import lc.kra.system.keyboard.GlobalKeyboardHook;
-import lc.kra.system.keyboard.event.GlobalKeyEvent;
+import dev.lukasl.jwinkey.UserInputInterceptor;
+import dev.lukasl.jwinkey.listener.UserInputEvent;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.components.ConfigManager;
@@ -28,7 +28,7 @@ public class HotkeyService implements ConfigManager {
     private final HotkeyListener hotkeyListener = new HotkeyListener(this);
     private final List<Integer> pressedKeys = new ArrayList<>();
     private final List<Hotkey> hotkeys = new ArrayList<>();
-    private final GlobalKeyboardHook globalKeyboardHook;
+    private final UserInputInterceptor userInputInterceptor;
     private final ScreenshotService screenshotService;
     private final ToolboxComponent drawComponent;
     private final ScreenService screenService;
@@ -42,23 +42,25 @@ public class HotkeyService implements ConfigManager {
      * Registers the {@link HotkeyService#hotkeyListener}.
      */
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
-        this.globalKeyboardHook = new GlobalKeyboardHook(true);
-        this.globalKeyboardHook.addKeyListener(this.hotkeyListener);
+        this.userInputInterceptor = new UserInputInterceptor();
+        this.userInputInterceptor.addListeners(this.hotkeyListener);
+        this.userInputInterceptor.registerAllVirtualKeys();
         this.screenshotService = screenshotService;
         this.screenService = screenService;
         this.drawService = drawService;
         this.drawComponent = ((ScreenshotToolbox) this.screenService.getScreenshotToolbox()).getDrawComponent();
 
         this.registerHotkeys();
+        this.userInputInterceptor.start();
     }
 
     /**
      * Invokes a {@link HotkeyService#hotkeyMap} method if the {@link Hotkey}
-     * is present and {@link Hotkey#canInvoke(GlobalKeyEvent, List)}.
+     * is present and {@link Hotkey#canInvoke(UserInputEvent, List)}.
      *
-     * @param event for the {@link Hotkey#canInvoke(GlobalKeyEvent, List)} method
+     * @param event for the {@link Hotkey#canInvoke(UserInputEvent, List)} method
      */
-    public void invokeIfPresent(GlobalKeyEvent event) {
+    public void invokeIfPresent(UserInputEvent event) {
         Optional<Hotkey> optionalHotkey = this.hotkeys
                 .stream().filter(var -> var.canInvoke(event, this.getPressedKeys()) &&
                         this.hotkeyMap.containsKey(var.getName())).findFirst();

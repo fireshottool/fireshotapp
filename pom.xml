@@ -93,6 +93,13 @@
         <maven.compiler.release>1.8</maven.compiler.release>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
 
         <dependency>
@@ -115,9 +122,9 @@
         </dependency>
 
         <dependency>
-            <groupId>lc.kra.system</groupId>
-            <artifactId>system-hook</artifactId>
-            <version>LATEST</version>
+            <groupId>com.github.lukasl-dev</groupId>
+            <artifactId>jwinkey</artifactId>
+            <version>v0.0.1</version>
         </dependency>
 
         <dependency>

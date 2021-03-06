@@ -1,6 +1,6 @@
 package me.fox.ui.components.settings.ext;
 
-import lc.kra.system.keyboard.event.GlobalKeyEvent;
+import dev.lukasl.jwinkey.listener.UserInputEvent;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshotapp;
@@ -42,14 +42,14 @@ public class HotkeyComponent extends SettingsComponent {
         this.hotkeyLabel.setSize(180, 60);
         this.hotkeyLabel.setFont(new Font(null, Font.ITALIC, 12));
         this.addMouseListener(new me.fox.listeners.mouse.HotkeyComponentListener(this));
-        Fireshotapp.getInstance().getHotkeyService().getGlobalKeyboardHook().addKeyListener(new HotkeyComponentListener(this));
+        Fireshotapp.getInstance().getHotkeyService().getUserInputInterceptor().addListeners(new HotkeyComponentListener(this));
     }
 
-    public void updateHotkey(GlobalKeyEvent event) {
-        this.hotkey.setHotkey(event.getVirtualKeyCode());
+    public void updateHotkey(UserInputEvent event) {
+        this.hotkey.setHotkey(event.getKeyCode());
         HotkeyService hotkeyService = Fireshotapp.getInstance().getHotkeyService();
         List<Integer> pressedKeys = new ArrayList<>(hotkeyService.getPressedKeys());
-        pressedKeys.remove((Integer) event.getVirtualKeyCode());
+        pressedKeys.remove((Integer) event.getKeyCode());
         this.hotkey.setRequiredKeys(pressedKeys.toArray(new Integer[0]));
         this.hotkeyLabel.setText(this.parse(this.hotkey));
     }
