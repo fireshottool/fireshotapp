@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## **Fireshotapp 0.3.2** - 2021-03-05
+## **Fireshotapp 0.3.2** - 2021-03-06
 
 ### Added
 
