@@ -42,9 +42,9 @@ public class HotkeyService implements ConfigManager {
      * Registers the {@link HotkeyService#hotkeyListener}.
      */
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
-        this.userInputInterceptor = new UserInputInterceptor();
-        this.userInputInterceptor.addListeners(this.hotkeyListener);
-        this.userInputInterceptor.registerAllVirtualKeys();
+        this.userInputInterceptor = new UserInputInterceptor()
+                .registerAllVirtualKeys()
+                .addListeners(this.hotkeyListener);
         this.screenshotService = screenshotService;
         this.screenService = screenService;
         this.drawService = drawService;
