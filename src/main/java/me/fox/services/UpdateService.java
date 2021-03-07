@@ -112,9 +112,8 @@ public class UpdateService {
         );
 
         String filename = String.format(
-                "%s%s%s.exe /SILENT",
-                System.getenv("LOCALAPPDATA"),
-                Paths.get("Programs", "Fireshotapp", "fireshotapp-setup-").toString(),
+                "%s%s.exe",
+                Paths.get(System.getenv("LOCALAPPDATA"), "Programs", "Fireshotapp", "fireshotapp-setup-").toString(),
                 newVersion
         );
 
@@ -127,6 +126,7 @@ public class UpdateService {
         this.jsonService.getConfig().getUpdateConfig().setUpdated(true);
         this.jsonService.saveAndApply();
 
+        filename += " /SILENT";
         try {
             Runtime.getRuntime().exec(filename);
         } catch (IOException e) {
@@ -157,10 +157,12 @@ public class UpdateService {
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        this.downloadUpdate(downloadUrl, filename, progress -> SwingUtilities.invokeLater(() -> {
-            progressBar.setValue((int) progress.doubleValue());
-            label.setText(String.format("Progress: %.2f%%", progress));
-        }));
+        this.downloadUpdate(downloadUrl, filename, progress -> {
+            SwingUtilities.invokeLater(() -> {
+                progressBar.setValue((int) progress.doubleValue());
+                label.setText(String.format("Progress: %.2f%%", progress));
+            });
+        });
     }
 
     private void downloadUpdate(String downloadURL, String filename, Consumer<Double> progressConsumer) throws IOException {
