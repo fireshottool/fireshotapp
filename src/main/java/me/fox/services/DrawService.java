@@ -206,6 +206,10 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
         }
     }
 
+    public void drawDrawings(Graphics2D g2d) {
+        this.drawings.forEach(var -> var.draw(g2d));
+    }
+
     private Cursor createCursor(Image image) {
         return Toolkit.getDefaultToolkit().createCustomCursor(
                 image,
@@ -247,7 +251,7 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
         g2d.setFont(this.font);
 
         this.backgroundLayer.forEach(var -> var.draw(g2d));
-        this.drawings.forEach(var -> var.draw(g2d));
+        this.drawDrawings(g2d);
         this.foregroundLayer.forEach(var -> var.draw(g2d));
         repaint();
     }
