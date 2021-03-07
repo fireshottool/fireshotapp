@@ -91,6 +91,8 @@ public class ScreenshotService implements Drawable, ConfigManager {
         BufferedImage screenshot = this.takeScreenshotFromSelection();
         if (screenshot == null) return;
 
+        Graphics2D g2d = this.image.createGraphics();
+        this.drawService.drawDrawings(g2d);
         if (this.isUpload() || imageDetection || googleSearch) {
             this.uploadImage(screenshot, imageDetection, googleSearch);
 
