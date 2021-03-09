@@ -8,7 +8,6 @@ import me.fox.constants.Strokes;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.frames.ScreenshotFrame;
 
-import java.awt.Rectangle;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
@@ -22,8 +21,9 @@ import java.awt.image.BufferedImage;
 @Setter
 public class ImageZoom implements Drawable {
 
-    private final int zoomFactor = 16;
-    private final int size = 144;
+    private int pixelCount = 11;
+    private int pixelSize = 20;
+    private int size = pixelCount * pixelSize;
 
     private Color gridColor, middleRectColor, borderColor, crossColor;
 
@@ -32,17 +32,17 @@ public class ImageZoom implements Drawable {
     private void drawZoom(Graphics2D g2d, Point point) {
         ScreenshotFrame screenshotFrame = Fireshotapp.getInstance().getScreenshotFrame();
 
-        Rectangle rectangle = new Rectangle(
-                point.x - (size / (2 * zoomFactor)),
-                point.y - (size / (2 * zoomFactor)),
-                (size / zoomFactor), (size / zoomFactor)
+        java.awt.Rectangle rectangle = new java.awt.Rectangle(
+                point.x - (this.size / (2 * this.pixelSize)),
+                point.y - (this.size / (2 * this.pixelSize)),
+                (this.size / this.pixelSize), (this.size / this.pixelSize)
         );
 
-        if (point.x + size + zoomFactor > screenshotFrame.getWidth())
-            point.x -= size;
+        if (point.x + this.size + this.pixelSize * 2 > screenshotFrame.getWidth())
+            point.x -= this.size;
 
-        if (point.y + size + zoomFactor * 2 > screenshotFrame.getHeight())
-            point.y -= size;
+        if (point.y + this.size + this.pixelSize * 2 > screenshotFrame.getHeight())
+            point.y -= this.size;
 
         BufferedImage image = Fireshotapp.getInstance().getScreenshotService().takeScreenshot(
                 rectangle.x,
@@ -53,7 +53,7 @@ public class ImageZoom implements Drawable {
         Shape clip = new Ellipse2D.Double(
                 point.x,
                 point.y,
-                size, size
+                this.size, this.size
         );
         g2d.setClip(clip);
         g2d.drawImage(image, point.x, point.y, size, size, null);
@@ -68,15 +68,16 @@ public class ImageZoom implements Drawable {
 
     private void drawGrid(Graphics2D g2d, Point point) {
         g2d.setColor(this.gridColor);
-        for (int i = 0; i < size; i += zoomFactor * 2) {
-            g2d.drawRect(point.x + i, point.y, zoomFactor, size);
-            g2d.drawRect(point.x, point.y + i, size, zoomFactor);
+
+        for (int i = 0; i < this.size; i += this.pixelSize * 2) {
+            g2d.drawRect(point.x + i, point.y, this.pixelSize, this.size);
+            g2d.drawRect(point.x, point.y + i, this.size, this.pixelSize);
         }
 
         if (!this.middleRect) return;
-        int middle = (size / 2) - (zoomFactor / 2);
+        int middle = (this.size / 2) - (this.pixelSize / 2);
         g2d.setColor(this.middleRectColor);
-        g2d.drawRect(point.x + middle, point.y + middle, zoomFactor, zoomFactor);
+        g2d.drawRect(point.x + middle, point.y + middle, this.pixelSize, this.pixelSize);
 
         if (this.cross)
             this.drawCross(g2d, point, middle);
@@ -85,11 +86,11 @@ public class ImageZoom implements Drawable {
     private void drawCross(Graphics2D g2d, Point point, int middle) {
         g2d.setColor(this.crossColor);
 
-        g2d.fillRect(point.x + middle, point.y, zoomFactor, middle);
-        g2d.fillRect(point.x + middle, point.y + middle + zoomFactor, zoomFactor, middle);
+        g2d.fillRect(point.x + middle, point.y, this.pixelSize, middle);
+        g2d.fillRect(point.x + middle, point.y + middle + this.pixelSize, this.pixelSize, middle);
 
-        g2d.fillRect(point.x, point.y + middle, middle, zoomFactor);
-        g2d.fillRect(point.x + middle + zoomFactor, point.y + middle, middle, zoomFactor);
+        g2d.fillRect(point.x, point.y + middle, middle, this.pixelSize);
+        g2d.fillRect(point.x + middle + this.pixelSize, point.y + middle, middle, this.pixelSize);
     }
 
     private void drawCoordinates(Graphics2D g2d, Point point) {
@@ -97,18 +98,20 @@ public class ImageZoom implements Drawable {
         g2d.setStroke(Strokes.WIDTH_ONE_STROKE);
         g2d.setColor(ColorPalette.DARK_BLUE_170);
         int x, y;
+        int width = cords.length() * 8;
+
         if (Fireshotapp.getInstance().getScreenshotService().isZoom() &&
                 !Fireshotapp.getInstance().getDrawService().isDraw()) {
-            x = point.x + (size / 5);
-            y = point.y + size + zoomFactor;
+            x = point.x + (this.size / 2) - (width / 2);
+            y = point.y + this.size + this.pixelSize;
         } else {
-            x = point.x + zoomFactor;
-            y = point.y + zoomFactor;
+            x = point.x + this.pixelSize;
+            y = point.y + this.pixelSize;
         }
 
-        g2d.fillRoundRect(x, y, cords.length() * 8, 20, 10, 10);
+        g2d.fillRoundRect(x, y, width, 20, 10, 10);
         g2d.setColor(ColorPalette.DARK_BLUE_LIGHTER_170);
-        g2d.drawRoundRect(x, y, cords.length() * 8, 20, 10, 10);
+        g2d.drawRoundRect(x, y, width, 20, 10, 10);
         g2d.setColor(Color.WHITE);
         g2d.drawString(cords, x + 10, y + 15);
     }
