@@ -1,6 +1,5 @@
 package me.fox.services;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,7 +19,7 @@ import java.util.List;
  */
 
 @Getter
-public class JsonService {
+public class JsonService implements Service {
 
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Path jsonPath = Paths.get(
@@ -38,11 +37,12 @@ public class JsonService {
      * <p>
      * When the config is loaded, all {@link ConfigManager} are invoked.
      *
-     * @param configManagers to invoke
+     * @param services to add to {@link JsonService#configManagers}
      */
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void read(ConfigManager... configManagers) {
-        this.configManagers.addAll(Lists.newArrayList(configManagers));
+    public void read(Collection<Service> services) {
+        if (services != null)
+            this.configManagers.addAll(services);
         try {
             File file = this.jsonPath.toFile();
 
@@ -50,7 +50,7 @@ public class JsonService {
                 this.createFileAndParents(file);
 
                 this.config = this.createDefault(file);
-                Arrays.stream(configManagers).forEach(var -> var.applyConfig(this.config));
+                this.configManagers.forEach(var -> var.applyConfig(this.config));
             } else {
                 this.readConfig(file);
                 this.invokeConfigManager();
@@ -129,5 +129,9 @@ public class JsonService {
         writer.close();
 
         return config;
+    }
+
+    @Override
+    public void applyConfig(Config config) {
     }
 }

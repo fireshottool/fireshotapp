@@ -27,7 +27,7 @@ import java.util.concurrent.ExecutionException;
  */
 
 @Setter
-public class FileService implements ConfigManager {
+public class FileService implements Service, ConfigManager {
 
     private final String fileSeparator = System.getProperty("file.separator");
 
@@ -128,7 +128,7 @@ public class FileService implements ConfigManager {
     }
 
     private void requestImageAndWrite(String imageName) throws ExecutionException, InterruptedException, IOException {
-        RequestService requestService = Fireshotapp.getInstance().getRequestService();
+        RequestService requestService = Fireshotapp.getInstance().use(RequestService.class);
         Image image = requestService.requestImage(imageName).get();
         if (image != null) {
             ImageIO.write((RenderedImage) image, "png", new File(this.resourcePath, imageName));

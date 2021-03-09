@@ -1,7 +1,6 @@
 package me.fox.ui.frames;
 
 import lombok.Getter;
-import me.fox.services.DrawService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -26,10 +25,9 @@ public class ScreenshotFrame extends JFrame {
      *
      * @param title for the {@link JFrame}
      */
-    public ScreenshotFrame(String title, DrawService drawService) {
+    public ScreenshotFrame(String title) {
         super(title);
         this.loadFrame();
-        this.setContentPane(drawService);
     }
 
     /**

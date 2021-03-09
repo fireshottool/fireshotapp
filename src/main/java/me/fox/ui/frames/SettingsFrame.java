@@ -64,19 +64,19 @@ public class SettingsFrame extends JFrame implements ConfigManager, WindowListen
     }
 
     private void okPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.saveAndApply();
         this.setVisible(false);
     }
 
     private void cancelPerformed(ActionEvent event) {
         this.setVisible(false);
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
-        jsonService.read();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
+        jsonService.read(null);
     }
 
     private void applyPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.saveAndApply();
     }
 
@@ -84,7 +84,7 @@ public class SettingsFrame extends JFrame implements ConfigManager, WindowListen
     public void setVisible(boolean b) {
         super.setVisible(b);
         if (!b) return;
-        this.applyConfig(Fireshotapp.getInstance().getJsonService().getConfig());
+        this.applyConfig(Fireshotapp.getInstance().use(JsonService.class).getConfig());
     }
 
     @Override
@@ -95,8 +95,8 @@ public class SettingsFrame extends JFrame implements ConfigManager, WindowListen
     @Override
     public void windowClosed(WindowEvent event) {
         this.setVisible(false);
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
-        jsonService.read();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
+        jsonService.read(null);
     }
 
     @Override
@@ -106,7 +106,6 @@ public class SettingsFrame extends JFrame implements ConfigManager, WindowListen
     @Override
     public void windowClosing(WindowEvent e) {
     }
-
 
     @Override
     public void windowIconified(WindowEvent e) {

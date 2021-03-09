@@ -37,7 +37,7 @@ import java.io.IOException;
 
 @Getter
 @Setter
-public class ScreenshotService implements Drawable, ConfigManager {
+public class ScreenshotService implements Service, Drawable, ConfigManager {
 
     private final ScreenshotFrame screenshotFrame;
     private final ScalableRectangle selectionRectangle;
@@ -140,7 +140,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     private void saveImage(BufferedImage screenshot) throws IOException {
         String fileName = RandomStringUtils.random(18);
 
-        Fireshotapp.getInstance().getFileService().saveImage(screenshot, fileName);
+        Fireshotapp.getInstance().use(FileService.class).saveImage(screenshot, fileName);
         System.out.println("Saved!");
         ClipboardImage.write(screenshot);
     }
@@ -210,7 +210,7 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     private boolean shouldAskForUpload() {
-        return Fireshotapp.getInstance().getJsonService().getConfig().getScreenshotConfig().isAskForUpload();
+        return Fireshotapp.getInstance().use(JsonService.class).getConfig().getScreenshotConfig().isAskForUpload();
     }
 
     private Pair<Integer, Boolean> showUploadDialog(boolean imageDetection, boolean googleSearch) {
@@ -227,8 +227,9 @@ public class ScreenshotService implements Drawable, ConfigManager {
     }
 
     private void saveNoUploadToConfig() {
-        Fireshotapp.getInstance().getJsonService().getConfig().getScreenshotConfig().setAskForUpload(false);
-        Fireshotapp.getInstance().getJsonService().saveAndApply();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
+        jsonService.getConfig().getScreenshotConfig().setAskForUpload(false);
+        jsonService.saveAndApply();
     }
 
     private void showUploadCanceledInfo() {

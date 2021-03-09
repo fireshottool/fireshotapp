@@ -9,6 +9,9 @@ import me.fox.ui.components.TrayIcon;
 import me.fox.ui.frames.ScreenshotFrame;
 
 import javax.swing.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 /**
@@ -25,33 +28,54 @@ public class Fireshotapp {
     public static final Version VERSION = new Version("0.3.3");
     private final ListeningExecutorService executorService = MoreExecutors.listeningDecorator(Executors.newScheduledThreadPool(2));
 
-    private final DrawService drawService = new DrawService();
-    private final JsonService jsonService = new JsonService();
-    private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshot", drawService);
-    private final RequestService requestService = new RequestService();
-    private final ScreenshotService screenshotService = new ScreenshotService(screenshotFrame, drawService, requestService);
-    private final ScreenService screenService = new ScreenService(screenshotFrame, screenshotService);
-    private final HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
+    private final Map<Class<? extends Service>, Service> services = new HashMap<>();
+
     private final TrayIcon systemTray = new TrayIcon("Fireshot");
-    private final FileService fileService = new FileService(screenService, systemTray, drawService);
-    private final UpdateService updateService = new UpdateService(requestService, jsonService);
+
+    private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshotapp");
+
+    @SuppressWarnings("unchecked")
+    public <T extends Service> T use(Class<? super T> type) {
+        return (T) this.services.get(type);
+    }
+
+    private void registerServices(Service... services) {
+        Arrays.stream(services).forEach((service) -> this.services.put(service.getClass(), service));
+    }
+
+    private void registerServices() {
+        DrawService drawService = new DrawService();
+        JsonService jsonService = new JsonService();
+        RequestService requestService = new RequestService();
+        ScreenshotService screenshotService = new ScreenshotService(this.screenshotFrame, drawService, requestService);
+        ScreenService screenService = new ScreenService(this.screenshotFrame, screenshotService);
+        HotkeyService hotkeyService = new HotkeyService(screenshotService, drawService, screenService);
+        FileService fileService = new FileService(screenService, this.systemTray, drawService);
+        UpdateService updateService = new UpdateService(requestService, jsonService);
+
+        this.registerServices(
+                drawService,
+                jsonService,
+                requestService,
+                screenshotService,
+                screenService,
+                hotkeyService,
+                fileService,
+                updateService
+        );
+        this.screenshotFrame.setContentPane(drawService);
+    }
 
     private void load() {
+        this.registerServices();
         this.readJson();
-        this.fileService.loadResources();
-        this.updateService.checkForUpdate(false);
-        this.screenshotFrame.registerMouseListener(this.drawService.getDrawListener());
+        this.use(FileService.class).loadResources();
+        this.use(UpdateService.class).checkForUpdate(false);
+        this.screenshotFrame.registerMouseListener(this.use(DrawService.class).getDrawListener());
     }
 
     private void readJson() {
-        this.jsonService.read(
-                hotkeyService,
-                drawService,
-                screenshotService,
-                fileService,
-                requestService,
-                screenService.getSettingsFrame()
-        );
+        this.use(JsonService.class).read(this.services.values());
     }
 
     public static void main(String[] args) {

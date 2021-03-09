@@ -5,6 +5,7 @@ import dev.lukasl.jwinkey.listener.UserInputEvent;
 import dev.lukasl.jwinkey.listener.UserInputListenerAdapter;
 import lombok.AllArgsConstructor;
 import me.fox.Fireshotapp;
+import me.fox.services.HotkeyService;
 import me.fox.ui.components.settings.ext.HotkeyComponent;
 
 /**
@@ -18,7 +19,7 @@ public class HotkeyComponentListener extends UserInputListenerAdapter {
 
     @Override
     public void keyPressed(UserInputEvent event) {
-        if (this.hotkeyComponent.isInside() && Fireshotapp.getInstance().getHotkeyService().isChangingHotkey()) {
+        if (this.hotkeyComponent.isInside() && Fireshotapp.getInstance().use(HotkeyService.class).isChangingHotkey()) {
             if (event.getKeyCode() == VirtualKey.VK_LEFT_WIN.getKeyCode()
                     || event.getKeyCode() == VirtualKey.VK_SHIFT.getKeyCode()
                     || event.getKeyCode() == VirtualKey.VK_CONTROL.getKeyCode()

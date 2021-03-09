@@ -7,8 +7,10 @@ import me.fox.components.ConfigManager;
 import me.fox.components.ResourceManager;
 import me.fox.config.Config;
 import me.fox.config.ScreenshotConfig;
+import me.fox.services.FileService;
 import me.fox.services.JsonService;
 import me.fox.services.ScreenService;
+import me.fox.services.UpdateService;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -112,40 +114,40 @@ public class TrayIcon extends java.awt.TrayIcon implements ResourceManager, Conf
     }
 
     private void screenshotItemActionPerformed(ActionEvent event) {
-        ScreenService screenService = Fireshotapp.getInstance().getScreenService();
+        ScreenService screenService = Fireshotapp.getInstance().use(ScreenService.class);
         if (screenService.getScreenshotFrame().isVisible()) return;
         screenService.show();
     }
 
     private void switchItemActionPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.getConfig().getScreenshotConfig().setLocalSave(!localSaveItem.getState());
         jsonService.getConfig().getScreenshotConfig().setUpload(!uploadItem.getState());
         jsonService.saveAndApply();
     }
 
     private void settingsItemActionPerformed(ActionEvent event) {
-        Fireshotapp.getInstance().getScreenService().getSettingsFrame().setVisible(true);
+        Fireshotapp.getInstance().use(ScreenService.class).getSettingsFrame().setVisible(true);
     }
 
     private void localSaveItemStateChanged(ItemEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.getConfig().getScreenshotConfig().setLocalSave(this.localSaveItem.getState());
         jsonService.saveAndApply();
     }
 
     private void uploadItemStateChanged(ItemEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.getConfig().getScreenshotConfig().setUpload(this.uploadItem.getState());
         jsonService.saveAndApply();
     }
 
     private void updateItemActionPerformed(ActionEvent event) {
-        Fireshotapp.getInstance().getUpdateService().checkForUpdate(true);
+        Fireshotapp.getInstance().use(UpdateService.class).checkForUpdate(true);
     }
 
     private void reloadItemActionPerformed(ActionEvent event) {
-        Fireshotapp.getInstance().getFileService().loadResources();
+        Fireshotapp.getInstance().use(FileService.class).loadResources();
     }
 
     @Override

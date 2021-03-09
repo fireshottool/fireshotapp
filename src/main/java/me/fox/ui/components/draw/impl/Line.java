@@ -2,6 +2,7 @@ package me.fox.ui.components.draw.impl;
 
 import lombok.Getter;
 import me.fox.Fireshotapp;
+import me.fox.services.DrawService;
 import me.fox.ui.components.draw.Drawable;
 
 import java.awt.*;
@@ -18,8 +19,8 @@ public class Line implements Drawable {
 
     private final List<Point> points = new CopyOnWriteArrayList<>();
 
-    private final Color color = Fireshotapp.getInstance().getDrawService().getDrawColor();
-    private final Stroke stroke = new BasicStroke(Fireshotapp.getInstance().getDrawService().getCurrentStrokeWidth(),
+    private final Color color = Fireshotapp.getInstance().use(DrawService.class).getDrawColor();
+    private final Stroke stroke = new BasicStroke(Fireshotapp.getInstance().use(DrawService.class).getCurrentStrokeWidth(),
             BasicStroke.CAP_ROUND,
             BasicStroke.JOIN_ROUND);
 

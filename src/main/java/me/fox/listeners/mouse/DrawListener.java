@@ -2,6 +2,7 @@ package me.fox.listeners.mouse;
 
 import me.fox.Fireshotapp;
 import me.fox.services.DrawService;
+import me.fox.services.HotkeyService;
 import me.fox.ui.components.draw.impl.Line;
 
 import java.awt.event.MouseAdapter;
@@ -37,7 +38,7 @@ public class DrawListener extends MouseAdapter {
                 this.drawService.addRectangle(event.getPoint());
                 return;
             }
-            if (Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
+            if (Fireshotapp.getInstance().use(HotkeyService.class).getPressedKeys().contains(16)) {
                 this.drawService.addPoint(event.getPoint());
                 return;
             }
@@ -68,7 +69,7 @@ public class DrawListener extends MouseAdapter {
                 this.drawService.resizeRectangle(event.getPoint());
                 return;
             }
-            if (this.drawService.isLine() || Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(16)) {
+            if (this.drawService.isLine() || Fireshotapp.getInstance().use(HotkeyService.class).getPressedKeys().contains(16)) {
                 Line line = (Line) this.drawService.getDrawings().peek();
                 if (line.getPoints().size() == 1) {
                     line.getPoints().add(event.getPoint());

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.components.ResourceManager;
+import me.fox.config.Config;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.ui.frames.SettingsFrame;
 import me.fox.ui.panels.toolbox.Toolbox;
@@ -22,7 +23,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ScreenService implements ResourceManager {
+public class ScreenService implements Service, ResourceManager {
 
     private final ScreenshotFrame screenshotFrame;
     private final ScreenshotService screenshotService;
@@ -92,7 +93,7 @@ public class ScreenService implements ResourceManager {
         this.drawToolbox.reset();
         this.screenshotToolbox.reset();
 
-        Fireshotapp.getInstance().getDrawService().resetDraw();
+        Fireshotapp.getInstance().use(DrawService.class).resetDraw();
     }
 
     private void hide() {
@@ -105,5 +106,10 @@ public class ScreenService implements ResourceManager {
     public void applyResources(List<File> files) {
         drawToolbox.applyResources(files);
         this.screenshotToolbox.applyResources(files);
+    }
+
+    @Override
+    public void applyConfig(Config config) {
+        this.settingsFrame.applyConfig(config);
     }
 }

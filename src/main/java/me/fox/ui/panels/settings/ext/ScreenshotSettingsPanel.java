@@ -89,7 +89,7 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
 
     private void zoomCrossColorChanged(ActionEvent event) {
         this.zoomCrossColorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         Color color = this.zoomCrossColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getScreenshotConfig().setZoomCrossColor(hex);
@@ -97,7 +97,7 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
 
     private void zoomGridColorChanged(ActionEvent event) {
         this.zoomGridColorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         Color color = this.zoomGridColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getScreenshotConfig().setZoomGridColor(hex);
@@ -105,24 +105,24 @@ public class ScreenshotSettingsPanel extends SettingsPanel {
 
     private void dimColorChanged(ActionEvent event) {
         this.dimColorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         Color color = this.dimColorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getScreenshotConfig().setDimColor(hex);
     }
 
     private void saveCheckBoxActionPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.getConfig().getScreenshotConfig().setLocalSave(this.saveCheckBox.getCheckBox().isSelected());
     }
 
     private void uploadCheckBoxActionPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.getConfig().getScreenshotConfig().setUpload(this.uploadCheckBox.getCheckBox().isSelected());
     }
 
     private void zoomCheckBoxActionPerformed(ActionEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         jsonService.getConfig().getScreenshotConfig().setZoom(this.zoomCheckBox.getCheckBox().isSelected());
     }
 

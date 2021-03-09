@@ -5,6 +5,8 @@ import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.constants.ColorPalette;
 import me.fox.constants.Strokes;
+import me.fox.services.DrawService;
+import me.fox.services.ScreenshotService;
 import me.fox.ui.components.draw.Drawable;
 import me.fox.ui.frames.ScreenshotFrame;
 
@@ -44,7 +46,7 @@ public class ImageZoom implements Drawable {
         if (point.y + this.size + this.pixelSize * 2 > screenshotFrame.getHeight())
             point.y -= this.size;
 
-        BufferedImage image = Fireshotapp.getInstance().getScreenshotService().takeScreenshot(
+        BufferedImage image = Fireshotapp.getInstance().use(ScreenshotService.class).takeScreenshot(
                 rectangle.x,
                 rectangle.y,
                 rectangle.width,
@@ -100,8 +102,8 @@ public class ImageZoom implements Drawable {
         int x, y;
         int width = cords.length() * 8;
 
-        if (Fireshotapp.getInstance().getScreenshotService().isZoom() &&
-                !Fireshotapp.getInstance().getDrawService().isDraw()) {
+        if (Fireshotapp.getInstance().use(ScreenshotService.class).isZoom() &&
+                !Fireshotapp.getInstance().use(DrawService.class).isDraw()) {
             x = point.x + (this.size / 2) - (width / 2);
             y = point.y + this.size + this.pixelSize;
         } else {
@@ -120,8 +122,8 @@ public class ImageZoom implements Drawable {
     public void draw(Graphics2D g2d) {
         Point point = MouseInfo.getPointerInfo().getLocation();
         g2d.setStroke(Strokes.WIDTH_ONE_STROKE);
-        if (Fireshotapp.getInstance().getScreenshotService().isZoom() &&
-                !Fireshotapp.getInstance().getDrawService().isDraw())
+        if (Fireshotapp.getInstance().use(ScreenshotService.class).isZoom() &&
+                !Fireshotapp.getInstance().use(DrawService.class).isDraw())
             this.drawZoom(g2d, point);
 
         this.drawCoordinates(g2d, point);

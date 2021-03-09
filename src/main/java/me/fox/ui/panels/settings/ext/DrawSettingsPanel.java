@@ -66,26 +66,26 @@ public class DrawSettingsPanel extends SettingsPanel {
     }
 
     private void defaultThicknessChanged(ChangeEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         int value = this.defaultThicknessComponent.getValue();
         jsonService.getConfig().getDrawConfig().setDefaultThickness(value);
     }
 
     private void thicknessIncreased(ChangeEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         int value = this.thicknessIncreaseComponent.getValue();
         jsonService.getConfig().getDrawConfig().setThicknessIncrease(value);
     }
 
     private void thicknessDecreased(ChangeEvent event) {
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         int value = this.thicknessDecreaseComponent.getValue();
         jsonService.getConfig().getDrawConfig().setThicknessDecrease(value);
     }
 
     private void colorChanged(ActionEvent event) {
         this.colorComponent.getColorPickerDialog().setVisible(false);
-        JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+        JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
         Color color = this.colorComponent.getColor();
         String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
         jsonService.getConfig().getDrawConfig().setColor(hex);

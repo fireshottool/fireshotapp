@@ -36,14 +36,14 @@ public class ScreenshotToolbox extends Toolbox {
 
 
     private void confirmScreenshot(ActionEvent event) {
-        Fireshotapp.getInstance().getScreenService().hideAndConfirm(false, false);
+        Fireshotapp.getInstance().use(ScreenService.class).hideAndConfirm(false, false);
     }
 
     private void switchDraw(ActionEvent event) {
-        DrawService drawService = Fireshotapp.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().use(DrawService.class);
 
         drawService.setDraw(!drawService.isDraw());
-        ScreenService screenService = Fireshotapp.getInstance().getScreenService();
+        ScreenService screenService = Fireshotapp.getInstance().use(ScreenService.class);
         if (screenService.getDrawToolbox().isVisible()) {
             screenService.getDrawToolbox().hideSelf();
         } else {
@@ -52,15 +52,15 @@ public class ScreenshotToolbox extends Toolbox {
     }
 
     private void cancel(ActionEvent event) {
-        Fireshotapp.getInstance().getScreenService().resetAndHide();
+        Fireshotapp.getInstance().use(ScreenService.class).resetAndHide();
     }
 
     private void googleSearch(ActionEvent event) {
-        Fireshotapp.getInstance().getScreenService().hideAndConfirm(false, true);
+        Fireshotapp.getInstance().use(ScreenService.class).hideAndConfirm(false, true);
     }
 
     private void textRecognition(ActionEvent event) {
-        Fireshotapp.getInstance().getScreenService().hideAndConfirm(true, false);
+        Fireshotapp.getInstance().use(ScreenService.class).hideAndConfirm(true, false);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ScreenshotToolbox extends Toolbox {
 
     @Override
     public void reset() {
-        DrawService drawService = Fireshotapp.getInstance().getDrawService();
+        DrawService drawService = Fireshotapp.getInstance().use(DrawService.class);
         if (drawService.isDraw()) {
             this.drawComponent.unselect();
         }

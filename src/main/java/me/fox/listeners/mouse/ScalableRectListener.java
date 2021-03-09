@@ -2,6 +2,8 @@ package me.fox.listeners.mouse;
 
 import lombok.Getter;
 import me.fox.Fireshotapp;
+import me.fox.services.ScreenService;
+import me.fox.services.ScreenshotService;
 import me.fox.ui.components.ScalableRectangle;
 
 import java.awt.*;
@@ -49,7 +51,7 @@ public class ScalableRectListener extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent event) {
         if (this.scalableRectangle.getDrawService().isDraw()) return;
-        Fireshotapp.getInstance().getScreenService().getScreenshotToolbox().hideSelf();
+        Fireshotapp.getInstance().use(ScreenService.class).getScreenshotToolbox().hideSelf();
 
         if (this.scalableRectangle.contains(event.getPoint()) &&
                 this.scalableRectangle.getCursor() == Cursor.MOVE_CURSOR) {
@@ -124,7 +126,7 @@ public class ScalableRectListener extends MouseAdapter {
             }
             this.scalableRectangle.setRect(this.scalableRectangle.reCalcRect());
         }
-        Fireshotapp.getInstance().getScreenService().getScreenshotToolbox().showSelf();
+        Fireshotapp.getInstance().use(ScreenService.class).getScreenshotToolbox().showSelf();
     }
 
     @Override

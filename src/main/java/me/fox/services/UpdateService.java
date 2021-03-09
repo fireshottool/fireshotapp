@@ -5,6 +5,7 @@ import com.google.common.util.concurrent.Futures;
 import javafx.util.Pair;
 import me.fox.Fireshotapp;
 import me.fox.components.Version;
+import me.fox.config.Config;
 import me.fox.config.UpdateConfig;
 import me.fox.ui.frames.OptionCheckboxFrame;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -25,7 +26,7 @@ import java.util.function.Consumer;
  * @version (~ 07.01.2021)
  */
 
-public class UpdateService {
+public class UpdateService implements Service{
 
     private final RequestService requestService;
     private final JsonService jsonService;
@@ -203,5 +204,9 @@ public class UpdateService {
 
     private void showTrayInfo(String message) {
         Fireshotapp.getInstance().getSystemTray().info("Fireshotapp", message);
+    }
+
+    @Override
+    public void applyConfig(Config config) {
     }
 }

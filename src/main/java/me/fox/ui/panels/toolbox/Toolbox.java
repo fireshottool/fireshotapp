@@ -7,6 +7,7 @@ import me.fox.components.ResourceManager;
 import me.fox.constants.ColorPalette;
 import me.fox.enums.ToolboxType;
 import me.fox.listeners.mouse.ToolboxListener;
+import me.fox.services.ScreenshotService;
 import me.fox.ui.components.ScalableRectangle;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 
@@ -208,7 +209,7 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
      * Shows the {@link Toolbox}.
      */
     public void showSelf() {
-        this.updateLocation(Fireshotapp.getInstance().getScreenshotService().getSelectionRectangle());
+        this.updateLocation(Fireshotapp.getInstance().use(ScreenshotService.class).getSelectionRectangle());
         this.setVisible(true);
     }
 

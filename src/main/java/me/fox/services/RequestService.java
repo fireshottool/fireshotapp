@@ -31,7 +31,7 @@ import java.net.URL;
  * @version (~ 07.12.2020)
  */
 
-public class RequestService implements ConfigManager {
+public class RequestService implements Service, ConfigManager {
 
     private final HttpClient client = HttpClientBuilder.create().build();
     private String uploadURL, imageURL, imageDetectionURL;

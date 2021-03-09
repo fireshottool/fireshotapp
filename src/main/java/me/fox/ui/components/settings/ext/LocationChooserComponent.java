@@ -50,7 +50,7 @@ public class LocationChooserComponent extends SettingsComponent {
         PlatformImpl.startup(() -> {
             File file = this.fileChooser.showDialog(null);
             if (file == null) return;
-            JsonService jsonService = Fireshotapp.getInstance().getJsonService();
+            JsonService jsonService = Fireshotapp.getInstance().use(JsonService.class);
             String filePath = file.toString();
             jsonService.getConfig().getFileConfig().setImageLocation(filePath);
             this.label.setText(labelText + filePath);

@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 @Setter
-public class DrawService extends JComponent implements ConfigManager, ResourceManager {
+public class DrawService extends JComponent implements Service, ConfigManager, ResourceManager {
 
     private final DrawListener drawListener;
 
@@ -99,6 +99,7 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
      * @param drawable to register
      */
     public void registerDrawable(Drawable drawable, @NonNull LayerType type) {
+        System.out.println("Drawable registered! : " + drawable.getClass());
         if (type == LayerType.FOREGROUND) {
             this.foregroundLayer.add(drawable);
         } else if (type == LayerType.BACKGROUND) {
@@ -150,7 +151,7 @@ public class DrawService extends JComponent implements ConfigManager, ResourceMa
     public void resizeCurrentCircle(Point point) {
         Circle circle = (Circle) this.drawings.peek();
 
-        if (Fireshotapp.getInstance().getHotkeyService().getPressedKeys().contains(17)) {
+        if (Fireshotapp.getInstance().use(HotkeyService.class).getPressedKeys().contains(17)) {
             int radius = (int) Math.sqrt(Math.pow(circle.getX() - point.x, 2) + (Math.pow(circle.getY() - point.y, 2)));
             circle.setSize(radius * 2, radius * 2);
             return;

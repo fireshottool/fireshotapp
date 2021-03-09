@@ -21,7 +21,7 @@ import java.util.*;
 
 @Getter
 @Setter
-public class HotkeyService implements ConfigManager {
+public class HotkeyService implements Service, ConfigManager {
 
     private final Map<String, Runnable> hotkeyMap = new HashMap<>();
 

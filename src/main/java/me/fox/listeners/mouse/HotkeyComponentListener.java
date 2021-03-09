@@ -2,6 +2,7 @@ package me.fox.listeners.mouse;
 
 import lombok.AllArgsConstructor;
 import me.fox.Fireshotapp;
+import me.fox.services.HotkeyService;
 import me.fox.ui.components.settings.ext.HotkeyComponent;
 
 import java.awt.*;
@@ -21,7 +22,7 @@ public class HotkeyComponentListener extends MouseAdapter {
     public void mouseClicked(MouseEvent event) {
         if (this.hotkeyComponent.isInside()) {
             this.hotkeyComponent.getHotkeyLabel().setForeground(Color.GRAY);
-            Fireshotapp.getInstance().getHotkeyService().setChangingHotkey(true);
+            Fireshotapp.getInstance().use(HotkeyService.class).setChangingHotkey(true);
         }
     }
 
@@ -34,6 +35,6 @@ public class HotkeyComponentListener extends MouseAdapter {
     public void mouseExited(MouseEvent event) {
         this.hotkeyComponent.getHotkeyLabel().setForeground(Color.BLACK);
         this.hotkeyComponent.setInside(false);
-        Fireshotapp.getInstance().getHotkeyService().setChangingHotkey(false);
+        Fireshotapp.getInstance().use(HotkeyService.class).setChangingHotkey(false);
     }
 }

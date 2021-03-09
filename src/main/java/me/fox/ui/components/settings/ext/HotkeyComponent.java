@@ -42,12 +42,12 @@ public class HotkeyComponent extends SettingsComponent {
         this.hotkeyLabel.setSize(180, 60);
         this.hotkeyLabel.setFont(new Font(null, Font.ITALIC, 12));
         this.addMouseListener(new me.fox.listeners.mouse.HotkeyComponentListener(this));
-        Fireshotapp.getInstance().getHotkeyService().getUserInputInterceptor().addListeners(new HotkeyComponentListener(this));
+        Fireshotapp.getInstance().use(HotkeyService.class).getUserInputInterceptor().addListeners(new HotkeyComponentListener(this));
     }
 
     public void updateHotkey(UserInputEvent event) {
         this.hotkey.setHotkey(event.getKeyCode());
-        HotkeyService hotkeyService = Fireshotapp.getInstance().getHotkeyService();
+        HotkeyService hotkeyService = Fireshotapp.getInstance().use(HotkeyService.class);
         List<Integer> pressedKeys = new ArrayList<>(hotkeyService.getPressedKeys());
         pressedKeys.remove((Integer) event.getKeyCode());
         this.hotkey.setRequiredKeys(pressedKeys.toArray(new Integer[0]));
@@ -96,7 +96,7 @@ public class HotkeyComponent extends SettingsComponent {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.setColor(Color.darkGray);
+        g.setColor(Color.DARK_GRAY);
         g.drawLine(0, 0, this.getWidth(), 0);
     }
 }
