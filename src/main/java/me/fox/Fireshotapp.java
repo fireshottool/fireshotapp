@@ -45,6 +45,8 @@ public class Fireshotapp {
 
     private void registerServices() {
         DrawService drawService = new DrawService();
+
+        this.screenshotFrame.setContentPane(drawService);
         JsonService jsonService = new JsonService();
         RequestService requestService = new RequestService();
         ScreenshotService screenshotService = new ScreenshotService(this.screenshotFrame, drawService, requestService);
@@ -63,7 +65,7 @@ public class Fireshotapp {
                 fileService,
                 updateService
         );
-        this.screenshotFrame.setContentPane(drawService);
+
     }
 
     private void load() {
