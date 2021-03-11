@@ -44,8 +44,8 @@ public class ScreenService implements Service, ResourceManager {
         this.screenshotFrame = screenshotFrame;
         this.screenshotService = screenshotService;
         this.drawToolbox = new DrawToolbox(screenshotFrame);
-        this.screenshotFrame.add(drawToolbox);
-        this.screenshotFrame.add(screenshotToolbox);
+        this.screenshotFrame.add(this.drawToolbox);
+        this.screenshotFrame.add(this.screenshotToolbox);
     }
 
     /**
