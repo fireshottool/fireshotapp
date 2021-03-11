@@ -31,7 +31,6 @@ public class Fireshotapp {
     private final Map<Class<? extends Service>, Service> services = new HashMap<>();
 
     private final TrayIcon systemTray = new TrayIcon("Fireshot");
-
     private final ScreenshotFrame screenshotFrame = new ScreenshotFrame("Fireshotapp");
 
     @SuppressWarnings("unchecked")
