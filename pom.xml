@@ -6,7 +6,7 @@
 
     <groupId>me.fox</groupId>
     <artifactId>FireshotClient</artifactId>
-    <version>0.3.3-beta</version>
+    <version>0.3.4-beta</version>
 
     <build>
         <plugins>
