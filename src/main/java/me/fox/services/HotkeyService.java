@@ -101,6 +101,15 @@ public class HotkeyService implements Service, ConfigManager {
         this.hotkeyMap.put("zoom", this::zoom);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void listenSnapshot() {
+        KeyStateObservable keyStateObservable = KeyStateObservable.of(VirtualKey.VK_SNAPSHOT.getVirtualKeyCode());
+        keyStateObservable.subscribe(update -> {
+            if (update.getKeyState() == KeyState.PRESSED)
+                Fireshotapp.getInstance().use(ScreenService.class).show();
+        });
+    }
+
     private void screenshot() {
         if (this.screenService.getScreenshotFrame().isVisible()) return;
         this.screenService.show();
