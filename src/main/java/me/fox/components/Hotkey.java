@@ -1,9 +1,9 @@
 package me.fox.components;
 
-import dev.lukasl.jwinkey.listener.UserInputEvent;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.event.KeyEvent;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class Hotkey {
      * @param keys  the keys to check
      * @return whether the {@link Hotkey} can be invoked
      */
-    public boolean canInvoke(UserInputEvent event, List<Integer> keys) {
+    public boolean canInvoke(KeyEvent event, List<Integer> keys) {
         if (this.hotkey != event.getKeyCode()) return false;
         if (this.requiredKeys == null) return true;
         return this.requiredKeysPressed(keys);

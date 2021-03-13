@@ -1,16 +1,18 @@
 package me.fox.ui.components.settings.ext;
 
-import dev.lukasl.jwinkey.listener.UserInputEvent;
 import lombok.Getter;
 import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.components.Hotkey;
 import me.fox.listeners.keyboard.HotkeyComponentListener;
 import me.fox.services.HotkeyService;
+import me.fox.services.ScreenService;
 import me.fox.ui.components.settings.SettingsComponent;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,10 +44,10 @@ public class HotkeyComponent extends SettingsComponent {
         this.hotkeyLabel.setSize(180, 60);
         this.hotkeyLabel.setFont(new Font(null, Font.ITALIC, 12));
         this.addMouseListener(new me.fox.listeners.mouse.HotkeyComponentListener(this));
-        Fireshotapp.getInstance().use(HotkeyService.class).getUserInputInterceptor().addListeners(new HotkeyComponentListener(this));
+        Fireshotapp.getInstance().use(ScreenService.class).getScreenshotFrame().addKeyListener(new HotkeyComponentListener(this));
     }
 
-    public void updateHotkey(UserInputEvent event) {
+    public void updateHotkey(KeyEvent event) {
         this.hotkey.setHotkey(event.getKeyCode());
         HotkeyService hotkeyService = Fireshotapp.getInstance().use(HotkeyService.class);
         List<Integer> pressedKeys = new ArrayList<>(hotkeyService.getPressedKeys());
@@ -56,7 +58,7 @@ public class HotkeyComponent extends SettingsComponent {
 
     private String parse(Hotkey hotkey) {
         return this.requiredKeysToString(hotkey)
-                + this.getChar(hotkey.getHotkey());
+                + KeyEvent.getKeyText(hotkey.getHotkey());
     }
 
     private String requiredKeysToString(Hotkey hotkey) {
@@ -65,32 +67,11 @@ public class HotkeyComponent extends SettingsComponent {
         StringBuilder stringBuilder = new StringBuilder();
 
         Arrays.stream(hotkey.getRequiredKeys()).forEach(var -> {
-            stringBuilder.append(getChar(var));
+            stringBuilder.append(KeyEvent.getKeyText(var));
             stringBuilder.append(" + ");
         });
 
         return stringBuilder.toString();
-    }
-
-    private String getChar(int i) {
-        switch (i) {
-            case 13:
-                return "ENTER";
-            case 17:
-                return "CTRL";
-            case 16:
-                return "SHIFT";
-            case 18:
-                return "ALT";
-            case 44:
-                return "PRNTSCR";
-            case 91:
-                return "WIN";
-            case 27:
-                return "ESC";
-            default:
-                return String.valueOf((char) i);
-        }
     }
 
     @Override
