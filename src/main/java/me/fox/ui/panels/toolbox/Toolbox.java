@@ -14,6 +14,7 @@ import me.fox.ui.components.toolbox.ToolboxComponent;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -211,6 +212,12 @@ public abstract class Toolbox extends JPanel implements ResourceManager {
     public void showSelf() {
         this.updateLocation(Fireshotapp.getInstance().use(ScreenshotService.class).getSelectionRectangle());
         this.setVisible(true);
+    }
+
+    @Override
+    public synchronized void addKeyListener(KeyListener l) {
+        super.addKeyListener(l);
+        this.toolboxComponents.forEach(var -> var.addKeyListener(l));
     }
 
     @Override
