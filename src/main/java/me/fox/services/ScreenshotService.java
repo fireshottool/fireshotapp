@@ -122,7 +122,7 @@ public class ScreenshotService implements Service, Drawable, ConfigManager {
         return this.image.getSubimage(corrected.x, corrected.y, corrected.width, corrected.height);
     }
 
-    private BufferedImage takeScreenshotFromSelection() {
+    public BufferedImage takeScreenshotFromSelection() {
         return this.takeScreenshot(
                 this.selectionRectangle.x, this.selectionRectangle.y,
                 this.selectionRectangle.width, this.selectionRectangle.height
