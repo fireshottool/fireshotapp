@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## **Fireshotapp 0.3.4** - 2021-03-13
+
+### Changed
+
+- Implemented newer version of [lukasl-dev/jwinkey (1.0.2)](https://github.com/lukasl-dev/jwinkey)
+
+### Fixed
+
+- Performance issues
+- Screenshot window now blocks key presses
+
 ## **Fireshotapp 0.3.3** - 2021-03-07
 
 ### Fixed
