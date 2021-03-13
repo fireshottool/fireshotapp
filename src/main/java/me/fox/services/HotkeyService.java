@@ -1,9 +1,11 @@
 package me.fox.services;
 
-import dev.lukasl.jwinkey.UserInputInterceptor;
-import dev.lukasl.jwinkey.listener.UserInputEvent;
+import dev.lukasl.jwinkey.enums.KeyState;
+import dev.lukasl.jwinkey.enums.VirtualKey;
+import dev.lukasl.jwinkey.observables.KeyStateObservable;
 import lombok.Getter;
 import lombok.Setter;
+import me.fox.Fireshotapp;
 import me.fox.components.ConfigManager;
 import me.fox.components.Hotkey;
 import me.fox.config.Config;
@@ -12,6 +14,7 @@ import me.fox.listeners.keyboard.HotkeyListener;
 import me.fox.ui.components.toolbox.ToolboxComponent;
 import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
 
+import java.awt.event.KeyEvent;
 import java.util.*;
 
 /**
@@ -28,7 +31,6 @@ public class HotkeyService implements Service, ConfigManager {
     private final HotkeyListener hotkeyListener = new HotkeyListener(this);
     private final List<Integer> pressedKeys = new ArrayList<>();
     private final List<Hotkey> hotkeys = new ArrayList<>();
-    private final UserInputInterceptor userInputInterceptor;
     private final ScreenshotService screenshotService;
     private final ToolboxComponent drawComponent;
     private final ScreenService screenService;
@@ -42,25 +44,25 @@ public class HotkeyService implements Service, ConfigManager {
      * Registers the {@link HotkeyService#hotkeyListener}.
      */
     public HotkeyService(ScreenshotService screenshotService, DrawService drawService, ScreenService screenService) {
-        this.userInputInterceptor = new UserInputInterceptor()
-                .registerAllVirtualKeys()
-                .addListeners(this.hotkeyListener);
         this.screenshotService = screenshotService;
         this.screenService = screenService;
         this.drawService = drawService;
         this.drawComponent = ((ScreenshotToolbox) this.screenService.getScreenshotToolbox()).getDrawComponent();
+        this.screenshotService.getScreenshotFrame().addKeyListener(this.hotkeyListener);
+        this.screenService.getDrawToolbox().addKeyListener(this.hotkeyListener);
+        this.screenService.getScreenshotToolbox().addKeyListener(this.hotkeyListener);
 
+        this.listenSnapshot();
         this.registerHotkeys();
-        this.userInputInterceptor.start();
     }
 
     /**
      * Invokes a {@link HotkeyService#hotkeyMap} method if the {@link Hotkey}
-     * is present and {@link Hotkey#canInvoke(UserInputEvent, List)}.
+     * is present and {@link Hotkey#canInvoke(KeyEvent, List)}.
      *
-     * @param event for the {@link Hotkey#canInvoke(UserInputEvent, List)} method
+     * @param event for the {@link Hotkey#canInvoke(KeyEvent, List)} method
      */
-    public void invokeIfPresent(UserInputEvent event) {
+    public void invokeIfPresent(KeyEvent event) {
         Optional<Hotkey> optionalHotkey = this.hotkeys
                 .stream().filter(var -> var.canInvoke(event, this.getPressedKeys()) &&
                         this.hotkeyMap.containsKey(var.getName())).findFirst();
