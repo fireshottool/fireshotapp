@@ -29,7 +29,7 @@ public class ScalableRectangle extends Rectangle implements Drawable {
     private final ScalableRectListener listener = new ScalableRectListener(this);
     private final Stroke stroke = new BasicStroke();
     private Stroke dashedStroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
-            3.0f, new float[]{6}, 0);
+            3.0f, new float[]{4, 8}, 0);
     private int cursor = 1;
 
     /**
@@ -87,8 +87,8 @@ public class ScalableRectangle extends Rectangle implements Drawable {
             @Override
             public void run() {
                 dashedStroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
-                        3.0f, new float[]{6}, count.get());
-                if (count.get() == 12) {
+                        3.0f, new float[]{4, 8}, count.get());
+                if (count.get() == 24) {
                     count.set(0);
                 }
                 count.set(count.get() + 1);
