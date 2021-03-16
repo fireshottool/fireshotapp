@@ -142,6 +142,8 @@ public class ScreenshotService implements Service, Drawable, ConfigManager {
 
         Fireshotapp.getInstance().use(FileService.class).saveImage(screenshot, fileName);
         ClipboardImage.write(screenshot);
+        Fireshotapp.getInstance().getSystemTray().info("Fireshotapp",
+                "The screenshot has been copied to your clipboard");
     }
 
     /**
