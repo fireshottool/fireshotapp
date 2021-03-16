@@ -141,7 +141,6 @@ public class ScreenshotService implements Service, Drawable, ConfigManager {
         String fileName = RandomStringUtils.randomAscii(18);
 
         Fireshotapp.getInstance().use(FileService.class).saveImage(screenshot, fileName);
-        System.out.println("Saved!");
         ClipboardImage.write(screenshot);
     }
 
