@@ -16,5 +16,6 @@ public class Config {
     private final HotkeyConfig hotkeyConfig = new HotkeyConfig();
     private final UpdateConfig updateConfig = new UpdateConfig();
     private final RequestConfig requestConfig = new RequestConfig();
+    private final ImagePinConfig imagePinConfig = new ImagePinConfig();
     private final ScreenshotConfig screenshotConfig = new ScreenshotConfig();
 }
