@@ -138,7 +138,7 @@ public class ScreenshotService implements Service, Drawable, ConfigManager {
      * @throws IOException if an I/O error occurs
      */
     private void saveImage(BufferedImage screenshot) throws IOException {
-        String fileName = RandomStringUtils.randomAscii(18);
+        String fileName = RandomStringUtils.randomAlphabetic(18);
 
         Fireshotapp.getInstance().use(FileService.class).saveImage(screenshot, fileName);
         ClipboardImage.write(screenshot);
