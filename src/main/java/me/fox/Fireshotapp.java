@@ -2,6 +2,9 @@ package me.fox;
 
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 import lombok.Getter;
 import me.fox.components.Version;
 import me.fox.services.*;
@@ -20,7 +23,7 @@ import java.util.concurrent.Executors;
  */
 
 @Getter
-public class Fireshotapp {
+public class Fireshotapp extends Application {
 
     @Getter
     private static Fireshotapp instance;
@@ -36,6 +39,10 @@ public class Fireshotapp {
     @SuppressWarnings("unchecked")
     public <T extends Service> T use(Class<? super T> type) {
         return (T) this.services.get(type);
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 
     private void registerServices(Service... services) {
@@ -79,14 +86,11 @@ public class Fireshotapp {
         this.use(JsonService.class).read(this.services.values());
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(
-                    UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        instance = new Fireshotapp();
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        instance = this;
         instance.load();
+        Platform.setImplicitExit(false);
     }
 }

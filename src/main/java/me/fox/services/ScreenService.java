@@ -5,12 +5,14 @@ import lombok.Setter;
 import me.fox.Fireshotapp;
 import me.fox.components.ResourceManager;
 import me.fox.config.Config;
+import me.fox.ui.frames.ImagePinFrame;
 import me.fox.ui.frames.ScreenshotFrame;
 import me.fox.ui.frames.SettingsFrame;
 import me.fox.ui.panels.toolbox.Toolbox;
 import me.fox.ui.panels.toolbox.ext.DrawToolbox;
 import me.fox.ui.panels.toolbox.ext.ScreenshotToolbox;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -30,6 +32,7 @@ public class ScreenService implements Service, ResourceManager {
     private final Toolbox drawToolbox;
     private final Toolbox screenshotToolbox = new ScreenshotToolbox();
     private final SettingsFrame settingsFrame = new SettingsFrame();
+    private final ImagePinFrame imagePinFrame = new ImagePinFrame();
 
     /**
      * Constructor for {@link ScreenService}
@@ -83,6 +86,12 @@ public class ScreenService implements Service, ResourceManager {
         this.hide();
     }
 
+    public void pinScreenshot() {
+        BufferedImage image = this.screenshotService.takeScreenshotFromSelection();
+        imagePinFrame.showImage(image);
+        resetAndHide();
+    }
+
     private void reset() {
         this.screenshotService.setImage(null);
         this.screenshotService.getSelectionRectangle().setRect(-10, -10, 0, 0);
@@ -111,5 +120,6 @@ public class ScreenService implements Service, ResourceManager {
     @Override
     public void applyConfig(Config config) {
         this.settingsFrame.applyConfig(config);
+        this.imagePinFrame.applyConfig(config);
     }
 }

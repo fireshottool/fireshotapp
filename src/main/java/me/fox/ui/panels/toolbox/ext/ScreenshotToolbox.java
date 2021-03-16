@@ -1,5 +1,6 @@
 package me.fox.ui.panels.toolbox.ext;
 
+import javafx.application.Platform;
 import lombok.Getter;
 import me.fox.Fireshotapp;
 import me.fox.enums.ToolboxType;
@@ -28,6 +29,7 @@ public class ScreenshotToolbox extends Toolbox {
             confirmComponent,
             googleSearchComponent,
             textRecognitionComponent,
+            pinScreenshotComponent,
             cancelComponent;
 
     public ScreenshotToolbox() {
@@ -63,10 +65,17 @@ public class ScreenshotToolbox extends Toolbox {
         Fireshotapp.getInstance().use(ScreenService.class).hideAndConfirm(true, false);
     }
 
+    private void pinScreenshot() {
+        Fireshotapp.getInstance().use(ScreenService.class).pinScreenshot();
+    }
+
     @Override
     public void loadToolboxComponents() {
         this.googleSearchComponent = new DefaultToolboxComponent(null, this::googleSearch);
         this.googleSearchComponent.setToolTipText("Search the image on google");
+
+        this.pinScreenshotComponent = new DefaultToolboxComponent(null, event -> Platform.runLater(this::pinScreenshot));
+        this.pinScreenshotComponent.setToolTipText("Pin screenshot");
 
         this.textRecognitionComponent = new DefaultToolboxComponent(null, this::textRecognition);
         this.textRecognitionComponent.setToolTipText("Get the text on the image (OCR)");
@@ -81,6 +90,7 @@ public class ScreenshotToolbox extends Toolbox {
         this.confirmComponent.setToolTipText("Confirm Screenshot");
 
         this.addComponent(this.cancelComponent);
+        this.addComponent(this.pinScreenshotComponent);
         this.addComponent(this.googleSearchComponent);
         this.addComponent(this.textRecognitionComponent);
         this.addComponent(this.drawComponent);
